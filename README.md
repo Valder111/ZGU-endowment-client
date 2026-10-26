@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# Репозиторий клиента проекта ZGU-endowment
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## Содержание репозитория:
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+node_modules - зависимости проекта
+public - статика сайта
+src - исходный код проекта
+	assets/ - картинки, шрифт, ассеты проекта
+    components/ - UI-компоненты
+    pages/ - страницы приложения
+    router/ - настройки маршрутизации проекта
+    services/ - API-запросы, клиенты
+    utils/ - утилиты и хелперы (общая валидация, даты и т.д.)
+    App.tsx - корневой компонент проекта
+    main.tsx - рендеринг проекта в DOM
+.gitignore - список элементов проекта, не попадающих в отслеживание системой git
+.oxlintrc.json - файл конфигурации линтера oxlint
+package.json - "паспорт" проекта
+package-lock.json - фиксация зависимостей проекта
+index.html - единственная реальная html-страница проекта, куда React будет монтировать компоненты и элементы
+vite.config.ts - файл конфигурации сборщика vite
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Первая настройка проекта
+
+Если вы впервые клонировали репозиторий, вот первые шаги для успешной его инициализации:
+
+```
+# 1. Установка всех зависимостей, указанных в package.json
+npm install
+
+# 2. Запуск проекта в режиме разработки
+npm run dev
+```
+
+Если что-то пошло не так и команда "npm run dev" выдала ошибку - увы, вы зря старались |:
