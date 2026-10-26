@@ -1,0 +1,8 @@
+node_modules
+dist
+.ssr
+.migration
+package-lock.json
+playwright-report
+test-results
+

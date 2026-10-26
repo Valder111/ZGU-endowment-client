@@ -1,0 +1,73 @@
+@layer theme, base, components, utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import './fonts.css';
+@import './site.css' layer(components);
+@import './ui.css' layer(components);
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --font-sans: 'Montserrat', Arial, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+:root {
+  --radius: 0.5rem;
+  --card: #fff;
+  --card-foreground: #1d3754;
+  --destructive-foreground: #fff;
+  --chart-1: #2bc6c5;
+  --chart-2: #009bde;
+  --chart-3: #1d3754;
+  --chart-4: #e57200;
+  --chart-5: #397385;
+  --background: #fff;
+  --foreground: #1d3754;
+  --primary: #2bc6c5;
+  --primary-foreground: #102f49;
+  --secondary: #edf5f5;
+  --secondary-foreground: #1d3754;
+  --muted: #edf5f5;
+  --muted-foreground: #5d7586;
+  --accent: #e6f4f3;
+  --accent-foreground: #1d3754;
+  --popover: #fff;
+  --popover-foreground: #1d3754;
+  --border: #c7d7dd;
+  --input: #c7d7dd;
+  --ring: #ef7d00;
+  --destructive: #b91c1c;
+}
+
+@layer base {
+  button {
+    letter-spacing: normal;
+  }
+}
