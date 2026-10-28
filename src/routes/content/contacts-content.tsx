@@ -1,4 +1,5 @@
 import { siteConfig } from '@/configs/site';
+import { PolarPostcard } from '@/components/elements/polar-postcard';
 export function ContactsContent() {
   return (
     <div className="wrap article-content">
@@ -28,6 +29,23 @@ export function ContactsContent() {
             Официальный сайт ЗГУ ↗
           </a>
         </article>
+      </div>
+      <div className="north-postcard" id="north-postcard">
+        <div>
+          <span className="eyebrow">НА СВЯЗИ С СЕВЕРОМ</span>
+          <h2>
+            Расстояния не мешают
+            <br />
+            быть рядом.
+          </h2>
+          <p>
+            Университет в Норильске. Идеи и связи — далеко за его пределами.
+          </p>
+          <span className="postcard-coordinate">
+            69°20′ N · 88°13′ E / НОРИЛЬСК
+          </span>
+        </div>
+        <PolarPostcard />
       </div>
     </div>
   );

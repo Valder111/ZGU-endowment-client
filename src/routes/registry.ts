@@ -4,8 +4,8 @@ const pageGroups = [
   {
     paths: ['/'],
     kind: 'home',
-    title: 'БУДУЩЕЕ СЕВЕРАНАЧИНАЕТСЯС ВАШЕГО ВКЛАДА',
-    eyebrow: '●   ЗГУ ИМЕНИ Н. М. ФЕДОРОВСКОГО',
+    title: 'БУДУЩЕЕ АРКТИКИНАЧИНАЕТСЯС ВАШЕГО ВКЛАДА',
+    eyebrow: 'ЭНДАУМЕНТ-ФОНД',
   },
   {
     paths: ['/answers-on-questions/', '/project/instructions-for-benefactors/'],

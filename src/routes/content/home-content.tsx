@@ -1,5 +1,6 @@
 import { Hero } from '@/components/elements/hero';
 import { Mission } from '@/components/elements/mission';
+import { FundActivity } from '@/components/elements/fund-activity';
 import { Mechanism } from '@/components/elements/mechanism';
 import { Community } from '@/components/elements/community';
 import { CallToAction } from '@/components/elements/call-to-action';
@@ -11,6 +12,7 @@ export function HomeContent() {
     <>
       <Hero />
       <Mission />
+      <FundActivity />
       <section className="section" id="directions">
         <div className="wrap">
           <div className="section-heading">

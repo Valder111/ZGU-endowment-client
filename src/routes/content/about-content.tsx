@@ -1,5 +1,6 @@
 import { Mechanism } from '@/components/elements/mechanism';
 import { DonateButton } from '@/components/elements/donate-button';
+import { EditorialArtwork } from '@/assets/svg/editorial-artwork';
 export function AboutContent() {
   return (
     <div className="wrap article-content">
@@ -26,6 +27,29 @@ export function AboutContent() {
           <DonateButton />
         </div>
       </div>
+      <section className="foundation-principles" aria-label="Смысл эндаумента">
+        <div className="foundation-illustration">
+          <EditorialArtwork scene="endowment" />
+          <span>УЧАСТИЕ, У КОТОРОГО ЕСТЬ ПРОДОЛЖЕНИЕ</span>
+        </div>
+        <div className="foundation-copy">
+          <span className="eyebrow">БОЛЬШЕ, ЧЕМ ОДИН МОМЕНТ</span>
+          <h2>
+            У будущего есть
+            <br />
+            точка опоры.
+          </h2>
+          <p>
+            Идея эндаумента связывает сегодняшний вклад с возможностями
+            следующих поколений.
+          </p>
+          <div className="foundation-values">
+            <span>Люди</span>
+            <span>Знания</span>
+            <span>Долгий горизонт</span>
+          </div>
+        </div>
+      </section>
       <Mechanism />
     </div>
   );

@@ -96,28 +96,6 @@ export function useMotion(
                 { y: 20, opacity: 0, clearProps: 'transform,opacity' },
                 0.85,
               );
-            if (desktop) {
-              gsap.to('.orbit-outer', {
-                rotation: 40,
-                ease: 'none',
-                scrollTrigger: {
-                  trigger: hero,
-                  start: 'top top',
-                  end: 'bottom top',
-                  scrub: 0.7,
-                },
-              });
-              gsap.to('.orbit-inner', {
-                rotation: -24,
-                ease: 'none',
-                scrollTrigger: {
-                  trigger: hero,
-                  start: 'top top',
-                  end: 'bottom top',
-                  scrub: 0.7,
-                },
-              });
-            }
             const emblem = hero.querySelector<HTMLElement>('.polar-emblem');
             if (desktop && fine && emblem) {
               const xTo = gsap.quickTo(emblem, 'x', {

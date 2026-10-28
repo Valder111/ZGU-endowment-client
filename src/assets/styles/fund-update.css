@@ -1,0 +1,554 @@
+/* One fund identity, shared by the header, footer and browser tab. */
+.brand {
+  gap: 14px;
+  flex-direction: row;
+  align-items: center;
+  min-width: 0;
+}
+.fund-mark {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 auto;
+  color: #effafa;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.fund-mark-orbit {
+  stroke: #86d5d4;
+  opacity: 0.55;
+}
+.fund-mark-pages {
+  fill: #ffffff08;
+}
+.fund-mark-star {
+  fill: #60e1d9;
+  stroke: #60e1d9;
+}
+.brand > .brand-fund {
+  display: grid;
+  gap: 5px;
+  max-width: none;
+  border: 0;
+  padding: 0;
+  flex-shrink: 1;
+  letter-spacing: normal;
+  line-height: 1.3;
+}
+.brand-fund > strong {
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+.brand-fund > span {
+  font-size: 11px;
+  letter-spacing: 0.025em;
+  color: #d4e8ed;
+}
+.footer-brand {
+  display: inline-flex;
+  margin-bottom: 15px;
+}
+.footer-brand .fund-mark {
+  width: 50px;
+  height: 50px;
+}
+.footer-brand .brand-fund > strong {
+  font-size: 17px;
+}
+.footer-brand .brand-fund > span {
+  font-size: 10px;
+}
+
+/* The dot stays on the circular border while the bear remains upright. */
+.orbit-outer:before {
+  top: 0;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+}
+.globe-satellite-still {
+  display: none;
+}
+.globe-satellite-motion {
+  display: block;
+}
+.accessible .globe-satellite-motion {
+  display: none;
+}
+.accessible .globe-satellite-still {
+  display: block;
+}
+.page-title-art {
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(230px, 25vw, 330px);
+  opacity: 0.8;
+}
+.project-visual .editorial-artwork {
+  width: 100%;
+  margin: 12px auto;
+}
+.artwork-alumni .art-scene {
+  stroke-width: 1.9;
+}
+.artwork-endowment .art-scene {
+  stroke-width: 2;
+}
+
+.fund-activity {
+  padding: 12px 0 75px;
+  background: #edf5f5;
+}
+.activity-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+.activity-heading .eyebrow {
+  margin-bottom: 14px;
+}
+.activity-heading h2 {
+  font-size: clamp(28px, 3vw, 42px);
+}
+.activity-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #446878;
+  padding: 9px 13px;
+  border: 1px solid #abcdd1;
+  border-radius: 50px;
+  background: #e2f0f0;
+}
+.activity-status > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #137f83;
+  box-shadow: 0 0 0 5px #137f8310;
+}
+.activity-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 24px;
+  align-items: stretch;
+}
+.activity-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  min-width: 0;
+  border: 1px solid #c9dcdf;
+  border-radius: 18px;
+  padding: 24px;
+  background: #ffffffa6;
+  color: #1d3754;
+  transition:
+    border-color 0.25s,
+    background 0.25s,
+    box-shadow 0.25s;
+}
+.metric-card:hover {
+  border-color: #137f83;
+  background: #fff;
+}
+.metric-card[aria-pressed='true'] {
+  border-color: #137f83;
+  background: #fff;
+  box-shadow:
+    inset 0 0 0 1px #137f83,
+    0 10px 35px #1d375409;
+}
+.metric-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  color: #137f83;
+}
+.metric-card-top > span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: #537384;
+}
+.metric-value {
+  display: block;
+  margin: 18px 0 2px;
+  font-size: clamp(26px, 3.2vw, 42px);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.2;
+}
+.metric-value > small {
+  font-size: 16px;
+}
+.metric-label {
+  font-size: 15px;
+  font-weight: 550;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.metric-availability {
+  margin-top: 10px;
+  max-width: 190px;
+  font-size: 10px;
+  line-height: 1.6;
+  color: #54717f;
+}
+.activity-focus {
+  display: grid;
+  grid-template-columns: 0.95fr 1fr;
+  align-items: center;
+  gap: 20px;
+  padding: 30px;
+  background: #1d3754;
+  color: #eef9f7;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.activity-focus:before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+  background: radial-gradient(ellipse at 10% 30%, #2bc6c517, transparent 70%);
+}
+.activity-dial {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1;
+  position: relative;
+  margin: auto;
+}
+.activity-dial > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke: #a1d3d84d;
+  stroke-width: 1;
+}
+.dial-halo {
+  stroke-dasharray: 1 7;
+  stroke-width: 3;
+}
+.dial-inner {
+  stroke-dasharray: 2 6;
+  opacity: 0.45;
+}
+.dial-selection {
+  transform-origin: 160px 160px;
+  transition: transform 0.6s ease;
+}
+.dial-selection path {
+  stroke: #60e1d9;
+  stroke-width: 3;
+}
+.dial-selection circle {
+  fill: #60e1d9;
+  stroke: #1d3754;
+  stroke-width: 3;
+}
+.dial-funding > circle:first-child {
+  stroke: #60e1d9;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.dial-funding > circle:last-child {
+  fill: #60e1d9;
+  stroke: #1d3754;
+  stroke-width: 3;
+}
+.dial-star {
+  transform-origin: 160px 160px;
+  fill: #a8eee8;
+  stroke: none;
+}
+.activity-dial-value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.activity-dial-value > strong {
+  max-width: 85%;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: #60e1d9;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
+}
+.activity-dial-value > span {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #c5e7e8;
+}
+.activity-dial-value > small {
+  font-size: 11px;
+  color: #e7f4f2;
+}
+.activity-story .activity-target {
+  margin: 14px 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #a1d3d830;
+  font-size: 12px;
+}
+.activity-target > strong {
+  color: #73e0db;
+  font-weight: 600;
+}
+.activity-target > span {
+  display: block;
+  font-size: 10px;
+  margin-top: 5px;
+  color: #c3dcdf;
+}
+.activity-stories {
+  position: relative;
+  min-width: 0;
+}
+.activity-story[data-active='false'] {
+  display: none;
+}
+.activity-story .eyebrow {
+  font-size: 8px;
+  color: #a8eee8;
+  letter-spacing: 0.1em;
+  margin-bottom: 13px;
+}
+.activity-story h3 {
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.activity-story p {
+  margin: 17px 0;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #dfedef;
+}
+.activity-story small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.8;
+  color: #bed3dd;
+}
+.activity-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
+  margin-top: 25px;
+}
+.activity-bottom > p {
+  font-size: 11px;
+  max-width: 640px;
+  color: #537181;
+  line-height: 1.8;
+}
+.activity-bottom .text-link {
+  flex-shrink: 0;
+  color: #1d3754;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+}
+.no-js .activity-metrics {
+  pointer-events: none;
+}
+.no-js .activity-story[data-active='false'] {
+  display: block;
+  margin-top: 25px;
+}
+.accessible .metric-label {
+  font-size: 18px;
+}
+.accessible .metric-availability,
+.accessible .activity-story small,
+.accessible .activity-story .eyebrow,
+.accessible .activity-status {
+  font-size: 14px;
+}
+.accessible .activity-focus {
+  grid-template-columns: 1fr;
+}
+@media (max-width: 1100px) {
+  .activity-focus {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .activity-dial {
+    max-width: 220px;
+  }
+  .activity-story h3 {
+    font-size: 22px;
+  }
+}
+@media (max-width: 1000px) {
+  .activity-layout {
+    grid-template-columns: 1fr;
+  }
+  .activity-focus {
+    grid-template-columns: 0.85fr 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .header-inner {
+    min-height: 86px;
+  }
+  .brand {
+    gap: 9px;
+  }
+  .fund-mark {
+    width: 43px;
+    height: 43px;
+  }
+  .brand-fund > strong {
+    font-size: 14px;
+  }
+  .brand-fund > span {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+  .brand > .brand-fund {
+    gap: 4px;
+  }
+  .page-title-art {
+    width: 150px;
+    top: 50%;
+    opacity: 0.5;
+  }
+  .fund-activity {
+    padding: 0 0 55px;
+  }
+  .activity-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  .activity-heading h2 {
+    max-width: 340px;
+  }
+  .activity-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .activity-metrics {
+    gap: 10px;
+  }
+  .metric-card {
+    border-radius: 14px;
+    padding: 18px 15px;
+  }
+  .metric-card-top > span {
+    gap: 7px;
+  }
+  .metric-card-top > svg {
+    width: 21px;
+  }
+  .metric-value {
+    margin-top: 15px;
+    font-size: 26px;
+  }
+  .metric-label {
+    font-size: 13px;
+  }
+  .metric-availability {
+    font-size: 9px;
+  }
+  .activity-focus {
+    grid-template-columns: 1fr;
+    padding: 24px;
+    gap: 14px;
+  }
+  .activity-dial {
+    max-width: 245px;
+  }
+  .activity-dial-value > strong {
+    font-size: 40px;
+  }
+  .activity-story h3 {
+    font-size: 24px;
+  }
+  .activity-story p {
+    font-size: 13px;
+    margin: 14px 0;
+  }
+  .activity-story small {
+    font-size: 11px;
+  }
+  .activity-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .activity-status {
+    font-size: 10px;
+  }
+  .accessible .activity-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  body:not(.accessible) .orbit-outer {
+    animation: fund-orbit-turn 65s linear infinite;
+  }
+  body:not(.accessible) .orbit-inner {
+    animation: fund-orbit-turn 95s linear infinite reverse;
+  }
+  body:not(.accessible) .dial-star {
+    animation: fund-orbit-turn 55s linear infinite;
+  }
+  body:not(.accessible) .activity-story[data-active='true'] {
+    animation: story-arrive 0.3s ease-out both;
+  }
+  body:not(.accessible) .activity-dial-value > strong {
+    animation: metric-arrive 0.35s ease-out both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .globe-satellite-motion {
+    display: none;
+  }
+  .globe-satellite-still {
+    display: block;
+  }
+  .dial-selection {
+    transition: none;
+  }
+}
+@keyframes fund-orbit-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes metric-arrive {
+  from {
+    opacity: 0.3;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

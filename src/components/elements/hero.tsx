@@ -1,16 +1,23 @@
 import { SiteLink } from '@/components/elements/site-link';
 import { DonateButton } from '@/components/elements/donate-button';
 import { assets } from '@/constants/assets';
+import { NorthernContours } from '@/assets/svg/northern-contours';
 export function Hero() {
   return (
     <section className="hero">
+      <NorthernContours />
       <div className="wrap hero-inner">
         <div className="hero-copy">
-          <span className="eyebrow light">
-            ● &nbsp; ЗГУ ИМЕНИ Н. М. ФЕДОРОВСКОГО
-          </span>
-          <h1 aria-label="Будущее Севера начинается с вашего вклада">
-            <span className="headline-line">БУДУЩЕЕ СЕВЕРА</span>
+          <div className="eyebrow light hero-identity">
+            <span>Эндаумент-фонд</span>
+            <span>
+              Заполярного государственного университета
+              <br />
+              имени Н. М. Федоровского
+            </span>
+          </div>
+          <h1 aria-label="Будущее Арктики начинается с вашего вклада">
+            <span className="headline-line">БУДУЩЕЕ АРКТИКИ</span>
             <span className="headline-line">НАЧИНАЕТСЯ</span>
             <span className="headline-line">
               <em>С ВАШЕГО ВКЛАДА</em>

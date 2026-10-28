@@ -11,6 +11,8 @@ import { ProjectGrid } from '@/components/elements/project-grid';
 import { NewsGrid } from '@/components/elements/news-grid';
 import { PageTitle } from '@/components/elements/page-title';
 import { SiteLink } from '@/components/elements/site-link';
+import { artworkForPage } from '@/constants/visual-content';
+import { DirectionExplorer } from '@/components/elements/direction-explorer';
 function InteriorContent({ page }: { page: PageDefinition }) {
   switch (page.kind) {
     case 'about':
@@ -22,7 +24,7 @@ function InteriorContent({ page }: { page: PageDefinition }) {
     case 'events':
       return <EventsContent />;
     case 'pending':
-      return <PendingContent />;
+      return <PendingContent title={page.title} />;
     case 'project':
       return page.projectId ? <ProjectContent id={page.projectId} /> : null;
     case 'faq':
@@ -30,6 +32,7 @@ function InteriorContent({ page }: { page: PageDefinition }) {
     case 'projects':
       return (
         <div className="wrap article-content">
+          <DirectionExplorer />
           <ProjectGrid />
           {page.showNote && (
             <p className="note">
@@ -72,7 +75,11 @@ export function PageContent({ page }: { page?: PageDefinition }) {
   if (page.kind === 'home') return <HomeContent />;
   return (
     <>
-      <PageTitle title={page.title} eyebrow={page.eyebrow} />
+      <PageTitle
+        title={page.title}
+        eyebrow={page.eyebrow}
+        scene={artworkForPage(page)}
+      />
       <section className="section">
         <InteriorContent page={page} />
       </section>

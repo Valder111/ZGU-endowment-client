@@ -1,0 +1,580 @@
+/* Keep the fund identity visible at every screen width. */
+.brand > .brand-fund {
+  display: block;
+  max-width: 190px;
+  flex-shrink: 0;
+}
+.hero .hero-identity {
+  display: grid;
+  gap: 9px;
+  margin-bottom: 28px;
+  letter-spacing: normal;
+}
+.hero-identity > span:first-child {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.hero-identity > span:last-child {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #e2edf4;
+}
+@media (max-width: 1000px) {
+  .brand > .brand-fund {
+    max-width: 155px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 4.15vw, 40px);
+  }
+}
+@media (max-width: 760px) {
+  .header-inner {
+    min-height: 100px;
+    padding-block: 14px;
+  }
+  .brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+  }
+  .brand > .brand-fund {
+    max-width: none;
+    padding-left: 0;
+    border-left: 0;
+    font-size: 10px;
+    letter-spacing: 0.02em;
+  }
+  .header-actions {
+    flex-shrink: 0;
+  }
+  .hero .hero-identity {
+    margin-bottom: 25px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 7.7vw, 48px);
+  }
+  .hero-identity > span:first-child {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .hero-identity > span:last-child {
+    font-size: 12px;
+  }
+}
+
+/* Keep line art crisp at icon sizes and reserve space around text. */
+.editorial-artwork :is(path, circle, ellipse, rect),
+.project-symbol svg :is(path, circle, ellipse, rect),
+.direction-node-icon svg :is(path, circle, ellipse, rect),
+.involvement-art svg :is(path, circle, ellipse, rect) {
+  vector-effect: non-scaling-stroke;
+}
+.editorial-artwork {
+  stroke-width: 1.55;
+}
+.art-construction {
+  opacity: 0.15;
+  stroke-width: 0.7;
+}
+.project-card .project-symbol {
+  width: 30%;
+  height: 130px;
+  right: 22px;
+  top: 105px;
+  opacity: 0.8;
+}
+.project-card h3,
+.project-card p {
+  max-width: 62%;
+}
+.project-visual-label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.project-visual-caption {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+.foundation-illustration > span {
+  font-size: 9px;
+}
+.direction-node {
+  font-size: 12px;
+}
+.direction-node-icon svg {
+  stroke-width: 1.5;
+}
+.direction-center > span {
+  font-size: clamp(30px, 3.1vw, 42px);
+}
+.involvement-art svg {
+  stroke-width: 1.5;
+}
+.process-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke: #1d3754;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.process-icon :is(path, circle) {
+  vector-effect: non-scaling-stroke;
+}
+.process-icon-backdrop {
+  fill: #e8f2f3;
+  stroke: none;
+}
+.process-icon-accent {
+  stroke: #137f83;
+}
+.process-icon-accent-fill {
+  fill: #137f83;
+  stroke: none;
+}
+.process-icon-coin {
+  fill: #f3f8f8;
+}
+.interactive-steps .mechanism-art {
+  width: 102px;
+  height: 102px;
+  margin: 20px 0 0;
+  border-radius: 50%;
+  transition: box-shadow 0.25s;
+}
+.interactive-steps article[data-active='true'] .mechanism-art {
+  box-shadow: 0 0 0 5px #2bc6c51c;
+}
+.interactive-steps article > span {
+  font-size: 11px;
+}
+.interactive-steps article > p {
+  flex: 1;
+}
+.step-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 44px;
+  margin-top: 23px;
+  padding: 9px 16px;
+  border: 1px solid #b6cfd5;
+  border-radius: 50px;
+  background: transparent;
+  color: #235c6b;
+  font-size: 11px;
+  line-height: 1.5;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.step-action[aria-pressed='true'] {
+  border-color: #2bc6c5;
+  background: #2bc6c5;
+  color: #123950;
+}
+.step-action:hover {
+  border-color: #137f83;
+  background: #d9f2ee;
+}
+.journey-explanation {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 35px;
+  align-items: center;
+  margin-top: 36px;
+  padding: 30px;
+  border: 1px solid #c9dce1;
+  border-radius: 12px;
+  background: #fff;
+}
+.journey-indicator {
+  min-width: 0;
+}
+.journey-indicator > span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #397385;
+  text-align: center;
+}
+.journey-indicator svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  stroke: #9bbcc5;
+  stroke-width: 1.4;
+}
+.journey-indicator svg g > circle {
+  fill: #fff;
+}
+.journey-indicator svg g.is-active > circle {
+  stroke: #137f83;
+}
+.journey-indicator > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  color: #397385;
+  font-size: 10px;
+}
+.journey-marker {
+  transition: transform 0.5s ease-in-out;
+}
+.journey-marker circle:first-child {
+  fill: #2bc6c5;
+  opacity: 0.2;
+  stroke: none;
+}
+.journey-marker circle:last-child {
+  fill: #137f83;
+  stroke: none;
+}
+.journey-story {
+  min-height: 170px;
+}
+.journey-story[data-active='false'] {
+  display: none;
+}
+.journey-story .eyebrow {
+  font-size: 9px;
+  margin-bottom: 10px;
+}
+.journey-story h3 {
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.journey-story p {
+  font-size: 13px;
+  color: #586f80;
+  line-height: 1.85;
+  margin: 12px 0;
+}
+.journey-story small {
+  display: block;
+  font-size: 11px;
+  color: #586f80;
+  line-height: 1.8;
+}
+.no-js .step-action {
+  display: none;
+}
+.no-js .journey-story[data-active='false'] {
+  display: block;
+  margin-top: 25px;
+}
+.polar-postcard {
+  min-width: 0;
+  width: 100%;
+  max-width: 600px;
+  margin: 0;
+  justify-self: end;
+}
+.polar-picture {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  --sky: #e1f1f3;
+  --mountains-far: #bdd8de;
+  --mountains-near: #9fc4cf;
+  --snow: #f6fcfc;
+  --city: #e9f3f3;
+  --city-stroke: #397385;
+  --windows: #7fbbbf;
+  --ground: #edf7f7;
+  --picture-label: #235b6b;
+}
+.polar-picture > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.polar-picture :is(path, circle, rect) {
+  transition:
+    fill 0.7s ease,
+    stroke 0.7s ease,
+    opacity 0.7s ease;
+}
+.polar-sky {
+  fill: var(--sky);
+}
+.polar-mountains-far {
+  fill: var(--mountains-far);
+}
+.polar-mountains-near {
+  fill: var(--mountains-near);
+}
+.polar-snowcaps {
+  fill: var(--snow);
+  opacity: 0.8;
+}
+.polar-city {
+  fill: var(--city);
+  stroke: var(--city-stroke);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.polar-city > path,
+.polar-city > rect {
+  vector-effect: non-scaling-stroke;
+}
+.polar-city .polar-window {
+  fill: var(--windows);
+  stroke: none;
+}
+.polar-ground {
+  fill: var(--ground);
+}
+.polar-ground-line {
+  stroke: var(--city-stroke);
+  opacity: 0.35;
+  stroke-width: 1.5;
+}
+.polar-sun {
+  stroke: #b58c27;
+  stroke-width: 1.4;
+  opacity: 1;
+  transition: opacity 0.7s;
+}
+.polar-sun > circle:first-child {
+  fill: #f5d88a;
+  stroke: none;
+}
+.polar-sun > circle:nth-child(2) {
+  opacity: 0.4;
+}
+.polar-stars {
+  stroke: #b9ebe4;
+  stroke-width: 1.3;
+  opacity: 0;
+  transition: opacity 0.7s;
+}
+.polar-aurora {
+  stroke: #67e1cd;
+  stroke-width: 16;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 0.7s;
+}
+.polar-aurora > path:nth-child(2) {
+  stroke: #57bbd8;
+  stroke-width: 12;
+  opacity: 0.45;
+}
+.polar-aurora > path:nth-child(3) {
+  stroke-width: 5;
+  opacity: 0.2;
+}
+.polar-moon {
+  fill: #e6f5dc;
+  opacity: 0;
+  transition: opacity 0.7s;
+}
+.polar-picture-label {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--picture-label);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+.polar-postcard[data-night='true'] .polar-picture {
+  --sky: #102e48;
+  --mountains-far: #274963;
+  --mountains-near: #35617b;
+  --snow: #a5cad1;
+  --city: #1c4059;
+  --city-stroke: #82bac7;
+  --windows: #ffe2a3;
+  --ground: #264e68;
+  --picture-label: #c1e8e8;
+}
+.polar-postcard[data-night='true'] .polar-stars {
+  opacity: 0.85;
+}
+.polar-postcard[data-night='true'] .polar-aurora {
+  opacity: 0.36;
+}
+.polar-postcard[data-night='true'] .polar-moon {
+  opacity: 1;
+}
+.polar-postcard[data-night='true'] .polar-sun {
+  opacity: 0;
+}
+.polar-postcard > figcaption {
+  margin-top: 16px;
+}
+.polar-state {
+  display: block;
+  text-align: center;
+  min-height: 25px;
+  margin-bottom: 10px;
+  color: #397385;
+  font-size: 12px;
+}
+.polar-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.polar-controls button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid #bdd3d9;
+  border-radius: 50px;
+  background: transparent;
+  color: #235b6b;
+  font-size: 11px;
+  line-height: 1.5;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.polar-controls button > svg {
+  flex-shrink: 0;
+}
+.polar-controls button[aria-pressed='true'] {
+  background: #1d3754;
+  border-color: #1d3754;
+  color: #e4f7f5;
+}
+.polar-controls button:hover {
+  border-color: #137f83;
+}
+.no-js .polar-controls {
+  display: none;
+}
+.accessible .polar-controls {
+  grid-template-columns: 1fr;
+}
+.accessible .polar-controls button,
+.accessible .step-action {
+  font-size: 16px;
+}
+@media (max-width: 1000px) {
+  .project-card .project-symbol {
+    position: relative;
+    align-self: flex-end;
+    top: auto;
+    right: auto;
+    width: 90px;
+    height: 70px;
+    margin: 12px 0 0;
+    z-index: auto;
+    opacity: 1;
+  }
+  .project-card h3 {
+    max-width: 100%;
+    margin-top: 12px;
+  }
+  .project-card p {
+    max-width: 100%;
+  }
+  .project-card {
+    min-height: 390px;
+  }
+  .direction-node {
+    font-size: 11px;
+  }
+  .journey-explanation {
+    grid-template-columns: 210px 1fr;
+    gap: 25px;
+    padding: 25px;
+  }
+}
+@media (max-width: 760px) {
+  .page-title-art {
+    width: 140px;
+    top: -25px;
+    right: 0;
+    opacity: 0.35;
+  }
+  .project-card .project-symbol {
+    margin-top: 8px;
+  }
+  .project-card h3 {
+    margin-top: 6px;
+  }
+  .project-card {
+    min-height: 0;
+  }
+  .project-visual-label {
+    font-size: 9px;
+  }
+  .project-visual-caption {
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+  .foundation-illustration > span {
+    font-size: 8px;
+  }
+  .interactive-steps .mechanism-art {
+    width: 88px;
+    height: 88px;
+    margin-top: 18px;
+  }
+  .step-action {
+    margin-top: 20px;
+  }
+  .journey-explanation {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 24px;
+  }
+  .journey-indicator {
+    width: 100%;
+    max-width: 270px;
+    margin: auto;
+  }
+  .journey-story {
+    min-height: 0;
+  }
+  .journey-story h3 {
+    font-size: 22px;
+  }
+  .polar-picture-label {
+    font-size: 7px;
+    bottom: 12px;
+  }
+  .polar-controls button {
+    font-size: 10px;
+    padding: 9px 8px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  body:not(.accessible) .art-spin {
+    animation-duration: 38s;
+  }
+  body:not(.accessible) .art-float {
+    animation-duration: 5.2s;
+  }
+  body:not(.accessible) .journey-story[data-active='true'] {
+    animation: story-arrive 0.3s ease-out both;
+  }
+  body:not(.accessible) .polar-postcard[data-night='true'] .polar-aurora {
+    animation: polar-lights 8s ease-in-out infinite;
+  }
+}
+@keyframes polar-lights {
+  50% {
+    transform: translateY(-8px);
+    opacity: 0.6;
+  }
+}

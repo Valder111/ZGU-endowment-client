@@ -107,13 +107,13 @@ npx playwright install chromium
 
 По умолчанию базовый путь — `/`, что подходит для `https://<user>.github.io/` и собственного домена. Для сайта проекта скопируйте `.env.example` в `.env` и задайте `BASE_PATH=/repository/` до сборки. Путь должен начинаться и заканчиваться `/`.
 
-Публикуйте только содержимое `dist/`. Для GitHub Pages подготовлен workflow `.github/workflows/deploy.yml`, запускаемый **только вручную**:
+Публикуйте только содержимое `dist/`. Workflow `.github/workflows/deploy.yml` публикует сайт после отправки изменений в `main`; также доступен ручной запуск:
 
 1. После своей отправки изменений выберите в Settings → Pages источник **GitHub Actions**.
-2. Для сайта в подпапке задайте переменную репозитория `BASE_PATH=/repository/` в Settings → Secrets and variables → Actions → Variables. Для корня домена переменная не нужна.
+2. Путь определяется автоматически по настройкам GitHub Pages. Для этого репозитория стандартный адрес — `https://valder111.github.io/ZGU-endowment-client/`. При необходимости путь можно переопределить переменной репозитория `BASE_PATH`.
 3. Откройте Actions → Deploy website → Run workflow.
 
-Workflow устанавливает зависимости, проверяет форматирование, линтер, сборку и браузерные тесты, затем публикует `dist/`. `.github/workflows/ci.yml` выполняет только проверки при push и pull request. Во время рефакторинга workflows не запускались и публикация не выполнялась.
+Workflow проверяет форматирование, линтер, сборку и браузерные тесты, собирает сайт с фактическим путём Pages и проверяет его на обычном статическом сервере перед публикацией. Команда `npm run test:pages` проверяет уже собранный `dist/` без создания скриншотов или отчётов. CI дополнительно проверяет сборку с подпапкой `/pages-preview/` при push и pull request.
 
 Сборка добавляет `.nojekyll` и `404.html`; rewrite всех URL на главную не требуется. Официальная инструкция по размещению: [Vite — GitHub Pages](https://vite.dev/guide/static-deploy#github-pages).
 

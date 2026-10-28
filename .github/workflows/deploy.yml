@@ -1,5 +1,7 @@
 name: Deploy website
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -27,12 +29,17 @@ jobs:
         env:
           PLAYWRIGHT_CHANNEL: chromium
           BASE_PATH: /
-      - name: Build for a project subpath
-        if: ${{ vars.BASE_PATH != '' && vars.BASE_PATH != '/' }}
+      - name: Configure GitHub Pages
+        id: pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+      - name: Build for GitHub Pages
         run: npm run build
         env:
-          BASE_PATH: ${{ vars.BASE_PATH }}
-      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+          BASE_PATH: ${{ vars.BASE_PATH || format('{0}/', steps.pages.outputs.base_path) }}
+      - name: Verify static Pages website
+        run: npm run test:pages
+        env:
+          PLAYWRIGHT_CHANNEL: chromium
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: dist

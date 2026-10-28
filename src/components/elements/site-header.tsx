@@ -1,5 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { assets } from '@/constants/assets';
+import { FundBrand } from '@/components/elements/fund-brand';
 import { navigation } from '@/constants/navigation';
 import { useSite } from '@/hooks/use-site';
 import { SiteLink } from '@/components/elements/site-link';
@@ -26,15 +26,7 @@ export function SiteHeader({ page }: { page?: PageDefinition }) {
     <header onKeyDown={handleKeyDown}>
       <div className="wrap header-inner">
         <SiteLink className="brand" href="/" aria-label="Главная">
-          <img
-            src={assets.universityLogo}
-            alt="Заполярный государственный университет"
-          />
-          <span>
-            ЭНДАУМЕНТ
-            <br />
-            ФОНД
-          </span>
+          <FundBrand />
         </SiteLink>
         <div className="header-actions">
           <button
@@ -46,7 +38,6 @@ export function SiteHeader({ page }: { page?: PageDefinition }) {
           >
             Аа
           </button>
-          <small>ПРОЕКТ САЙТА</small>
           <DonateButton />
           <button
             ref={menuRef}

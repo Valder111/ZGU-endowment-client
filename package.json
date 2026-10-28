@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:e2e": "playwright test",
+    "test:pages": "node scripts/check-pages.mjs",
     "ui:add": "shadcn add",
     "check": "npm run lint && npm run build && npm run test:e2e"
   },

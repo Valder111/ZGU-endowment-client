@@ -20,6 +20,15 @@ jobs:
       - run: npm run check
         env:
           PLAYWRIGHT_CHANNEL: chromium
+          BASE_PATH: /
+      - name: Build with a GitHub Pages subpath
+        run: npm run build
+        env:
+          BASE_PATH: /pages-preview/
+      - name: Verify static Pages website
+        run: npm run test:pages
+        env:
+          PLAYWRIGHT_CHANNEL: chromium
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

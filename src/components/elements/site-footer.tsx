@@ -1,13 +1,18 @@
 import { siteConfig } from '@/configs/site';
 import { SiteLink } from '@/components/elements/site-link';
+import { FundBrand } from '@/components/elements/fund-brand';
 export function SiteFooter() {
   return (
     <footer>
       <div className="wrap">
         <div className="footer-top">
           <div>
-            <SiteLink className="wordmark" href="/">
-              ЗГУ<small>ЭНДАУМЕНТ-ФОНД</small>
+            <SiteLink
+              className="brand footer-brand"
+              href="/"
+              aria-label="Эндаумент-фонд Заполярного университета — главная"
+            >
+              <FundBrand />
             </SiteLink>
             <p>
               Вместе создаём
@@ -56,9 +61,6 @@ export function SiteFooter() {
         </div>
         <div className="footer-bottom">
           <span>© 2026 · ЗГУ имени Н. М. Федоровского</span>
-          <span>
-            Концепция сайта эндаумент-фонда · приём платежей не подключён
-          </span>
         </div>
       </div>
     </footer>
