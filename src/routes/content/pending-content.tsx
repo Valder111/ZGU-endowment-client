@@ -13,7 +13,7 @@ export function PendingContent({ title }: { title: string }) {
             className="button primary"
             href="/about/general-information/"
           >
-            О проекте ↗
+            О&nbsp;проекте ↗
           </SiteLink>
         </div>
         <EditorialArtwork

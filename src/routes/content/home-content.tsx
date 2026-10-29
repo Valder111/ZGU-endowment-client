@@ -22,9 +22,9 @@ export function HomeContent() {
                 ЗНАЧЕНИЕ
               </span>
               <h2>
-                У каждого вклада
+                У&nbsp;поддержки
                 <br />
-                <span className="muted">есть своё направление.</span>
+                <span className="muted">есть своё направление</span>
               </h2>
             </div>
             <SiteLink className="text-link" href="/project/all-project/">
@@ -33,13 +33,49 @@ export function HomeContent() {
           </div>
           <ProjectGrid />
           <p className="note">
-            Предлагаемые направления. Конкретные программы и условия поддержки
-            будут опубликованы после утверждения.
+            Предлагаемые направления. Конкретные программы и&nbsp;условия
+            поддержки будут опубликованы после утверждения.
           </p>
         </div>
       </section>
       <Mechanism />
       <Community />
+      <section className="section home-transparency">
+        <div className="wrap">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">ОТКРЫТОСТЬ И&nbsp;ОТВЕТСТВЕННОСТЬ</span>
+              <h2>Понятно, кто принимает решения</h2>
+            </div>
+            <SiteLink
+              className="text-link"
+              href="/about/constituent-the-documents/"
+            >
+              Документы фонда ↗
+            </SiteLink>
+          </div>
+          <div className="trust-grid">
+            <SiteLink href="/about/governing-bodies/">
+              <span>01 / ЛЮДИ</span>
+              <h3>Команда и&nbsp;управление</h3>
+              <p>Совет фонда, директор и&nbsp;разделение функций</p>
+              <span aria-hidden="true">↗</span>
+            </SiteLink>
+            <SiteLink href="/about/reporting/">
+              <span>02 / ПОДОТЧЁТНОСТЬ</span>
+              <h3>Доход и&nbsp;результаты</h3>
+              <p>Путь от&nbsp;отчёта управляющей компании до&nbsp;программ</p>
+              <span aria-hidden="true">↗</span>
+            </SiteLink>
+            <SiteLink href="/answers-on-questions/">
+              <span>03 / ОТВЕТЫ</span>
+              <h3>Вопросы о&nbsp;главном</h3>
+              <p>Участие, управление, прозрачность и&nbsp;поддержка проектов</p>
+              <span aria-hidden="true">↗</span>
+            </SiteLink>
+          </div>
+        </div>
+      </section>
       <section className="section">
         <div className="wrap">
           <div className="section-heading">

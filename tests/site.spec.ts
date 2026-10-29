@@ -25,7 +25,7 @@ for (const original of originalPages) {
 test('every route is prerendered with readable content and local assets', async ({
   browser,
 }) => {
-  // This scenario navigates all 44 routes sequentially, including font loading.
+  // This scenario navigates all registered routes sequentially, including font loading.
   test.setTimeout(60_000);
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
@@ -44,7 +44,7 @@ test('every route is prerendered with readable content and local assets', async 
     );
   }
   await page.goto('http://127.0.0.1:4173/');
-  await expect(page.locator('header .fund-mark')).toBeVisible();
+  await expect(page.locator('header .fund-mark')).toHaveCount(0);
   await expect(page.locator('header .brand-fund')).toContainText(
     'Заполярного университета',
   );
@@ -92,11 +92,13 @@ test('mobile menu supports keyboard and navigation', async ({ page }) => {
   await expect(toggle).toBeFocused();
   await expect(navigation).toBeHidden();
   await toggle.click();
-  await navigation.getByRole('link', { name: 'Новости', exact: true }).click();
-  await expect(page.locator('h1')).toHaveText('Жизнь университета');
+  await navigation
+    .getByRole('link', { name: 'Новости и истории', exact: true })
+    .click();
+  await expect(page.locator('h1')).toHaveText('Новости и истории');
   await toggle.click();
   await expect(
-    navigation.getByRole('link', { name: 'Новости', exact: true }),
+    navigation.getByRole('link', { name: 'Новости и истории', exact: true }),
   ).toHaveAttribute('aria-current', 'page');
 });
 test('FAQ opens by keyboard and accessibility preference survives navigation', async ({
@@ -128,6 +130,11 @@ for (const width of [360, 390, 768, 1024, 1440]) {
       '/about/general-information/',
       '/events/',
       '/about/reporting/',
+      '/how-to-support/',
+      '/about/governing-bodies/',
+      '/about/company-information/',
+      '/about/constituent-the-documents/',
+      '/results/',
     ]) {
       await page.goto(path);
       await expect(page.locator('header .brand-fund')).toBeVisible();
@@ -212,6 +219,11 @@ for (const path of [
   '/news/',
   '/events/',
   '/about/reporting/',
+  '/how-to-support/',
+  '/about/governing-bodies/',
+  '/about/company-information/',
+  '/about/constituent-the-documents/',
+  '/results/',
 ]) {
   test(`accessibility audit ${path}`, async ({ page }) => {
     await page.goto(path);
@@ -280,9 +292,9 @@ test('mobile navigation stays available without JavaScript', async ({
   await expect(page.getByRole('navigation')).toBeVisible();
   await page
     .getByRole('navigation')
-    .getByRole('link', { name: 'Новости', exact: true })
+    .getByRole('link', { name: 'Новости и истории', exact: true })
     .click();
-  await expect(page.locator('h1')).toHaveText('Жизнь университета');
+  await expect(page.locator('h1')).toHaveText('Новости и истории');
   await context.close();
 });
 
@@ -360,7 +372,7 @@ test('direction constellation changes the active story and opens its matching pa
   await page.keyboard.press('Enter');
   await expect(science).toHaveAttribute('aria-pressed', 'true');
   await expect(
-    explorer.getByRole('heading', { name: 'Решения для Арктики' }),
+    explorer.getByRole('heading', { name: 'Наука и инженерия для Арктики' }),
   ).toBeVisible();
   await expect(
     explorer.getByRole('link', { name: 'Познакомиться с направлением' }),
@@ -373,7 +385,9 @@ test('direction constellation changes the active story and opens its matching pa
   await explorer
     .getByRole('link', { name: 'Познакомиться с направлением' })
     .click();
-  await expect(page.locator('main h1')).toHaveText('Место, где рождаются идеи');
+  await expect(page.locator('main h1')).toHaveText(
+    'Кампус и студенческая среда',
+  );
 });
 
 test('FAQ search filters answers, handles no results, and resets', async ({
@@ -381,9 +395,9 @@ test('FAQ search filters answers, handles no results, and resets', async ({
 }) => {
   await page.goto('/answers-on-questions/');
   const search = page.getByRole('searchbox', { name: 'Найти ответ' });
-  await search.fill('  ДОКУМЕНТЫ  ');
+  await search.fill('  УСТАВ, ОТЧЁТНОСТЬ И ДОКУМЕНТЫ  ');
   await expect(page.locator('.faq details:visible')).toHaveCount(1);
-  await expect(page.getByRole('status')).toHaveText('Найдено: 1 из 6');
+  await expect(page.getByRole('status')).toHaveText('Найдено: 1 из 53');
   await page.locator('.faq summary:visible').click();
   await expect(page.locator('.faq details:visible')).toHaveAttribute(
     'open',
@@ -396,7 +410,7 @@ test('FAQ search filters answers, handles no results, and resets', async ({
   ).toBeVisible();
   await page.getByRole('button', { name: 'Очистить поиск' }).click();
   await expect(search).toHaveValue('');
-  await expect(page.locator('.faq details:visible')).toHaveCount(6);
+  await expect(page.locator('.faq details:visible')).toHaveCount(53);
 });
 
 test('endowment journey switches explanations by keyboard on home and about pages', async ({
@@ -431,7 +445,7 @@ test('endowment journey switches explanations by keyboard on home and about page
     await expect(capital).toHaveAttribute('aria-pressed', 'false');
     await expect(
       mechanism.getByRole('heading', {
-        name: 'За каждым направлением стоят люди.',
+        name: 'За каждым направлением стоят люди',
       }),
     ).toBeVisible();
   }
@@ -464,10 +478,10 @@ test('activity cards switch explanations by keyboard and label illustrative figu
   ).toBeVisible();
   await expect(explanation).toContainText('Количество приведено для примера');
   await expect(activity.locator('.metric-value')).toHaveText([
-    /3,2\s*млн\s*₽/,
+    /3\s*200\s*000\s*рублей/,
     '128',
     '7',
-    /240\s*тыс\.?\s*₽/,
+    /240\s*000\s*рублей/,
   ]);
   await expect(activity.getByRole('button', { pressed: true })).toHaveCount(1);
   await activity.getByRole('link', { name: 'Отчётность фонда' }).click();

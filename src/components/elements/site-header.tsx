@@ -17,11 +17,13 @@ export function SiteHeader({ page }: { page?: PageDefinition }) {
     }
   }
   const group =
-    page?.kind === 'pending'
+    page?.kind === 'pending' || page?.kind === 'management'
       ? 'about'
-      : page?.kind === 'project'
-        ? 'projects'
-        : page?.kind;
+      : page?.kind === 'reporting'
+        ? 'documents'
+        : page?.kind === 'project'
+          ? 'projects'
+          : page?.kind;
   return (
     <header onKeyDown={handleKeyDown}>
       <div className="wrap header-inner">

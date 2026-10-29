@@ -8,27 +8,19 @@ export function Hero() {
       <NorthernContours />
       <div className="wrap hero-inner">
         <div className="hero-copy">
-          <div className="eyebrow light hero-identity">
-            <span>Эндаумент-фонд</span>
-            <span>
-              Заполярного государственного университета
-              <br />
-              имени Н. М. Федоровского
-            </span>
-          </div>
           <h1 aria-label="Будущее Арктики начинается с вашего вклада">
             <span className="headline-line">БУДУЩЕЕ АРКТИКИ</span>
             <span className="headline-line">НАЧИНАЕТСЯ</span>
             <span className="headline-line">
-              <em>С ВАШЕГО ВКЛАДА</em>
+              <em>С&nbsp;ВАШЕГО ВКЛАДА</em>
             </span>
           </h1>
           <p>
-            Ваш вклад становится частью перемен.
-            <br />В образовании, науке и жизни за Полярным кругом.
+            Ваша поддержка становится частью перемен — в&nbsp;образовании, науке
+            и&nbsp;жизни за&nbsp;полярным кругом.
           </p>
           <div className="hero-actions">
-            <DonateButton />
+            <DonateButton label="Стать благотворителем" />
             <SiteLink className="text-link" href="/about/general-information/">
               Как работает фонд ↗
             </SiteLink>
@@ -51,9 +43,9 @@ export function Hero() {
           <div className="hero-caption">
             <span className="caption-dot"></span>
             <span>
-              В центре — люди.
+              В&nbsp;центре — люди
               <br />
-              <b>Впереди — возможности.</b>
+              <b>Впереди — возможности</b>
             </span>
             <span className="caption-arrow">↗</span>
           </div>

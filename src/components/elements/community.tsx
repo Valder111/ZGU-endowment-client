@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 import { SiteLink } from '@/components/elements/site-link';
 import { CommunityGlobe } from '@/assets/svg/community-globe';
 import { communityStories } from '@/constants/community';
+import { readableText } from '@/utils/typography';
 export function Community() {
   const [selected, setSelected] = useState(0);
   const instanceId = useId();
@@ -14,15 +15,16 @@ export function Community() {
       <div className="wrap community-inner">
         <div className="community-copy">
           <span className="eyebrow light">
-            <span className="section-number">04 /</span> ВЫПУСКНИКАМ И ПАРТНЁРАМ
+            <span className="section-number">04 /</span> ВЫПУСКНИКАМ
+            И&nbsp;ПАРТНЁРАМ
           </span>
           <h2 id={`${instanceId}-title`}>
-            Север объединяет.
+            Север объединяет
             <br />
-            <span>Участие меняет.</span>
+            <span>Участие меняет</span>
           </h2>
           <p className="community-intro">
-            Продолжите свою историю с университетом.
+            Сохраните связь с&nbsp;университетом.
             <br />
             Помогите следующему поколению найти свой путь.
           </p>
@@ -58,8 +60,8 @@ export function Community() {
                 aria-label={story.label}
               >
                 <span className="eyebrow light">{story.eyebrow}</span>
-                <h3>{story.title}</h3>
-                <p>{story.description}</p>
+                <h3>{readableText(story.title)}</h3>
+                <p>{readableText(story.description)}</p>
                 <SiteLink className="community-story-link" href={story.href}>
                   {story.link} <span aria-hidden="true">↗</span>
                 </SiteLink>
@@ -73,9 +75,9 @@ export function Community() {
         <div className="community-visual">
           <CommunityGlobe active={selected} />
           <p className="community-visual-caption">
-            Разные истории.
+            Разные истории
             <br />
-            <span>Одна точка притяжения.</span>
+            <span>Одна точка притяжения</span>
           </p>
         </div>
       </div>

@@ -57,11 +57,6 @@ export function useMotion(
             });
             intro
               .from(
-                '.hero .eyebrow',
-                { y: 15, opacity: 0, clearProps: 'transform,opacity' },
-                0,
-              )
-              .from(
                 '.headline-line',
                 {
                   y: 48,

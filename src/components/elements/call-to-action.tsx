@@ -4,11 +4,11 @@ export function CallToAction() {
     <section className="cta">
       <div className="wrap cta-inner">
         <div>
-          <span className="eyebrow">ОДИН ВКЛАД. МНОГО ВОЗМОЖНОСТЕЙ.</span>
+          <span className="eyebrow">ВМЕСТЕ С&nbsp;УНИВЕРСИТЕТОМ</span>
           <h2>
             Будущее ближе,
             <br />
-            <em>когда мы вместе.</em>
+            <em>когда мы&nbsp;вместе</em>
           </h2>
         </div>
         <DonateButton />

@@ -22,11 +22,19 @@ export function SiteFooter() {
           </div>
           <div>
             <h3>Фонд</h3>
-            <SiteLink href="/about/general-information/">О проекте</SiteLink>
-            <SiteLink href="/project/all-project/">
-              Направления поддержки
+            <SiteLink href="/about/general-information/">О&nbsp;фонде</SiteLink>
+            <SiteLink href="/project/all-project/">Целевые капиталы</SiteLink>
+            <SiteLink href="/how-to-support/">Как поддержать</SiteLink>
+            <SiteLink href="/results/">Проекты и&nbsp;результаты</SiteLink>
+            <SiteLink href="/about/constituent-the-documents/">
+              Документы и&nbsp;отчётность
             </SiteLink>
-            <SiteLink href="/answers-on-questions/">Вопросы и ответы</SiteLink>
+            <SiteLink href="/about/governing-bodies/">
+              Команда и&nbsp;управление
+            </SiteLink>
+            <SiteLink href="/answers-on-questions/">
+              Вопросы и&nbsp;ответы
+            </SiteLink>
           </div>
           <div>
             <h3>Университет</h3>
@@ -61,6 +69,9 @@ export function SiteFooter() {
         </div>
         <div className="footer-bottom">
           <span>© 2026 · ЗГУ имени Н. М. Федоровского</span>
+          <SiteLink href="/about/constituent-the-documents/#privacy">
+            Персональные данные
+          </SiteLink>
         </div>
       </div>
     </footer>

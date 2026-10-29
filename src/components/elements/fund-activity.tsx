@@ -8,15 +8,11 @@ import {
 } from 'lucide-react';
 import { fundActivity, fundActivitySummary } from '@/constants/fund-activity';
 import { SiteLink } from '@/components/elements/site-link';
+import { formatNumber } from '@/utils/typography';
 
 const icons = [Coins, HeartHandshake, Layers3, Landmark];
 const formatValue = (value: number | null) =>
-  value === null
-    ? '—'
-    : new Intl.NumberFormat('ru-RU', {
-        notation: 'compact',
-        maximumFractionDigits: 1,
-      }).format(value);
+  value === null ? '—' : formatNumber(value);
 
 export function FundActivity() {
   const [selected, setSelected] = useState(0);
@@ -36,7 +32,7 @@ export function FundActivity() {
       <div className="wrap">
         <div className="activity-heading">
           <div>
-            <span className="eyebrow">ОТ УЧАСТИЯ К РЕЗУЛЬТАТАМ</span>
+            <span className="eyebrow">ОТ&nbsp;УЧАСТИЯ К&nbsp;РЕЗУЛЬТАТАМ</span>
             <h2 id={`${panelId}-heading`}>Показатели деятельности</h2>
           </div>
           <span className="activity-status">
@@ -137,7 +133,7 @@ export function FundActivity() {
                     : current.unit || 'УСЛОВНЫЙ ПРИМЕР'}
                 </span>
                 {selected === 0 && (
-                  <small>{Math.round(progress)}% от цели</small>
+                  <small>{Math.round(progress)}% от&nbsp;цели</small>
                 )}
               </div>
             </div>
@@ -161,7 +157,7 @@ export function FundActivity() {
                     <p className="activity-target">
                       Цель сбора:{' '}
                       <strong>
-                        {formatValue(fundActivitySummary.target)} ₽
+                        {formatValue(fundActivitySummary.target)} рублей
                       </strong>
                       <span>Достигнуто {Math.round(progress)}%</span>
                     </p>

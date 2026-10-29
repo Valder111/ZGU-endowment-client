@@ -1,30 +1,44 @@
 import { SiteLink } from '@/components/elements/site-link';
 import { communityStories } from '@/constants/community';
 import { ProjectGlyph } from '@/components/elements/project-glyph';
+import { readableText } from '@/utils/typography';
 export function PartnersContent() {
   return (
     <div className="wrap article-content">
       <div className="intro-grid">
         <h2>
-          Ваша история с ЗГУ
+          Ваша связь с&nbsp;ЗГУ
           <br />
-          продолжается.
+          продолжается
         </h2>
         <div>
           <p className="lead">
-            Знания, опыт и участие выпускников помогают университетскому
+            Знания, опыт и&nbsp;участие выпускников помогают университетскому
             сообществу становиться сильнее.
           </p>
           <p>
-            Здесь появятся истории благотворителей, форматы партнёрства и
-            условия участия. Сейчас можно познакомиться с предлагаемыми
-            направлениями поддержки.
+            Выберите программу, обсудите поддержку вместе с&nbsp;однокурсниками,
+            именной капитал или&nbsp;партнёрство компании.
           </p>
           <SiteLink className="button primary" href="/project/all-project/">
             Выбрать направление ↗
           </SiteLink>
         </div>
       </div>
+      <section className="donor-recognition editorial-section">
+        <span className="eyebrow">ПРИЗНАНИЕ УЧАСТИЯ</span>
+        <h2>Быть частью сообщества</h2>
+        <p>
+          Благодарственное письмо, согласованное упоминание на&nbsp;сайте
+          и&nbsp;участие в&nbsp;открытых событиях — форматы, которые можно
+          обсудить с&nbsp;командой фонда. Порядок признания пока
+          не&nbsp;утверждён; материальные привилегии за&nbsp;пожертвование
+          не&nbsp;предусматриваются.
+        </p>
+        <SiteLink className="button primary" href="/how-to-support/">
+          Выбрать формат участия ↗
+        </SiteLink>
+      </section>
       <div className="involvement-grid">
         {communityStories.map((story, index) => (
           <SiteLink
@@ -40,8 +54,8 @@ export function PartnersContent() {
                 }
               />
             </span>
-            <h3>{story.title}</h3>
-            <p>{story.description}</p>
+            <h3>{readableText(story.title)}</h3>
+            <p>{readableText(story.description)}</p>
             <span>
               {story.link} <span aria-hidden="true">↗</span>
             </span>

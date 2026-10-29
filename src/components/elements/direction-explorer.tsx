@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 import { projects } from '@/constants/projects';
 import { SiteLink } from '@/components/elements/site-link';
 import { ProjectGlyph } from '@/components/elements/project-glyph';
+import { readableText } from '@/utils/typography';
 
 export function DirectionExplorer() {
   const [selected, setSelected] = useState(0);
@@ -67,7 +68,7 @@ export function DirectionExplorer() {
       </div>
       <div className="direction-copy">
         <span className="eyebrow light">СОЗВЕЗДИЕ ВОЗМОЖНОСТЕЙ</span>
-        <h2>Найдите свой вектор.</h2>
+        <h2>Найдите свой вектор</h2>
         <p className="direction-hint">
           Четыре направления. Одна общая цель — будущее Севера.
         </p>
@@ -88,13 +89,14 @@ export function DirectionExplorer() {
               <span className="direction-story-number">
                 {project.number} / {project.category}
               </span>
-              <h3>{project.title}</h3>
-              <p>{project.description}</p>
+              <h3>{readableText(project.title)}</h3>
+              <p>{readableText(project.description)}</p>
               <SiteLink
                 href={`/projects/${project.id}/`}
                 className="direction-story-link"
               >
-                Познакомиться с направлением <span aria-hidden="true">↗</span>
+                Познакомиться с&nbsp;направлением{' '}
+                <span aria-hidden="true">↗</span>
               </SiteLink>
             </div>
           ))}

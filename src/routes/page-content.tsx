@@ -13,8 +13,29 @@ import { PageTitle } from '@/components/elements/page-title';
 import { SiteLink } from '@/components/elements/site-link';
 import { artworkForPage } from '@/constants/visual-content';
 import { DirectionExplorer } from '@/components/elements/direction-explorer';
+import { SupportContent } from '@/routes/content/support-content';
+import {
+  DocumentsContent,
+  GovernanceContent,
+  ManagementContent,
+  ReportingContent,
+} from '@/routes/content/transparency-content';
+import { ResultsContent } from '@/routes/content/results-content';
+import { UniversityStories } from '@/components/elements/university-stories';
 function InteriorContent({ page }: { page: PageDefinition }) {
   switch (page.kind) {
+    case 'support':
+      return <SupportContent />;
+    case 'documents':
+      return <DocumentsContent />;
+    case 'governance':
+      return <GovernanceContent />;
+    case 'management':
+      return <ManagementContent />;
+    case 'reporting':
+      return <ReportingContent />;
+    case 'results':
+      return <ResultsContent />;
     case 'about':
       return <AboutContent />;
     case 'partners':
@@ -46,6 +67,10 @@ function InteriorContent({ page }: { page: PageDefinition }) {
       return (
         <div className="wrap article-content">
           <NewsGrid />
+          <UniversityStories />
+          <SiteLink className="text-link" href="/events/">
+            События сообщества ↗
+          </SiteLink>
           <p className="note">
             Материалы открываются на официальном сайте ЗГУ.
           </p>

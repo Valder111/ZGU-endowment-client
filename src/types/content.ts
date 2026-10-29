@@ -15,8 +15,11 @@ export interface NewsItem {
   image: string;
 }
 export interface FaqItem {
+  category: string;
   question: string;
   answer: string;
+  href?: string;
+  link?: string;
 }
 export type PageKind =
   | 'home'
@@ -28,6 +31,12 @@ export type PageKind =
   | 'faq'
   | 'contacts'
   | 'events'
+  | 'support'
+  | 'documents'
+  | 'reporting'
+  | 'governance'
+  | 'management'
+  | 'results'
   | 'pending';
 export interface PageDefinition {
   path: string;

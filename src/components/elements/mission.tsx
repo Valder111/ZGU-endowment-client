@@ -1,3 +1,4 @@
+import { SiteLink } from '@/components/elements/site-link';
 export function Mission() {
   return (
     <section className="mission">
@@ -6,17 +7,20 @@ export function Mission() {
           <span className="section-number">01 /</span> СИЛА ПРИТЯЖЕНИЯ СЕВЕРА
         </span>
         <h2>
-          Университет даёт старт.
+          Университет даёт старт
           <br />
           <span>
-            Вы помогаете
+            Вы&nbsp;помогаете
             <br />
-            двигаться дальше.
+            двигаться дальше
           </span>
         </h2>
         <p>
-          Новые возможности для студентов, смелые исследования и сильное
-          сообщество — направления, ради которых создаётся этот проект.
+          Новые возможности для студентов, смелые исследования и&nbsp;сильное
+          сообщество — направления, ради которых создаётся фонд.
+          <SiteLink href="/how-to-support/" className="text-link">
+            Найти свой формат участия ↗
+          </SiteLink>
         </p>
       </div>
     </section>

@@ -110,7 +110,7 @@ try {
   }
   await page.goto(siteUrl('/projects/alumni/'));
   await page.reload();
-  await expect(page.locator('h1')).toHaveText('Связь, которая остаётся');
+  await expect(page.locator('h1')).toHaveText('Связь выпускников');
   await page.goto(siteUrl('/'));
   await page.locator('.hero-actions button').click();
   await expect(page.getByRole('dialog')).toBeVisible();
@@ -145,7 +145,7 @@ try {
   const noJs = await browser.newContext({ javaScriptEnabled: false });
   const staticPage = await noJs.newPage();
   await staticPage.goto(siteUrl('/projects/alumni/'));
-  await expect(staticPage.locator('h1')).toHaveText('Связь, которая остаётся');
+  await expect(staticPage.locator('h1')).toHaveText('Связь выпускников');
   assert.deepEqual(
     errors.filter((error) => !error.includes('404')),
     [],

@@ -12,6 +12,12 @@ const pageScenes: Record<PageKind, ArtworkScene> = {
   contacts: 'contacts',
   events: 'events',
   pending: 'documents',
+  support: 'alumni',
+  documents: 'documents',
+  reporting: 'documents',
+  governance: 'alumni',
+  management: 'endowment',
+  results: 'science',
 };
 
 export function artworkForPage(page?: PageDefinition): ArtworkScene {

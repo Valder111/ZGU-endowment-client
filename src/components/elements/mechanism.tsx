@@ -1,6 +1,7 @@
 import { useId, useState } from 'react';
 import { ProcessIcon } from '@/assets/svg/process-icon';
 import { mechanismSteps } from '@/constants/mechanism';
+import { SiteLink } from '@/components/elements/site-link';
 
 export function Mechanism() {
   const [selected, setSelected] = useState(0);
@@ -19,15 +20,15 @@ export function Mechanism() {
               ПОДДЕРЖКА
             </span>
             <h2>
-              Вклад сегодня.
+              Вклад сегодня —
               <br />
-              Возможности навсегда.
+              возможности навсегда
             </h2>
           </div>
           <p>
             Эндаумент объединяет университет,
             <br />
-            выпускников и партнёров
+            выпускников и&nbsp;партнёров
             <br />
             вокруг общих целей.
           </p>
@@ -112,6 +113,14 @@ export function Mechanism() {
             ))}
           </div>
         </div>
+        <p className="risk-note mechanism-risk">
+          Доходность не&nbsp;гарантирована. Стоимость капитала может снижаться.
+          Решения о&nbsp;поддержке принимаются по&nbsp;фактическим результатам
+          управления.
+        </p>
+        <SiteLink className="text-link" href="/about/reporting/">
+          Как распределяется доход ↗
+        </SiteLink>
       </div>
     </section>
   );

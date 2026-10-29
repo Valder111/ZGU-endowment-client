@@ -107,7 +107,9 @@ export function PolarPostcard() {
             d="M65 300q85-10 170-2m135 3q80 10 160-2"
           />
         </svg>
-        <span className="polar-picture-label">СЕВЕР В ДВУХ НАСТРОЕНИЯХ</span>
+        <span className="polar-picture-label">
+          СЕВЕР В&nbsp;ДВУХ НАСТРОЕНИЯХ
+        </span>
       </div>
       <figcaption>
         <span className="polar-state" role="status">

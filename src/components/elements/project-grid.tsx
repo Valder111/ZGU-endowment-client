@@ -1,6 +1,7 @@
 import { projects } from '@/constants/projects';
 import { SiteLink } from '@/components/elements/site-link';
 import { ProjectGlyph } from '@/components/elements/project-glyph';
+import { readableText } from '@/utils/typography';
 export function ProjectGrid() {
   return (
     <div className="project-grid">
@@ -14,8 +15,8 @@ export function ProjectGrid() {
             <div className="project-symbol" aria-hidden="true">
               <ProjectGlyph id={project.id} />
             </div>
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
+            <h3>{readableText(project.title)}</h3>
+            <p>{readableText(project.description)}</p>
             <SiteLink
               className="card-link"
               href={`/projects/${project.id}/`}

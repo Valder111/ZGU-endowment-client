@@ -8,6 +8,7 @@
 @import './refinements.css' layer(components);
 @import './fund-update.css' layer(components);
 @import './ui.css' layer(components);
+@import './editorial-update.css' layer(components);
 
 @custom-variant dark (&:is(.dark *));
 

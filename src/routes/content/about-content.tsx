@@ -1,6 +1,8 @@
 import { Mechanism } from '@/components/elements/mechanism';
 import { DonateButton } from '@/components/elements/donate-button';
 import { EditorialArtwork } from '@/assets/svg/editorial-artwork';
+import { SiteLink } from '@/components/elements/site-link';
+import { IncomeCycle } from '@/components/elements/income-cycle';
 export function AboutContent() {
   return (
     <div className="wrap article-content">
@@ -8,21 +10,23 @@ export function AboutContent() {
         <h2>
           Поддержка, которая
           <br />
-          смотрит вперёд.
+          смотрит вперёд
         </h2>
         <div>
           <p className="lead">
-            Концепция эндаумент-фонда Заполярного государственного университета
-            имени Н. М. Федоровского.
+            Эндаумент-фонд Заполярного государственного университета
+            имени&nbsp;Н.&nbsp;М.&nbsp;Федоровского объединяет поддержку
+            образования, науки и&nbsp;университетского сообщества.
           </p>
           <p>
-            Мы объединяем идеи поддержки образования, исследований и
-            университетской среды. Выпускники и партнёры смогут участвовать в
-            развитии университета и новых возможностей для его студентов.
+            Мы&nbsp;объединяем идеи поддержки образования, исследований
+            и&nbsp;университетской среды. Выпускники и&nbsp;партнёры смогут
+            участвовать в&nbsp;развитии университета и&nbsp;новых возможностей
+            для его студентов.
           </p>
           <p>
-            Финансовые показатели, программы и документы фонда будут
-            опубликованы после подготовки и утверждения.
+            Финансовые показатели, программы и&nbsp;документы фонда будут
+            опубликованы после подготовки и&nbsp;утверждения.
           </p>
           <DonateButton />
         </div>
@@ -30,17 +34,17 @@ export function AboutContent() {
       <section className="foundation-principles" aria-label="Смысл эндаумента">
         <div className="foundation-illustration">
           <EditorialArtwork scene="endowment" />
-          <span>УЧАСТИЕ, У КОТОРОГО ЕСТЬ ПРОДОЛЖЕНИЕ</span>
+          <span>УЧАСТИЕ, У&nbsp;КОТОРОГО ЕСТЬ ПРОДОЛЖЕНИЕ</span>
         </div>
         <div className="foundation-copy">
-          <span className="eyebrow">БОЛЬШЕ, ЧЕМ ОДИН МОМЕНТ</span>
+          <span className="eyebrow">ДОЛГОСРОЧНАЯ ПОДДЕРЖКА</span>
           <h2>
-            У будущего есть
+            У&nbsp;будущего есть
             <br />
-            точка опоры.
+            точка опоры
           </h2>
           <p>
-            Идея эндаумента связывает сегодняшний вклад с возможностями
+            Идея эндаумента связывает сегодняшний вклад с&nbsp;возможностями
             следующих поколений.
           </p>
           <div className="foundation-values">
@@ -50,7 +54,20 @@ export function AboutContent() {
           </div>
         </div>
       </section>
+      <nav className="practical-links" aria-label="Информация о фонде">
+        <SiteLink href="/about/governing-bodies/">
+          Команда и&nbsp;управление ↗
+        </SiteLink>
+        <SiteLink href="/about/constituent-the-documents/">
+          Документы и&nbsp;реквизиты ↗
+        </SiteLink>
+        <SiteLink href="/about/reporting/">Отчётность ↗</SiteLink>
+        <SiteLink href="/about/company-information/">
+          Управление капиталом ↗
+        </SiteLink>
+      </nav>
       <Mechanism />
+      <IncomeCycle />
     </div>
   );
 }
