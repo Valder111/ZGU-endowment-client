@@ -17,6 +17,65 @@
 .hero-copy > p {
   max-width: 520px;
 }
+.community .community-visual-caption {
+  display: grid;
+  width: min(100%, 410px);
+  margin: 28px auto 0;
+  text-align: left;
+  gap: 3px;
+  font-size: 19px;
+}
+.community-visual-caption > span {
+  justify-self: end;
+  text-align: right;
+}
+.community-bottom .community-bottom-line {
+  width: auto;
+  flex: 1;
+}
+.direction-hint {
+  max-width: 450px;
+  font-size: 15px;
+}
+.direction-selection {
+  border-top: 1px solid #b9d6df40;
+  margin-top: 28px;
+  padding-top: 24px;
+  margin-bottom: 22px;
+}
+.direction-selection .eyebrow {
+  font-size: 11px;
+  margin-bottom: 12px;
+}
+.direction-selection strong {
+  color: #edf8f7;
+  font-size: 24px;
+  font-weight: 500;
+}
+.direction-story-link {
+  min-height: 44px;
+  align-items: center;
+  font-size: 14px;
+}
+.project-card[data-selected='true'] {
+  box-shadow:
+    0 0 0 3px #1d3754,
+    0 0 0 6px #85e3dd;
+}
+.project-card[id] {
+  scroll-margin-top: 30px;
+}
+.project-card[id]:focus {
+  outline: 3px solid #1d3754;
+  outline-offset: 7px;
+}
+.accessible .direction-hint,
+.accessible .direction-story-link {
+  font-size: 18px;
+}
+.no-js .direction-selection {
+  display: none;
+}
 .mission p .text-link {
   margin-top: 18px;
   font-size: 14px;

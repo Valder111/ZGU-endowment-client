@@ -76,7 +76,6 @@ export function Community() {
           <CommunityGlobe active={selected} />
           <p className="community-visual-caption">
             Разные истории
-            <br />
             <span>Одна точка притяжения</span>
           </p>
         </div>
@@ -84,7 +83,6 @@ export function Community() {
       <div className="wrap community-bottom" aria-hidden="true">
         <span>СВЯЗЬ, КОТОРАЯ ОСТАЁТСЯ</span>
         <span className="community-bottom-line" />
-        <span>ЗГУ · БУДУЩЕЕ СОЗДАЁТСЯ ВМЕСТЕ</span>
       </div>
     </section>
   );

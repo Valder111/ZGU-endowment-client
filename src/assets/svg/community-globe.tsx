@@ -57,7 +57,6 @@ export function CommunityGlobe({ active }: { active: number }) {
       <span className="globe-tag globe-tag-top">ЗНАНИЯ</span>
       <span className="globe-tag globe-tag-left">ЛЮДИ</span>
       <span className="globe-tag globe-tag-bottom">ВОЗМОЖНОСТИ</span>
-      <span className="globe-coordinate">НОРИЛЬСК / ТОЧКА ПРИТЯЖЕНИЯ</span>
     </div>
   );
 }

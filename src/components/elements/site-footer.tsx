@@ -17,7 +17,7 @@ export function SiteFooter() {
             <p>
               Вместе создаём
               <br />
-              будущее Севера.
+              будущее Севера
             </p>
           </div>
           <div>
@@ -29,9 +29,7 @@ export function SiteFooter() {
             <SiteLink href="/about/constituent-the-documents/">
               Документы и&nbsp;отчётность
             </SiteLink>
-            <SiteLink href="/about/governing-bodies/">
-              Команда и&nbsp;управление
-            </SiteLink>
+            <SiteLink href="/about/governing-bodies/">Команда</SiteLink>
             <SiteLink href="/answers-on-questions/">
               Вопросы и&nbsp;ответы
             </SiteLink>
@@ -63,7 +61,7 @@ export function SiteFooter() {
             <p>
               Норильск,
               <br />
-              ул. 50 лет Октября, д. 7
+              ул. 50 лет Октября, 7
             </p>
           </div>
         </div>

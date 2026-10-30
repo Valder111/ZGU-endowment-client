@@ -216,33 +216,6 @@
   margin-top: 15px;
   max-width: 340px;
 }
-.direction-story {
-  border-top: 1px solid #b9d6df40;
-  margin-top: 24px;
-  padding-top: 23px;
-  min-height: 217px;
-}
-.direction-story[data-active='false'] {
-  display: none;
-}
-.direction-story-number {
-  color: #a8eee8;
-  font-size: 8px;
-  letter-spacing: 0.13em;
-}
-.direction-story h3 {
-  font-size: 23px;
-  font-weight: 500;
-  line-height: 1.25;
-  max-width: 330px;
-  margin-top: 12px;
-}
-.direction-story p {
-  font-size: 12px;
-  color: #bfd1df;
-  line-height: 1.9;
-  margin: 13px 0 20px;
-}
 .direction-story-link {
   display: inline-flex;
   gap: 20px;
@@ -253,9 +226,6 @@
 }
 .direction-story-link:hover {
   color: #fff;
-}
-.no-js .direction-story[data-active='false'] {
-  display: block;
 }
 .no-js .direction-controls {
   display: none;
@@ -687,9 +657,6 @@
   grid-template-columns: 0.9fr 1.4fr;
   gap: 25px;
 }
-.accessible .direction-story {
-  min-height: 300px;
-}
 .accessible .faq-search input {
   font-size: 17px;
 }
@@ -768,12 +735,6 @@
   }
   .direction-copy > h2 {
     font-size: 30px;
-  }
-  .direction-story {
-    min-height: 240px;
-  }
-  .direction-story h3 {
-    font-size: 23px;
   }
   .project-detail {
     display: flex;
@@ -905,9 +866,6 @@
   }
   body:not(.accessible) .direction-routes > path.is-active {
     animation: art-flow 16s linear infinite;
-  }
-  body:not(.accessible) .direction-story[data-active='true'] {
-    animation: story-arrive 0.3s ease-out both;
   }
 }
 @keyframes art-float {

@@ -30,9 +30,7 @@ export function DocumentsContent() {
       </div>
       <nav className="practical-links" aria-label="Разделы прозрачности">
         <SiteLink href="/about/reporting/">Отчётность ↗</SiteLink>
-        <SiteLink href="/about/governing-bodies/">
-          Команда и&nbsp;управление ↗
-        </SiteLink>
+        <SiteLink href="/about/governing-bodies/">Команда ↗</SiteLink>
         <SiteLink href="/about/company-information/">
           Управляющая компания ↗
         </SiteLink>
@@ -143,7 +141,7 @@ export function GovernanceContent() {
         <h2>Люди, которые задают направление</h2>
         <div>
           <p className="lead">
-            Управление фондом объединяет университет и&nbsp;партнёров Норильска.
+            Фонд объединяет университет и&nbsp;партнёров Норильска
           </p>
           <p>
             Состав совета и&nbsp;имя директора указаны по&nbsp;предоставленным
@@ -249,11 +247,11 @@ export function ManagementContent() {
   return (
     <div className="wrap article-content">
       <div className="intro-grid">
-        <h2>Профессиональное управление с&nbsp;понятными условиями</h2>
+        <h2>Понятные условия работы с&nbsp;капиталом</h2>
         <div>
           <p className="lead">
-            Сформированный целевой капитал передаётся в&nbsp;доверительное
-            управление профессиональной управляющей компании.
+            Сформированный целевой капитал передаётся профессиональной компании.
+            Она инвестирует средства на&nbsp;условиях договора с&nbsp;фондом.
           </p>
           <p className="risk-note">
             Доходность не&nbsp;гарантирована. Инвестиционные риски сохраняются,
@@ -263,7 +261,7 @@ export function ManagementContent() {
         </div>
       </div>
       <section className="management-status">
-        <span className="eyebrow">УПРАВЛЯЮЩАЯ КОМПАНИЯ</span>
+        <span className="eyebrow">СВЕДЕНИЯ И УСЛОВИЯ РАБОТЫ</span>
         <h2>Информация ожидает публикации</h2>
         <p>
           Наименование компании, сведения о&nbsp;лицензии и&nbsp;договоре

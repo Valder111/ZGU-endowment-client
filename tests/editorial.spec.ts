@@ -215,6 +215,14 @@ test('new practical pages remain readable without JavaScript', async ({
   const page = await context.newPage();
   await page.goto('http://127.0.0.1:4173/how-to-support/');
   await expect(page.locator('.support-path:visible')).toHaveCount(4);
+  await page.goto('http://127.0.0.1:4173/projects/');
+  await expect(page.locator('.project-card:visible')).toHaveCount(4);
+  await expect(
+    page.getByRole('heading', {
+      name: 'Стипендии для студентов Арктики',
+      exact: true,
+    }),
+  ).toHaveCount(1);
   await page.goto('http://127.0.0.1:4173/about/reporting/');
   await expect(page.locator('.cycle-description:visible')).toHaveCount(6);
   await page.goto('http://127.0.0.1:4173/about/constituent-the-documents/');

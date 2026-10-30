@@ -57,7 +57,7 @@ export function HomeContent() {
           <div className="trust-grid">
             <SiteLink href="/about/governing-bodies/">
               <span>01 / ЛЮДИ</span>
-              <h3>Команда и&nbsp;управление</h3>
+              <h3>Команда</h3>
               <p>Совет фонда, директор и&nbsp;разделение функций</p>
               <span aria-hidden="true">↗</span>
             </SiteLink>

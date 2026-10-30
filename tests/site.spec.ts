@@ -360,7 +360,7 @@ test('all community stories stay readable without JavaScript', async ({
   await context.close();
 });
 
-test('direction constellation changes the active story and opens its matching page', async ({
+test('direction constellation highlights and focuses its matching card without repeating descriptions', async ({
   page,
 }) => {
   await page.goto('/projects/');
@@ -371,19 +371,38 @@ test('direction constellation changes the active story and opens its matching pa
   await science.focus();
   await page.keyboard.press('Enter');
   await expect(science).toHaveAttribute('aria-pressed', 'true');
+  const scienceCard = page.locator('.project-card[data-project-id="science"]');
+  await expect(scienceCard).toHaveAttribute('data-selected', 'true');
+  await expect(explorer.getByRole('status')).toContainText('02 / Наука');
+  await expect(explorer.locator('h3')).toHaveCount(0);
   await expect(
-    explorer.getByRole('heading', { name: 'Наука и инженерия для Арктики' }),
-  ).toBeVisible();
-  await expect(
-    explorer.getByRole('link', { name: 'Познакомиться с направлением' }),
-  ).toHaveAttribute('href', '/projects/science/');
+    page.getByRole('heading', {
+      name: 'Наука и инженерия для Арктики',
+      exact: true,
+    }),
+  ).toHaveCount(1);
+  await expect(science).toHaveAttribute(
+    'aria-controls',
+    (await scienceCard.getAttribute('id'))!,
+  );
   const campus = explorer.getByRole('button', { name: 'Кампус', exact: true });
   await campus.focus();
   await page.keyboard.press('Space');
   await expect(science).toHaveAttribute('aria-pressed', 'false');
   await expect(campus).toHaveAttribute('aria-pressed', 'true');
+  const campusCard = page.locator('.project-card[data-project-id="campus"]');
+  await expect(scienceCard).toHaveAttribute('data-selected', 'false');
+  await expect(campusCard).toHaveAttribute('data-selected', 'true');
+  await expect(page.locator('.project-card[data-selected="true"]')).toHaveCount(
+    1,
+  );
   await explorer
-    .getByRole('link', { name: 'Познакомиться с направлением' })
+    .getByRole('link', { name: 'Перейти к выбранной карточке' })
+    .click();
+  await expect(campusCard).toBeFocused();
+  await expect(campusCard).toBeInViewport();
+  await campusCard
+    .getByRole('link', { name: 'Подробнее: Кампус и студенческая среда' })
     .click();
   await expect(page.locator('main h1')).toHaveText(
     'Кампус и студенческая среда',

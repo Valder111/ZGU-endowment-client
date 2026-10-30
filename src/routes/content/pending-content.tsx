@@ -18,7 +18,7 @@ export function PendingContent({ title }: { title: string }) {
         </div>
         <EditorialArtwork
           scene={
-            title === 'Управление капиталом'
+            title === 'Управляющая компания'
               ? 'endowment'
               : title === 'Управление фондом'
                 ? 'alumni'

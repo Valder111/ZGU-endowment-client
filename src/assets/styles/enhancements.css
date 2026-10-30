@@ -232,16 +232,6 @@
   bottom: 15%;
   right: 9%;
 }
-.globe-coordinate {
-  position: absolute;
-  bottom: -15px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 7px;
-  letter-spacing: 0.15em;
-  color: #bfd1df;
-}
 .community .community-visual-caption {
   text-align: center;
   margin: 44px 0 0;

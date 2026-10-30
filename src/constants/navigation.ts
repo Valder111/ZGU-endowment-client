@@ -20,7 +20,7 @@ export const navigation = [
   },
   {
     href: '/about/governing-bodies/',
-    label: 'Команда и управление',
+    label: 'Команда',
     group: 'governance',
   },
   { href: '/answers-on-questions/', label: 'Вопросы и ответы', group: 'faq' },

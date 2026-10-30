@@ -7,7 +7,6 @@ import { EventsContent } from '@/routes/content/events-content';
 import { PendingContent } from '@/routes/content/pending-content';
 import { ProjectContent } from '@/routes/content/project-content';
 import { FaqContent } from '@/routes/content/faq-content';
-import { ProjectGrid } from '@/components/elements/project-grid';
 import { NewsGrid } from '@/components/elements/news-grid';
 import { PageTitle } from '@/components/elements/page-title';
 import { SiteLink } from '@/components/elements/site-link';
@@ -54,7 +53,6 @@ function InteriorContent({ page }: { page: PageDefinition }) {
       return (
         <div className="wrap article-content">
           <DirectionExplorer />
-          <ProjectGrid />
           {page.showNote && (
             <p className="note">
               Предлагаемые направления поддержки. Программы, бюджеты и сроки

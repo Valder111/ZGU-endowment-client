@@ -55,15 +55,13 @@ export function AboutContent() {
         </div>
       </section>
       <nav className="practical-links" aria-label="Информация о фонде">
-        <SiteLink href="/about/governing-bodies/">
-          Команда и&nbsp;управление ↗
-        </SiteLink>
+        <SiteLink href="/about/governing-bodies/">Команда ↗</SiteLink>
         <SiteLink href="/about/constituent-the-documents/">
           Документы и&nbsp;реквизиты ↗
         </SiteLink>
         <SiteLink href="/about/reporting/">Отчётность ↗</SiteLink>
         <SiteLink href="/about/company-information/">
-          Управление капиталом ↗
+          Управляющая компания ↗
         </SiteLink>
       </nav>
       <Mechanism />

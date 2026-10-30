@@ -118,7 +118,7 @@ const pageGroups = [
   {
     paths: ['/about/company-information/'],
     kind: 'management',
-    title: 'Управление капиталом',
+    title: 'Управляющая компания',
     eyebrow: 'О ФОНДЕ',
   },
   {
@@ -130,7 +130,7 @@ const pageGroups = [
   {
     paths: ['/about/governing-bodies/'],
     kind: 'governance',
-    title: 'Команда и управление',
+    title: 'Команда',
     eyebrow: 'О ФОНДЕ',
   },
   {
