@@ -720,6 +720,65 @@ html:not(.no-js) .cycle-steps li[data-active='false'] .cycle-description {
   font-size: 26px;
   color: #137a7e;
 }
+.fundraising-summary {
+  margin-bottom: 24px;
+  padding: 28px 32px;
+  border: 1px solid #c9dcdf;
+  border-radius: 18px;
+  background: #fff;
+}
+.fundraising-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px 40px;
+  margin: 0;
+}
+.fundraising-amounts dt {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #4e697b;
+}
+.fundraising-amounts dd {
+  margin: 0;
+  font-size: clamp(24px, 2.6vw, 36px);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: #1d3754;
+}
+.fundraising-progress {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 24px;
+}
+.fundraising-progress progress {
+  appearance: none;
+  flex: 1;
+  min-width: 0;
+  height: 8px;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #dce9eb;
+  color: #137f83;
+}
+.fundraising-progress progress::-webkit-progress-bar {
+  background: #dce9eb;
+}
+.fundraising-progress progress::-webkit-progress-value {
+  background: #137f83;
+}
+.fundraising-progress progress::-moz-progress-bar {
+  background: #137f83;
+}
+.fundraising-progress > span {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: #4e697b;
+}
 .metric-value {
   font-size: clamp(44px, 4vw, 60px);
   font-variant-numeric: tabular-nums;
@@ -1017,6 +1076,9 @@ h3 {
   }
 }
 @media (max-width: 480px) {
+  .fundraising-summary {
+    padding: 24px;
+  }
   .intro-grid h2 {
     font-size: 30px;
   }

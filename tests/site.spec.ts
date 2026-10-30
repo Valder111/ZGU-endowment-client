@@ -481,6 +481,19 @@ test('support cards switch topics by keyboard without fictitious financial resul
     exact: true,
   });
   const purpose = activity.getByRole('button', { name: /Общая цель/ });
+  const fundraising = activity.getByRole('group', {
+    name: 'Сбор целевого капитала',
+  });
+  await expect(fundraising.locator('dd')).toHaveText([
+    '0 рублей',
+    '100 000 000 рублей',
+  ]);
+  const progress = fundraising.getByRole('progressbar', {
+    name: 'Прогресс сбора',
+  });
+  await expect(progress).toHaveAttribute('value', '0');
+  await expect(progress).toHaveAttribute('max', '100000000');
+  await expect(fundraising).toContainText('0% от цели');
   await expect(activity.locator('.activity-target')).toHaveCount(0);
   await expect(activity).not.toContainText(/3\s*200\s*000|240\s*000|128/);
   await purpose.focus();

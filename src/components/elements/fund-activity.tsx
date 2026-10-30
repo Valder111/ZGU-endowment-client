@@ -6,9 +6,9 @@ import {
   Landmark,
   ArrowUpRight,
 } from 'lucide-react';
-import { fundActivity } from '@/constants/fund-activity';
+import { fundActivity, fundraising } from '@/constants/fund-activity';
 import { SiteLink } from '@/components/elements/site-link';
-import { readableText } from '@/utils/typography';
+import { formatRubles, readableText } from '@/utils/typography';
 
 const icons = [Coins, HeartHandshake, Layers3, Landmark];
 
@@ -16,6 +16,10 @@ export function FundActivity() {
   const [selected, setSelected] = useState(0);
   const panelId = useId();
   const current = fundActivity[selected] ?? fundActivity[0];
+  const progress = Math.min(
+    100,
+    Math.max(0, (fundraising.collected / fundraising.target) * 100),
+  );
   return (
     <section
       className="fund-activity"
@@ -27,6 +31,31 @@ export function FundActivity() {
           <div>
             <span className="eyebrow">СМЫСЛ КАЖДОГО ВКЛАДА</span>
             <h2 id={`${panelId}-heading`}>Вместе развиваем университет</h2>
+          </div>
+        </div>
+        <div
+          className="fundraising-summary"
+          role="group"
+          aria-label="Сбор целевого капитала"
+        >
+          <dl className="fundraising-amounts">
+            <div>
+              <dt>Собрано</dt>
+              <dd>{formatRubles(fundraising.collected)}</dd>
+            </div>
+            <div>
+              <dt>Цель сбора</dt>
+              <dd>{formatRubles(fundraising.target)}</dd>
+            </div>
+          </dl>
+          <div className="fundraising-progress">
+            <progress
+              value={fundraising.collected}
+              max={fundraising.target}
+              aria-label="Прогресс сбора"
+              aria-valuetext={`${formatRubles(fundraising.collected)} из ${formatRubles(fundraising.target)}`}
+            />
+            <span>{Math.round(progress)}% от&nbsp;цели</span>
           </div>
         </div>
         <div className="activity-layout">

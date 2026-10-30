@@ -1,3 +1,5 @@
+export const fundraising = { target: 100_000_000, collected: 0 } as const;
+
 export const fundActivity = [
   {
     id: 'directions',
