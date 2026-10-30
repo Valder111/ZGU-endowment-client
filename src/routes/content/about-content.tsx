@@ -16,13 +16,11 @@ export function AboutContent() {
           <p className="lead">
             Эндаумент-фонд Заполярного государственного университета
             имени&nbsp;Н.&nbsp;М.&nbsp;Федоровского объединяет поддержку
-            образования, науки и&nbsp;университетского сообщества.
+            образования, науки и&nbsp;университетского сообщества
           </p>
           <p>
-            Мы&nbsp;объединяем идеи поддержки образования, исследований
-            и&nbsp;университетской среды. Выпускники и&nbsp;партнёры смогут
-            участвовать в&nbsp;развитии университета и&nbsp;новых возможностей
-            для его студентов.
+            Выпускники и&nbsp;партнёры смогут участвовать в&nbsp;развитии вуза,
+            создавать новые возможности для его студентов.
           </p>
           <p>
             Финансовые показатели, программы и&nbsp;документы фонда будут
@@ -55,7 +53,7 @@ export function AboutContent() {
         </div>
       </section>
       <nav className="practical-links" aria-label="Информация о фонде">
-        <SiteLink href="/about/governing-bodies/">Команда ↗</SiteLink>
+        <SiteLink href="/about/governing-bodies/">Команда фонда ↗</SiteLink>
         <SiteLink href="/about/constituent-the-documents/">
           Документы и&nbsp;реквизиты ↗
         </SiteLink>

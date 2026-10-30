@@ -30,7 +30,7 @@ export function DocumentsContent() {
       </div>
       <nav className="practical-links" aria-label="Разделы прозрачности">
         <SiteLink href="/about/reporting/">Отчётность ↗</SiteLink>
-        <SiteLink href="/about/governing-bodies/">Команда ↗</SiteLink>
+        <SiteLink href="/about/governing-bodies/">Команда фонда ↗</SiteLink>
         <SiteLink href="/about/company-information/">
           Управляющая компания ↗
         </SiteLink>
@@ -247,7 +247,7 @@ export function ManagementContent() {
   return (
     <div className="wrap article-content">
       <div className="intro-grid">
-        <h2>Понятные условия работы с&nbsp;капиталом</h2>
+        <h2>Понятные условия</h2>
         <div>
           <p className="lead">
             Сформированный целевой капитал передаётся профессиональной компании.

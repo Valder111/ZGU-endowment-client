@@ -74,6 +74,9 @@ export function Community() {
         </div>
         <div className="community-visual">
           <CommunityGlobe active={selected} />
+          <p className="community-location">
+            Норильск / Начало больших открытий
+          </p>
           <p className="community-visual-caption">
             Разные истории
             <span>Одна точка притяжения</span>
@@ -83,6 +86,7 @@ export function Community() {
       <div className="wrap community-bottom" aria-hidden="true">
         <span>СВЯЗЬ, КОТОРАЯ ОСТАЁТСЯ</span>
         <span className="community-bottom-line" />
+        <span>ЗГУ / Создаём будущее вместе</span>
       </div>
     </section>
   );

@@ -29,7 +29,7 @@ export function SiteFooter() {
             <SiteLink href="/about/constituent-the-documents/">
               Документы и&nbsp;отчётность
             </SiteLink>
-            <SiteLink href="/about/governing-bodies/">Команда</SiteLink>
+            <SiteLink href="/about/governing-bodies/">Команда фонда</SiteLink>
             <SiteLink href="/answers-on-questions/">
               Вопросы и&nbsp;ответы
             </SiteLink>

@@ -130,7 +130,7 @@ const pageGroups = [
   {
     paths: ['/about/governing-bodies/'],
     kind: 'governance',
-    title: 'Команда',
+    title: 'Команда фонда',
     eyebrow: 'О ФОНДЕ',
   },
   {
