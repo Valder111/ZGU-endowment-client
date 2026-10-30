@@ -13,15 +13,15 @@ export function ImpactCalculator() {
       aria-labelledby={`${id}-title`}
     >
       <div className="calculator-copy">
-        <span className="eyebrow">ИНТЕРАКТИВНАЯ МОДЕЛЬ</span>
+        <span className="eyebrow">КАЛЬКУЛЯТОР ПОДДЕРЖКИ</span>
         <h2 id={`${id}-title`}>Долгий горизонт поддержки</h2>
         <p>
-          Посмотрите, как сумма капитала и&nbsp;условная доходность связаны
+          Посмотрите, как сумма капитала и&nbsp;выбранная ставка связаны
           с&nbsp;возможным доходом для программ.
         </p>
         <p className="risk-note">
-          Это учебный расчёт, а&nbsp;не прогноз или обещание. Доходность
-          не&nbsp;гарантирована, стоимость капитала может снижаться.
+          Расчёт по&nbsp;заданным параметрам. Доходность не&nbsp;гарантирована,
+          стоимость капитала может снижаться.
         </p>
       </div>
       <div className="calculator-controls">
@@ -39,7 +39,7 @@ export function ImpactCalculator() {
           aria-valuetext={formatRubles(capital)}
         />
         <label htmlFor={`${id}-rate`}>
-          Условная доходность в&nbsp;год <strong>{rate}%</strong>
+          Ставка для расчёта в&nbsp;год <strong>{rate}%</strong>
         </label>
         <input
           id={`${id}-rate`}
@@ -70,7 +70,9 @@ export function ImpactCalculator() {
           aria-atomic="true"
         >
           <span>
-            {annual < 0 ? 'Условное снижение за год' : 'Условный доход за год'}
+            {annual < 0
+              ? 'Расчётное снижение за год'
+              : 'Расчётный доход за год'}
             <strong data-testid="annual-income">{formatRubles(annual)}</strong>
           </span>
           <span>

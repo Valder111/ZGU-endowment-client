@@ -44,8 +44,8 @@ export function UniversityStories() {
         </SiteLink>
       </div>
       <p className="section-note">
-        Примеры из&nbsp;жизни университета. Эти проекты не&nbsp;представлены как
-        результаты финансирования эндаумент-фондом.
+        Студенты, исследования и&nbsp;партнёрские инициативы ЗГУ. Материалы
+        официального сайта университета.
       </p>
       <div className="story-grid">
         {stories.map((story, index) => (

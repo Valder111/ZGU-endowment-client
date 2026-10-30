@@ -113,16 +113,6 @@
 .section-heading > p {
   color: #4e697b;
 }
-.publication-status {
-  display: inline-block;
-  color: #466677;
-  background: #edf5f5;
-  border: 1px solid #c9dcdf;
-  border-radius: 22px;
-  padding: 7px 12px;
-  font-size: 12px;
-  line-height: 1.5;
-}
 .practical-links {
   display: flex;
   flex-wrap: wrap;
@@ -540,8 +530,15 @@ html:not(.no-js) .cycle-steps li[data-active='false'] .cycle-description {
   margin-bottom: 25px;
   color: #168489;
 }
-.reporting-grid .publication-status {
+.reporting-grid .text-link,
+.requisites-section .text-link {
   margin-top: 25px;
+}
+.document-item > .text-link {
+  min-height: 44px;
+}
+.document-item > .text-link svg {
+  flex-shrink: 0;
 }
 .role-grid {
   display: grid;
@@ -724,7 +721,7 @@ html:not(.no-js) .cycle-steps li[data-active='false'] .cycle-description {
   color: #137a7e;
 }
 .metric-value {
-  font-size: clamp(24px, 2.6vw, 35px);
+  font-size: clamp(44px, 4vw, 60px);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -735,14 +732,18 @@ html:not(.no-js) .cycle-steps li[data-active='false'] .cycle-description {
   letter-spacing: 0;
 }
 .activity-dial-value > strong {
-  font-size: clamp(23px, 2.1vw, 32px);
+  font-size: clamp(64px, 6vw, 90px);
   white-space: nowrap;
 }
-.metric-availability,
 .metric-card-top > span,
-.activity-status,
 .activity-story > small {
   font-size: 12px;
+}
+.activity-story .text-link {
+  margin-top: 20px;
+  color: #a8eee8;
+  font-size: 14px;
+  line-height: 1.6;
 }
 .eyebrow {
   font-size: 12px;
@@ -950,7 +951,7 @@ h3 {
     grid-template-columns: 25px 1fr;
     gap: 17px;
   }
-  .document-item > .publication-status {
+  .document-item > .text-link {
     grid-column: 2;
     justify-self: start;
   }
@@ -1009,7 +1010,7 @@ h3 {
     font-size: 16px;
   }
   .activity-dial-value > strong {
-    font-size: 28px;
+    font-size: 64px;
   }
   .hero-actions {
     flex-wrap: wrap;
@@ -1038,12 +1039,12 @@ h3 {
     grid-template-columns: 1fr;
   }
   .metric-value {
-    font-size: 34px;
+    font-size: 52px;
   }
   .director-profile {
     grid-template-columns: 1fr;
   }
   .activity-dial-value > strong {
-    font-size: 29px;
+    font-size: 72px;
   }
 }

@@ -37,8 +37,9 @@ export function DonationDialog() {
           Поддержим будущее университета
         </DialogTitle>
         <DialogDescription className="text-[15px] leading-[1.9] text-[#5d7586]">
-          Приём пожертвований ещё не открыт: платёж не производится. Выберите
-          направление и&nbsp;обсудите удобный формат участия.
+          Выберите близкое направление и&nbsp;свяжитесь с&nbsp;командой через
+          ЗГУ, чтобы согласовать формат участия, документы и&nbsp;реквизиты.
+          Заявка по&nbsp;почте не&nbsp;списывает средства.
         </DialogDescription>
         <div className="donation-routes">
           <DialogClose asChild>

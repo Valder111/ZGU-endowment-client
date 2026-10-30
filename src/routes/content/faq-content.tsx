@@ -111,7 +111,7 @@ export function FaqContent() {
           ))}
           {count === 0 && (
             <div className="faq-no-results">
-              <h3>Пока нет такого ответа</h3>
+              <h3>Ничего не&nbsp;найдено</h3>
               <p>Попробуйте другое слово или напишите университету.</p>
               <SiteLink href="/contacts-and-requisites/" className="text-link">
                 Контакты ЗГУ ↗

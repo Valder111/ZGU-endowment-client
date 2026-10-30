@@ -14,9 +14,11 @@ for (const original of originalPages) {
     const response = await page.goto(original.path);
     expect(response?.status()).toBe(200);
     await expect(page.locator('main h1')).toHaveText(original.title);
-    expect(normalize((await page.locator('main').textContent()) ?? '')).toBe(
-      original.text,
+    const text = normalize((await page.locator('main').textContent()) ?? '');
+    expect(text).not.toMatch(
+      /демонстрационн|условный пример|ожида[ею]т публикации|раздел готовится|информация ожидает|не предоставлены|сервис не подключён/i,
     );
+    expect(text).toBe(original.text);
     await page.reload();
     await expect(page.locator('main h1')).toHaveText(original.title);
     expect(errors).toEqual([]);
@@ -58,7 +60,7 @@ test('donation dialog traps focus and restores it on Escape, close, and backdrop
   await trigger.click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
-  await expect(dialog).toContainText('платёж не производится');
+  await expect(dialog).toContainText('Заявка по почте не списывает средства');
   for (let i = 0; i < 5; i++) {
     await page.keyboard.press('Tab');
     expect(
@@ -425,7 +427,7 @@ test('FAQ search filters answers, handles no results, and resets', async ({
   await search.fill('несуществующийвопрос');
   await expect(page.locator('.faq details:visible')).toHaveCount(0);
   await expect(
-    page.getByRole('heading', { name: 'Пока нет такого ответа' }),
+    page.getByRole('heading', { name: 'Ничего не найдено' }),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Очистить поиск' }).click();
   await expect(search).toHaveValue('');
@@ -470,37 +472,36 @@ test('endowment journey switches explanations by keyboard on home and about page
   }
 });
 
-test('activity cards switch explanations by keyboard and label illustrative figures clearly', async ({
+test('support cards switch topics by keyboard without fictitious financial results', async ({
   page,
 }) => {
   await page.goto('/');
   const activity = page.getByRole('region', {
-    name: 'Показатели деятельности',
+    name: 'Вместе развиваем университет',
     exact: true,
   });
-  const donors = activity.getByRole('button', { name: /Благотворители/ });
-  await expect(
-    activity.getByText('Демонстрационные данные', { exact: true }),
-  ).toBeVisible();
-  await expect(activity.locator('.activity-target')).toContainText(
-    'Достигнуто 64%',
-  );
-  await donors.focus();
+  const purpose = activity.getByRole('button', { name: /Общая цель/ });
+  await expect(activity.locator('.activity-target')).toHaveCount(0);
+  await expect(activity).not.toContainText(/3\s*200\s*000|240\s*000|128/);
+  await purpose.focus();
   await page.keyboard.press('Enter');
-  await expect(donors).toHaveAttribute('aria-pressed', 'true');
+  await expect(purpose).toHaveAttribute('aria-pressed', 'true');
   const explanation = activity.getByRole('region', {
-    name: 'О показателе',
+    name: 'О выбранной теме',
     exact: true,
   });
   await expect(
-    explanation.getByRole('heading', { name: 'Благотворители', exact: true }),
+    explanation.getByRole('heading', { name: 'Общая цель', exact: true }),
   ).toBeVisible();
-  await expect(explanation).toContainText('Количество приведено для примера');
+  await expect(activity.locator('.activity-dial-value strong')).toHaveText('1');
+  await expect(
+    explanation.getByRole('link', { name: 'Люди и инициативы' }),
+  ).toHaveAttribute('href', '/results/');
   await expect(activity.locator('.metric-value')).toHaveText([
-    /3\s*200\s*000\s*рублей/,
-    '128',
-    '7',
-    /240\s*000\s*рублей/,
+    '4',
+    '3',
+    '1',
+    '∞',
   ]);
   await expect(activity.getByRole('button', { pressed: true })).toHaveCount(1);
   await activity.getByRole('link', { name: 'Отчётность фонда' }).click();
@@ -574,7 +575,7 @@ test('small donations question is searchable and opens with the keyboard', async
     '',
   );
   await expect(page.locator('.faq details:visible')).toContainText(
-    'Вы выбираете посильную сумму',
+    'Выбирайте посильную сумму',
   );
 });
 

@@ -4,41 +4,33 @@ import type { ProjectId } from '@/types/content';
 import { EditorialArtwork } from '@/assets/svg/editorial-artwork';
 import { projectFocus } from '@/constants/visual-content';
 import { SiteLink } from '@/components/elements/site-link';
-import { formatRubles, readableText } from '@/utils/typography';
-const programExamples = {
+import { readableText } from '@/utils/typography';
+const programFormats = {
   students: {
     title: 'Стипендиальная программа',
-    budget: 600_000,
-    calculation: '10 студентов × 5 000 рублей × 12 месяцев',
     result:
-      'Годовая поддержка десяти студентов для учёбы и профессионального развития',
+      'Обсудите поддержку студентов для учёбы и профессионального развития: цель стипендии, критерии отбора и продолжительность участия.',
   },
   science: {
     title: 'Молодые исследователи Арктики',
-    budget: 300_000,
-    calculation: '3 исследовательские команды × 100 000 рублей',
     result:
-      'Материалы, полевые работы и проверка гипотез по задачам северных территорий',
+      'Предложите исследовательскую задачу: материалы, полевые работы и проверку гипотез по вопросам развития северных территорий.',
   },
   campus: {
     title: 'Пространство совместной работы',
-    budget: 150_000,
-    calculation: '10 мастерских и встреч × 15 000 рублей',
     result:
-      'Практические занятия, студенческие встречи и совместная работа над идеями',
+      'Обсудите практические занятия, студенческие мастерские и пространства для совместной работы над идеями.',
   },
   alumni: {
     title: 'Выпускники делятся опытом',
-    budget: 200_000,
-    calculation: '4 образовательные встречи × 50 000 рублей',
     result:
-      'Встречи с выпускниками, обмен опытом и профессиональная навигация студентов',
+      'Предложите встречу с выпускниками, наставничество или обмен опытом, который поможет студентам выбрать профессиональный путь.',
   },
 } as const;
 export function ProjectContent({ id }: { id: ProjectId }) {
   const project = projects.find((project) => project.id === id);
   if (!project) throw new Error(`Unknown project: ${id}`);
-  const example = programExamples[id];
+  const program = programFormats[id];
   return (
     <div className="wrap article-content">
       <div className="project-detail">
@@ -56,24 +48,15 @@ export function ProjectContent({ id }: { id: ProjectId }) {
           <p className="lead">{readableText(project.description)}</p>
           <h2>От&nbsp;идеи к&nbsp;возможностям</h2>
           <p>
-            Направление объединит инициативы университетского сообщества.
-            Описание программ, порядок отбора и&nbsp;условия участия появятся
-            после утверждения.
+            Выберите задачу, которая вам близка. Вместе с&nbsp;командой фонда
+            можно обсудить цель поддержки, формат участия и&nbsp;ожидаемый
+            результат.
           </p>
-          <span className="eyebrow">НАПРАВЛЕНИЕ ФОРМИРУЕТСЯ</span>
           <DonateButton />
           <div className="program-example">
-            <span className="eyebrow">МОДЕЛЬ ПРОГРАММЫ · УСЛОВНЫЙ ПРИМЕР</span>
-            <h3>{example.title}</h3>
-            <p>{readableText(example.result)}</p>
-            <strong className="program-budget">
-              {formatRubles(example.budget)}
-            </strong>
-            <p>{example.calculation}</p>
-            <p className="section-note">
-              Иллюстрация бюджета, не&nbsp;открытый сбор
-              и&nbsp;не&nbsp;утверждённое обязательство фонда.
-            </p>
+            <span className="eyebrow">ФОРМАТ УЧАСТИЯ</span>
+            <h3>{program.title}</h3>
+            <p>{readableText(program.result)}</p>
             <SiteLink className="text-link" href="/how-to-support/">
               Обсудить это направление ↗
             </SiteLink>
@@ -88,8 +71,8 @@ export function ProjectContent({ id }: { id: ProjectId }) {
           <span className="eyebrow">СМЫСЛ УЧАСТИЯ</span>
           <h2>Что может изменить поддержка</h2>
           <p>
-            Возможные ориентиры направления — от&nbsp;идеи до&nbsp;новых
-            возможностей.
+            От&nbsp;личной инициативы до&nbsp;возможностей для всего
+            университетского сообщества.
           </p>
         </div>
         <div className="perspectives-grid">

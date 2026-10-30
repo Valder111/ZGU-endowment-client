@@ -53,12 +53,6 @@ function InteriorContent({ page }: { page: PageDefinition }) {
       return (
         <div className="wrap article-content">
           <DirectionExplorer />
-          {page.showNote && (
-            <p className="note">
-              Предлагаемые направления поддержки. Программы, бюджеты и сроки
-              будут уточнены.
-            </p>
-          )}
         </div>
       );
     case 'news':

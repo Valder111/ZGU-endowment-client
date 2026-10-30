@@ -9,6 +9,9 @@ import { IncomeCycle } from '@/components/elements/income-cycle';
 import { readableText } from '@/utils/typography';
 import { siteConfig } from '@/configs/site';
 
+const documentRequestHref = (topic: string) =>
+  `mailto:${siteConfig.email}?subject=${encodeURIComponent(`Эндаумент-фонд ЗГУ: ${topic}`)}&body=${encodeURIComponent(`Здравствуйте!\n\nПрошу уточнить порядок получения сведений по теме «${topic}».\n\nМой вопрос: `)}`;
+
 export function DocumentsContent() {
   const [filter, setFilter] = useState('Все материалы');
   const id = useId();
@@ -18,13 +21,13 @@ export function DocumentsContent() {
         <h2>Доверие начинается с&nbsp;открытости</h2>
         <div>
           <p className="lead">
-            Здесь собраны сведения, которые помогут проверить фонд, понять
-            условия участия и&nbsp;проследить использование дохода.
+            Условия участия, сведения о&nbsp;фонде и&nbsp;использовании дохода —
+            основа осознанного решения о&nbsp;поддержке.
           </p>
           <p>
-            Утверждённые файлы пока не&nbsp;предоставлены. Каждый материал имеет
-            явный статус; ссылки на&nbsp;скачивание появятся после публикации
-            документов.
+            Выберите тему и&nbsp;направьте запрос через ЗГУ. В&nbsp;письме можно
+            уточнить нужные документы, период и&nbsp;вопросы к&nbsp;команде
+            фонда.
           </p>
         </div>
       </div>
@@ -41,29 +44,19 @@ export function DocumentsContent() {
       >
         <span className="eyebrow">ПРОВЕРКА ПОЛУЧАТЕЛЯ</span>
         <h2 id={`${id}-requisites`}>Реквизиты фонда</h2>
-        <dl className="requisites-list">
-          {[
-            'Полное юридическое наименование',
-            'ИНН',
-            'ОГРН',
-            'Юридический адрес',
-            'Банк и расчётный счёт',
-          ].map((label) => (
-            <div key={label}>
-              <dt>{label}</dt>
-              <dd>Ожидает публикации</dd>
-            </div>
-          ))}
-        </dl>
-        <p className="section-note">
-          Не&nbsp;используйте реквизиты университета как реквизиты фонда. Перед
-          переводом сверяйте получателя с&nbsp;договором пожертвования.
+        <p>
+          Запросите полное наименование получателя, ИНН, ОГРН и&nbsp;банковские
+          данные. Перед переводом сверьте их&nbsp;с&nbsp;договором
+          пожертвования. Общие реквизиты ЗГУ не&nbsp;заменяют реквизиты фонда.
         </p>
+        <a className="text-link" href={documentRequestHref('Реквизиты фонда')}>
+          Запросить реквизиты <ArrowUpRight size={18} aria-hidden="true" />
+        </a>
       </section>
       <section className="editorial-section" aria-labelledby={`${id}-library`}>
         <div className="section-heading">
           <div>
-            <span className="eyebrow">БИБЛИОТЕКА ФОНДА</span>
+            <span className="eyebrow">ИНФОРМАЦИЯ ПО&nbsp;ЗАПРОСУ</span>
             <h2 id={`${id}-library`}>Документы и&nbsp;отчёты</h2>
           </div>
           <p>Устав, условия пожертвования и&nbsp;финансовая информация</p>
@@ -91,7 +84,7 @@ export function DocumentsContent() {
           ))}
         </div>
         <p className="section-note" role="status">
-          Материалов:{' '}
+          Тем запроса:{' '}
           {
             foundationDocuments.filter(
               (doc) => filter === 'Все материалы' || doc.category === filter,
@@ -112,7 +105,9 @@ export function DocumentsContent() {
                 <h3>{doc.title}</h3>
                 <p>{readableText(doc.description)}</p>
               </div>
-              <span className="publication-status">Ожидает публикации</span>
+              <a className="text-link" href={documentRequestHref(doc.title)}>
+                Запросить <ArrowUpRight size={17} aria-hidden="true" />
+              </a>
             </article>
           ))}
         </div>
@@ -120,10 +115,10 @@ export function DocumentsContent() {
       <div className="transparency-contact">
         <ShieldCheck size={34} aria-hidden="true" />
         <div>
-          <h3>Нужны сведения до&nbsp;публикации?</h3>
+          <h3>Поможем разобраться</h3>
           <p>
-            Уточните у&nbsp;университета статус фонда и&nbsp;порядок получения
-            документов.
+            Уточните условия участия и&nbsp;порядок получения документов через
+            общие контакты университета.
           </p>
         </div>
         <SiteLink className="text-link" href="/contacts-and-requisites/">
@@ -144,9 +139,9 @@ export function GovernanceContent() {
             Фонд объединяет университет и&nbsp;партнёров Норильска
           </p>
           <p>
-            Состав совета и&nbsp;имя директора указаны по&nbsp;предоставленным
-            сведениям. Учредительные документы, полномочия и&nbsp;решения
-            органов управления ожидают публикации.
+            Образование, исследования и&nbsp;университетская среда требуют
+            общего взгляда в&nbsp;будущее. Команда связывает эти задачи
+            с&nbsp;участием выпускников, друзей и&nbsp;партнёров ЗГУ.
           </p>
         </div>
       </div>
@@ -187,19 +182,6 @@ export function GovernanceContent() {
           ))}
         </div>
       </section>
-      <div className="governance-panels">
-        <section>
-          <h3>Попечительский совет</h3>
-          <p>Состав и&nbsp;положение о&nbsp;работе ожидают публикации.</p>
-        </section>
-        <section>
-          <h3>Контроль и&nbsp;аудит</h3>
-          <p>
-            Сведения об&nbsp;органах контроля, порядке проверок
-            и&nbsp;независимом аудиторе будут опубликованы после утверждения.
-          </p>
-        </section>
-      </div>
       <section className="editorial-section" aria-label="Разделение функций">
         <span className="eyebrow">РАЗДЕЛЕНИЕ ФУНКЦИЙ</span>
         <h2>Каждому участнику — своя роль</h2>
@@ -262,10 +244,11 @@ export function ManagementContent() {
       </div>
       <section className="management-status">
         <span className="eyebrow">СВЕДЕНИЯ И УСЛОВИЯ РАБОТЫ</span>
-        <h2>Информация ожидает публикации</h2>
+        <h2>На&nbsp;что обратить внимание</h2>
         <p>
-          Наименование компании, сведения о&nbsp;лицензии и&nbsp;договоре
-          доверительного управления пока не&nbsp;предоставлены.
+          При знакомстве с&nbsp;условиями управления важны сведения
+          о&nbsp;компании, её&nbsp;лицензии, инвестиционном подходе
+          и&nbsp;расходах.
         </p>
         <ul>
           <li>Порядок выбора и&nbsp;полномочия управляющей компании</li>
@@ -275,12 +258,14 @@ export function ManagementContent() {
           <li>Вознаграждение, расходы и&nbsp;порядок предоставления отчётов</li>
           <li>Результаты управления за&nbsp;отчётные периоды</li>
         </ul>
-        <SiteLink
+        <a
           className="text-link"
-          href="/about/constituent-the-documents/#manager"
+          href={documentRequestHref(
+            'Управляющая компания и условия управления',
+          )}
         >
-          Статус документа ↗
-        </SiteLink>
+          Запросить сведения ↗
+        </a>
       </section>
       <IncomeCycle />
     </div>
@@ -294,13 +279,13 @@ export function ReportingContent() {
         <h2>Результаты, которые можно проверить</h2>
         <div>
           <p className="lead">
-            В&nbsp;отчётности будут видны размер капитала, результат управления,
-            расходы и&nbsp;поддержанные программы.
+            Размер капитала, результат управления, расходы и&nbsp;программы —
+            ключевые темы финансовой отчётности.
           </p>
           <p>
-            Фактические отчёты пока не&nbsp;предоставлены. Показатели
-            на&nbsp;главной странице обозначены как демонстрационные и&nbsp;не
-            подтверждают сбор средств или финансирование проектов.
+            Для запроса сведений укажите интересующий период и&nbsp;тему.
+            Обращение через ЗГУ поможет уточнить порядок получения документов
+            фонда.
           </p>
         </div>
       </div>
@@ -312,9 +297,9 @@ export function ReportingContent() {
               <FileText size={32} aria-hidden="true" />
               <h3>{doc.title}</h3>
               <p>{doc.description}</p>
-              <span className="publication-status">
-                Период и&nbsp;файл ожидают публикации
-              </span>
+              <a className="text-link" href={documentRequestHref(doc.title)}>
+                Запросить сведения ↗
+              </a>
             </article>
           ))}
       </div>
@@ -323,7 +308,7 @@ export function ReportingContent() {
           Все документы ↗
         </SiteLink>
         <SiteLink href="/results/">Проекты и&nbsp;результаты ↗</SiteLink>
-        <SiteLink href="/#fund-activity">Показатели на&nbsp;главной ↗</SiteLink>
+        <SiteLink href="/how-to-support/">Как поддержать ↗</SiteLink>
       </div>
       <IncomeCycle />
     </div>

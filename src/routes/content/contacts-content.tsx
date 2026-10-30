@@ -13,8 +13,8 @@ export function ContactsContent() {
           <a href={`mailto:${siteConfig.email}`}>{siteConfig.email} ↗</a>
           <a href={siteConfig.phoneHref}>{siteConfig.phone}</a>
           <p>
-            Общие контакты университета. Контакты фонда будут добавлены
-            отдельно.
+            Общие контакты университета для обращений о&nbsp;фонде, поддержке
+            и&nbsp;партнёрстве.
           </p>
         </article>
         <article className="info-panel pale">

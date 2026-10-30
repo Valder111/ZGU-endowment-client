@@ -96,7 +96,8 @@ test('support path keeps the chosen audience and capital in the email', async ({
   expect(message.searchParams.get('body')).toContain(
     'Наука и инженерия для Арктики',
   );
-  await expect(page.getByText('Платёжный сервис не подключён')).toBeVisible();
+  await expect(page.locator('.support-methods article')).toHaveCount(4);
+  await expect(page.locator('.publication-status')).toHaveCount(0);
   await expect(page.locator('form[action], iframe')).toHaveCount(0);
 });
 
@@ -104,7 +105,7 @@ test('donation window leads to a useful support route', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Стать благотворителем' }).click();
   const dialog = page.getByRole('dialog');
-  await expect(dialog).toContainText('платёж не производится');
+  await expect(dialog).toContainText('Заявка по почте не списывает средства');
   await dialog.getByRole('link', { name: 'Как поддержать' }).click();
   await expect(page).toHaveURL(/\/how-to-support\/$/);
   await expect(
@@ -125,14 +126,14 @@ test('calculator handles positive, zero, and negative scenarios without promisin
   await expect(calculator.getByTestId('total-income')).toHaveText(
     '50 000 рублей',
   );
-  const rate = calculator.getByRole('slider', { name: /Условная доходность/ });
+  const rate = calculator.getByRole('slider', { name: /Ставка для расчёта/ });
   await rate.fill('0');
   await expect(calculator.getByTestId('annual-income')).toHaveText('0 рублей');
   await rate.fill('-5');
   await expect(calculator.getByTestId('annual-income')).toHaveText(
     '-5 000 рублей',
   );
-  await expect(calculator.getByText('Условное снижение за год')).toBeVisible();
+  await expect(calculator.getByText('Расчётное снижение за год')).toBeVisible();
   const amount = calculator.getByRole('slider', { name: /Сумма капитала/ });
   await amount.fill('200000');
   await calculator.getByRole('slider', { name: /Горизонт расчёта/ }).fill('2');
@@ -142,7 +143,7 @@ test('calculator handles positive, zero, and negative scenarios without promisin
   await expect(calculator).toContainText('Доходность не гарантирована');
 });
 
-test('document filters expose honest publication statuses without fake downloads', async ({
+test('document filters offer requests for the selected topic without fake downloads', async ({
   page,
 }) => {
   await page.goto('/about/constituent-the-documents/');
@@ -154,13 +155,19 @@ test('document filters expose honest publication statuses without fake downloads
     'Бухгалтерская отчётность',
     'Аудиторское заключение',
   ]);
-  await expect(
-    page.locator('.document-item:visible .publication-status'),
-  ).toHaveText([
-    'Ожидает публикации',
-    'Ожидает публикации',
-    'Ожидает публикации',
-  ]);
+  const requests = page.locator('.document-item:visible a');
+  await expect(requests).toHaveCount(3);
+  for (const [index, topic] of [
+    'Годовой отчёт',
+    'Бухгалтерская отчётность',
+    'Аудиторское заключение',
+  ].entries()) {
+    const href = new URL((await requests.nth(index).getAttribute('href'))!);
+    expect(href.protocol).toBe('mailto:');
+    expect(href.searchParams.get('subject')).toContain(topic);
+    expect(href.searchParams.get('body')).toContain(topic);
+  }
+  await expect(page.locator('.publication-status')).toHaveCount(0);
   await expect(page.locator('a[download], a[href="#"]')).toHaveCount(0);
   await page.getByRole('button', { name: 'Все материалы' }).click();
   await expect(page.locator('.document-item:visible')).toHaveCount(9);
@@ -236,9 +243,7 @@ test('new practical pages remain readable without JavaScript', async ({
   await context.close();
 });
 
-test('editorial headings, money amounts, and identity are consistent', async ({
-  page,
-}) => {
+test('editorial headings and identity are consistent', async ({ page }) => {
   for (const path of [
     '/',
     '/about/general-information/',
@@ -258,10 +263,6 @@ test('editorial headings, money amounts, and identity are consistent', async ({
     ).toHaveCount(0);
   }
   await page.goto('/');
-  await expect(page.locator('.activity-target')).toContainText(
-    '5 000 000 рублей',
-  );
-  await expect(page.locator('.metric-value').first()).toContainText(
-    '3 200 000',
-  );
+  await expect(page.locator('.activity-target')).toHaveCount(0);
+  await expect(page.locator('.metric-value')).toHaveText(['4', '3', '1', '∞']);
 });

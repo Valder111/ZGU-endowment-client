@@ -6,23 +6,16 @@ import {
   Landmark,
   ArrowUpRight,
 } from 'lucide-react';
-import { fundActivity, fundActivitySummary } from '@/constants/fund-activity';
+import { fundActivity } from '@/constants/fund-activity';
 import { SiteLink } from '@/components/elements/site-link';
-import { formatNumber } from '@/utils/typography';
+import { readableText } from '@/utils/typography';
 
 const icons = [Coins, HeartHandshake, Layers3, Landmark];
-const formatValue = (value: number | null) =>
-  value === null ? '—' : formatNumber(value);
 
 export function FundActivity() {
   const [selected, setSelected] = useState(0);
   const panelId = useId();
   const current = fundActivity[selected] ?? fundActivity[0];
-  const progress = Math.min(
-    100,
-    Math.max(0, (fundActivity[0].value / fundActivitySummary.target) * 100),
-  );
-  const markerAngle = (((progress / 100) * 360 - 90) * Math.PI) / 180;
   return (
     <section
       className="fund-activity"
@@ -32,21 +25,15 @@ export function FundActivity() {
       <div className="wrap">
         <div className="activity-heading">
           <div>
-            <span className="eyebrow">ОТ&nbsp;УЧАСТИЯ К&nbsp;РЕЗУЛЬТАТАМ</span>
-            <h2 id={`${panelId}-heading`}>Показатели деятельности</h2>
+            <span className="eyebrow">СМЫСЛ КАЖДОГО ВКЛАДА</span>
+            <h2 id={`${panelId}-heading`}>Вместе развиваем университет</h2>
           </div>
-          <span className="activity-status">
-            <span aria-hidden="true" />
-            {fundActivitySummary.isDemo
-              ? 'Демонстрационные данные'
-              : 'По данным отчётности фонда'}
-          </span>
         </div>
         <div className="activity-layout">
           <div
             className="activity-metrics"
             role="group"
-            aria-label="Выберите показатель фонда"
+            aria-label="О поддержке университета"
           >
             {fundActivity.map((metric, index) => {
               const Icon = icons[index] ?? Coins;
@@ -66,20 +53,8 @@ export function FundActivity() {
                       <ArrowUpRight size={17} />
                     </span>
                   </span>
-                  <span className="metric-value">
-                    {formatValue(metric.value)}
-                    {metric.value !== null && metric.unit && (
-                      <small> {metric.unit}</small>
-                    )}
-                  </span>
+                  <span className="metric-value">{metric.value}</span>
                   <span className="metric-label">{metric.label}</span>
-                  <span className="metric-availability">
-                    {metric.value === null
-                      ? 'Ожидаем подтверждённые данные'
-                      : fundActivitySummary.isDemo
-                        ? 'Демонстрационный пример'
-                        : 'По данным отчётности фонда'}
-                  </span>
                 </button>
               );
             })}
@@ -96,52 +71,27 @@ export function FundActivity() {
                     <circle cx="160" cy="40" r="3" />
                   </g>
                 ))}
-                {selected === 0 ? (
-                  <g className="dial-funding">
-                    <circle
-                      cx="160"
-                      cy="160"
-                      r="120"
-                      pathLength="100"
-                      strokeDasharray={`${progress} 100`}
-                      transform="rotate(-90 160 160)"
-                    />
-                    <circle
-                      cx={160 + 120 * Math.cos(markerAngle)}
-                      cy={160 + 120 * Math.sin(markerAngle)}
-                      r="7"
-                    />
-                  </g>
-                ) : (
-                  <g
-                    className="dial-selection"
-                    style={{ transform: `rotate(${selected * 90}deg)` }}
-                  >
-                    <path d="M75.15 75.15a120 120 0 0 1 169.7 0" />
-                    <circle cx="160" cy="40" r="7" />
-                  </g>
-                )}
+                <g
+                  className="dial-selection"
+                  style={{ transform: `rotate(${selected * 90}deg)` }}
+                >
+                  <path d="M75.15 75.15a120 120 0 0 1 169.7 0" />
+                  <circle cx="160" cy="40" r="7" />
+                </g>
                 <g className="dial-star">
                   <path d="m160 8 3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" />
                 </g>
               </svg>
               <div className="activity-dial-value">
-                <strong key={current.id}>{formatValue(current.value)}</strong>
-                <span>
-                  {current.value === null
-                    ? 'ДАННЫЕ ГОТОВЯТСЯ'
-                    : current.unit || 'УСЛОВНЫЙ ПРИМЕР'}
-                </span>
-                {selected === 0 && (
-                  <small>{Math.round(progress)}% от&nbsp;цели</small>
-                )}
+                <strong key={current.id}>{current.value}</strong>
+                <span>{current.unit}</span>
               </div>
             </div>
             <div
               id={panelId}
               className="activity-stories"
               role="region"
-              aria-label="О показателе"
+              aria-label="О выбранной теме"
               aria-live="polite"
               aria-atomic="true"
             >
@@ -151,19 +101,13 @@ export function FundActivity() {
                   className="activity-story"
                   data-active={selected === index}
                 >
-                  <span className="eyebrow">0{index + 1} / ОРИЕНТИР ФОНДА</span>
+                  <span className="eyebrow">0{index + 1} / ВАШЕ УЧАСТИЕ</span>
                   <h3>{metric.label}</h3>
-                  {index === 0 && (
-                    <p className="activity-target">
-                      Цель сбора:{' '}
-                      <strong>
-                        {formatValue(fundActivitySummary.target)} рублей
-                      </strong>
-                      <span>Достигнуто {Math.round(progress)}%</span>
-                    </p>
-                  )}
-                  <p>{metric.description}</p>
-                  <small>{metric.detail}</small>
+                  <p>{readableText(metric.description)}</p>
+                  <small>{readableText(metric.detail)}</small>
+                  <SiteLink href={metric.href} className="text-link">
+                    {metric.link} <ArrowUpRight size={17} aria-hidden="true" />
+                  </SiteLink>
                 </div>
               ))}
             </div>
@@ -171,9 +115,8 @@ export function FundActivity() {
         </div>
         <div className="activity-bottom">
           <p>
-            {fundActivitySummary.isDemo
-              ? 'Все суммы и количества условные: это пример заполнения, а не фактические результаты деятельности фонда.'
-              : 'Подтверждённые результаты фонда. Подробные данные доступны в отчётности.'}
+            Участие начинается с&nbsp;близкой вам идеи. Продолжение —
+            в&nbsp;образовании, науке и&nbsp;новых связях.
           </p>
           <SiteLink href="/about/reporting/" className="text-link">
             Отчётность фонда <ArrowUpRight size={17} aria-hidden="true" />

@@ -32,10 +32,6 @@ export function HomeContent() {
             </SiteLink>
           </div>
           <ProjectGrid />
-          <p className="note">
-            Предлагаемые направления. Конкретные программы и&nbsp;условия
-            поддержки будут опубликованы после утверждения.
-          </p>
         </div>
       </section>
       <Mechanism />

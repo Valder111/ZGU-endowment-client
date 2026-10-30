@@ -1,11 +1,5 @@
 import { useId, useState } from 'react';
-import {
-  ArrowUpRight,
-  Landmark,
-  QrCode,
-  CreditCard,
-  Handshake,
-} from 'lucide-react';
+import { ArrowUpRight, Landmark, Users, Award, Handshake } from 'lucide-react';
 import { supportAudiences, supportMethods } from '@/constants/support';
 import { projects } from '@/constants/projects';
 import { siteConfig } from '@/configs/site';
@@ -13,7 +7,7 @@ import { SiteLink } from '@/components/elements/site-link';
 import { ImpactCalculator } from '@/components/elements/impact-calculator';
 import { readableText } from '@/utils/typography';
 
-const methodIcons = [Landmark, QrCode, CreditCard, Handshake];
+const methodIcons = [Landmark, Users, Award, Handshake];
 export function SupportContent() {
   const id = useId();
   const [selected, setSelected] = useState(0);
@@ -100,16 +94,13 @@ export function SupportContent() {
           </a>
         </div>
       </section>
-      <section className="editorial-section" aria-label="Способы пожертвования">
+      <section className="editorial-section" aria-label="Форматы поддержки">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">СПОСОБЫ ПОДДЕРЖКИ</span>
+            <span className="eyebrow">ФОРМАТЫ ПОДДЕРЖКИ</span>
             <h2>От&nbsp;идеи до&nbsp;пожертвования</h2>
           </div>
-          <p>
-            Приём средств начнётся после публикации документов
-            и&nbsp;подключения платежей
-          </p>
+          <p>Цель, условия и&nbsp;документы согласуем при обсуждении участия</p>
         </div>
         <div className="support-methods">
           {supportMethods.map((method, index) => {
@@ -118,7 +109,6 @@ export function SupportContent() {
               <article key={method.title}>
                 <Icon size={30} aria-hidden="true" />
                 <h3>{method.title}</h3>
-                <span className="publication-status">{method.status}</span>
                 <p>{readableText(method.text)}</p>
               </article>
             );

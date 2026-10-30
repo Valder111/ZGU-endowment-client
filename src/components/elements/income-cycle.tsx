@@ -39,8 +39,7 @@ export function IncomeCycle() {
         ))}
       </ol>
       <p className="section-note">
-        Показана общая модель. Порядок работы фонда определяется утверждёнными
-        документами.{' '}
+        Порядок работы фонда определяется его документами.{' '}
         <SiteLink href="/about/reporting/">К&nbsp;отчётности ↗</SiteLink>
       </p>
     </section>
