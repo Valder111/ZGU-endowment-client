@@ -5,6 +5,25 @@ import { EditorialArtwork } from '@/assets/svg/editorial-artwork';
 import { projectFocus } from '@/constants/visual-content';
 import { SiteLink } from '@/components/elements/site-link';
 import { readableText } from '@/utils/typography';
+import { assets } from '@/constants/assets';
+const projectPhotos = {
+  students: {
+    src: assets.researcher,
+    alt: 'Студентка работает над исследовательским проектом',
+  },
+  science: {
+    src: assets.engineering,
+    alt: 'Исследователь работает с 3D-принтером в лаборатории',
+  },
+  campus: {
+    src: assets.studentWorkshop,
+    alt: 'Студент отрабатывает практические навыки в мастерской колледжа',
+  },
+  alumni: {
+    src: assets.universityCommunity,
+    alt: 'Студенты университетского сообщества с флагом колледжа',
+  },
+};
 const programFormats = {
   students: {
     title: 'Стипендиальная программа',
@@ -39,7 +58,17 @@ export function ProjectContent({ id }: { id: ProjectId }) {
             <span>{project.category}</span>
             <span>{project.number} /</span>
           </div>
-          <EditorialArtwork scene={id} />
+          <div className="project-photo-frame">
+            <img
+              src={projectPhotos[id].src}
+              alt={projectPhotos[id].alt}
+              width="1200"
+              height="800"
+            />
+            <div className="project-photo-glyph" aria-hidden="true">
+              <EditorialArtwork scene={id} />
+            </div>
+          </div>
           <span className="project-visual-caption">
             ВОЗМОЖНОСТИ НАЧИНАЮТСЯ С&nbsp;ЛЮДЕЙ
           </span>

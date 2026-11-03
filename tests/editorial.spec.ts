@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 const practicalRoutes = [
+  '/anniversary/',
   '/how-to-support/',
   '/results/',
   '/about/constituent-the-documents/',
@@ -9,6 +10,51 @@ const practicalRoutes = [
   '/about/governing-bodies/',
   '/about/company-information/',
 ];
+
+test('anniversary invitation preserves the chosen contribution in an enquiry', async ({
+  page,
+}) => {
+  await page.goto('/anniversary/');
+  await expect(
+    page.getByRole('group', { name: 'Сбор целевого капитала' }),
+  ).toContainText('50 000 рублей');
+  await page
+    .getByRole('button', { name: 'Сделать подарок университету' })
+    .click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('button', { name: 'Регулярно', exact: true }).click();
+  await dialog.getByRole('button', { name: '3 000 ₽', exact: true }).click();
+  const direction = dialog.getByRole('combobox', {
+    name: 'Направление поддержки',
+  });
+  const options = page.getByRole('listbox', { name: 'Направления поддержки' });
+  await direction.press('Enter');
+  await expect(options).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(options).toBeHidden();
+  await expect(dialog).toBeVisible();
+  await expect(direction).toBeFocused();
+  await direction.press('Enter');
+  await expect(
+    options.getByRole('option', { name: 'Общее развитие университета' }),
+  ).toBeFocused();
+  for (let index = 0; index < 3; index++)
+    await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(direction).toHaveText('Инфраструктура для развития');
+  const href = new URL(
+    (await dialog
+      .getByRole('link', { name: 'Обсудить вклад' })
+      .getAttribute('href'))!,
+  );
+  expect(href.protocol).toBe('mailto:');
+  expect(href.searchParams.get('body')).toContain('3000 рублей');
+  expect(href.searchParams.get('body')).toContain('Регулярно');
+  expect(href.searchParams.get('body')).toContain(
+    'Инфраструктура для развития',
+  );
+  await expect(dialog).toContainText('не списывает средства');
+});
 
 for (const width of [360, 390, 768, 1024, 1440]) {
   test(`practical pages fit at ${width}px with regular and enlarged text`, async ({
@@ -83,8 +129,11 @@ test('support path keeps the chosen audience and capital in the email', async ({
     page.getByRole('region', { name: 'Выпускник', exact: true }),
   ).toBeHidden();
   await page
-    .getByLabel('Что вы хотите поддержать?')
-    .selectOption('Наука и инженерия для Арктики');
+    .getByRole('combobox', { name: 'Что вы хотите поддержать?' })
+    .click();
+  await page
+    .getByRole('option', { name: 'Наука и инженерия для Арктики' })
+    .click();
   const href = await page
     .getByRole('link', { name: 'Обсудить участие', exact: true })
     .getAttribute('href');
@@ -101,6 +150,104 @@ test('support path keeps the chosen audience and capital in the email', async ({
   await expect(page.locator('form[action], iframe')).toHaveCount(0);
 });
 
+test('each jubilee orbit reveals a distinct photo and supports keyboard dismissal', async ({
+  page,
+}) => {
+  await page.goto('/#university-anniversary');
+  const gallery = page.getByRole('group', {
+    name: 'Созвездие ЗГУ — юбилейная фотогалерея',
+  });
+  await gallery.scrollIntoViewIfNeeded();
+
+  for (const [index, alt] of [
+    'Участники полевой школы с инструментами на практике',
+    'Исследовательница работает с оборудованием в лаборатории геомеханики',
+    'Студент работает с механической деталью в мастерской',
+  ].entries()) {
+    const point = await gallery
+      .locator('.orbit-hit')
+      .nth(index)
+      .evaluate((node) => {
+        const orbit = node as SVGEllipseElement;
+        const matrix = orbit.getScreenCTM()!;
+        for (let part = 0; part < 32; part++) {
+          const { x, y } = orbit
+            .getPointAtLength((orbit.getTotalLength() * part) / 32)
+            .matrixTransform(matrix);
+          if (document.elementFromPoint(x, y) === orbit) return { x, y };
+        }
+        throw new Error('Could not reach orbit with a pointer');
+      });
+    await page.mouse.move(point.x, point.y);
+    const image = gallery.getByRole('img', { name: alt, exact: true });
+    await expect(image).toBeVisible();
+    await expect(image).toHaveJSProperty('complete', true);
+    expect(
+      await image.evaluate((photo: HTMLImageElement) => photo.naturalWidth),
+    ).toBeGreaterThan(0);
+  }
+
+  const science = gallery.getByRole('button', { name: 'Наука', exact: true });
+  await science.focus();
+  await expect(gallery.getByRole('img')).toHaveAttribute('alt', /геомеханики/);
+  await page.keyboard.press('Enter');
+  await expect(science).toHaveAttribute('aria-pressed', 'true');
+  await page.keyboard.press('Escape');
+  await expect(gallery.getByRole('img')).toHaveCount(0);
+  await expect(science).toBeFocused();
+});
+
+test('jubilee photo gallery can be used by touch with orbits paused', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 360, height: 800 },
+    hasTouch: true,
+    reducedMotion: 'no-preference',
+  });
+  try {
+    const page = await context.newPage();
+    await page.goto('http://127.0.0.1:4173/anniversary/');
+    const gallery = page.getByRole('group', {
+      name: 'Созвездие ЗГУ — юбилейная фотогалерея',
+    });
+    await gallery
+      .getByRole('button', { name: 'Остановить движение орбит' })
+      .tap();
+    await expect(gallery.locator('.orbit-satellite').first()).toHaveCSS(
+      'animation-play-state',
+      'paused',
+    );
+    const travel = await gallery
+      .locator('.orbit-satellite')
+      .evaluateAll((satellites) =>
+        satellites.map((satellite) => {
+          const [flight] = satellite.getAnimations();
+          if (!flight) throw new Error('The satellite has no flight animation');
+          flight.currentTime = 1000;
+          const from = Number.parseFloat(
+            getComputedStyle(satellite).strokeDashoffset,
+          );
+          flight.currentTime = 1700;
+          const to = Number.parseFloat(
+            getComputedStyle(satellite).strokeDashoffset,
+          );
+          return to - from;
+        }),
+      );
+    expect(travel.every((distance) => distance > 0)).toBe(true);
+    await gallery.getByRole('button', { name: 'Инженерия', exact: true }).tap();
+    await expect(
+      gallery.getByRole('img', { name: /механической деталью/ }),
+    ).toBeVisible();
+    await expect(
+      gallery.getByRole('button', { name: 'Инженерия', exact: true }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  } finally {
+    await context.close();
+  }
+});
+
 test('donation window leads to a useful support route', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Стать благотворителем' }).click();
@@ -113,7 +260,7 @@ test('donation window leads to a useful support route', async ({ page }) => {
   ).toBeVisible();
 });
 
-test('calculator handles positive, zero, and negative scenarios without promising returns', async ({
+test('calculator handles positive and zero scenarios without promising returns', async ({
   page,
 }) => {
   await page.goto('/how-to-support/');
@@ -129,18 +276,17 @@ test('calculator handles positive, zero, and negative scenarios without promisin
   const rate = calculator.getByRole('slider', { name: /Ставка для расчёта/ });
   await rate.fill('0');
   await expect(calculator.getByTestId('annual-income')).toHaveText('0 рублей');
-  await rate.fill('-5');
-  await expect(calculator.getByTestId('annual-income')).toHaveText(
-    '-5 000 рублей',
-  );
-  await expect(calculator.getByText('Расчётное снижение за год')).toBeVisible();
+  await expect(rate).toHaveAttribute('min', '0');
+  await rate.fill('5');
   const amount = calculator.getByRole('slider', { name: /Сумма капитала/ });
   await amount.fill('200000');
   await calculator.getByRole('slider', { name: /Горизонт расчёта/ }).fill('2');
   await expect(calculator.getByTestId('total-income')).toHaveText(
-    '-20 000 рублей',
+    '20 000 рублей',
   );
-  await expect(calculator).toContainText('Доходность не гарантирована');
+  await expect(calculator).toContainText(
+    'Расчёт не является прогнозом доходности',
+  );
 });
 
 test('document filters offer requests for the selected topic without fake downloads', async ({
@@ -226,7 +372,7 @@ test('new practical pages remain readable without JavaScript', async ({
   await expect(page.locator('.project-card:visible')).toHaveCount(4);
   await expect(
     page.getByRole('heading', {
-      name: 'Стипендии для студентов Арктики',
+      name: 'Стипендии для талантов',
       exact: true,
     }),
   ).toHaveCount(1);

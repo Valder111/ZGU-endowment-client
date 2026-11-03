@@ -23,6 +23,8 @@ export interface FaqItem {
 }
 export type PageKind =
   | 'home'
+  | 'anniversary'
+  | 'news-article'
   | 'about'
   | 'projects'
   | 'project'
@@ -44,6 +46,7 @@ export interface PageDefinition {
   title: string;
   eyebrow: string;
   projectId?: ProjectId;
+  newsId?: 'council' | 'horizon' | 'scholarship';
   showNote?: boolean;
 }
 

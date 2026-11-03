@@ -2,9 +2,11 @@ import { SiteLink } from '@/components/elements/site-link';
 import { communityStories } from '@/constants/community';
 import { ProjectGlyph } from '@/components/elements/project-glyph';
 import { readableText } from '@/utils/typography';
+import { AlumniAppeal } from '@/components/elements/alumni-appeal';
 export function PartnersContent() {
   return (
     <div className="wrap article-content">
+      <AlumniAppeal full />
       <div className="intro-grid">
         <h2>
           Ваша связь с&nbsp;ЗГУ

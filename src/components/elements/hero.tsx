@@ -8,6 +8,9 @@ export function Hero() {
       <NorthernContours />
       <div className="wrap hero-inner">
         <div className="hero-copy">
+          <span className="hero-kicker">
+            ЦЕЛЕВОЙ КАПИТАЛ ДЛЯ РАЗВИТИЯ ИНЖЕНЕРНОЙ ЭЛИТЫ В АРКТИКЕ
+          </span>
           <h1 aria-label="Будущее Арктики начинается с вашего вклада">
             <span className="headline-line">БУДУЩЕЕ АРКТИКИ</span>
             <span className="headline-line">НАЧИНАЕТСЯ</span>
@@ -21,7 +24,10 @@ export function Hero() {
           </p>
           <div className="hero-actions">
             <DonateButton label="Стать благотворителем" />
-            <SiteLink className="text-link" href="/about/general-information/">
+            <SiteLink
+              className="text-link"
+              href="/about/general-information/#endowment-flow"
+            >
               Как работает фонд ↗
             </SiteLink>
           </div>
@@ -51,7 +57,9 @@ export function Hero() {
           </div>
         </div>
         <div className="hero-bottom">
-          <span>ЗАПОЛЯРНЫЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ</span>
+          <SiteLink href="/anniversary/">
+            ЗГУ — 65 ЛЕТ. ИСТОРИЯ ПРОДОЛЖАЕТСЯ ↗
+          </SiteLink>
           <span>НОРИЛЬСК · 69° С. Ш.</span>
           <a href="#directions" aria-label="Далее">
             ↓

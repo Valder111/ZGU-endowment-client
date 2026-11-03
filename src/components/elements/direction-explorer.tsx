@@ -4,7 +4,7 @@ import { SiteLink } from '@/components/elements/site-link';
 import { ProjectGlyph } from '@/components/elements/project-glyph';
 import { ProjectGrid } from '@/components/elements/project-grid';
 
-const labels = ['Образование', 'Наука', 'Кампус', 'Сообщество'];
+const labels = ['Образование', 'Наука', 'Инфраструктура', 'Сообщество'];
 
 export function DirectionExplorer() {
   const [selected, setSelected] = useState(0);

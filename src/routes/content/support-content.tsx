@@ -1,7 +1,10 @@
 import { useId, useState } from 'react';
 import { ArrowUpRight, Landmark, Users, Award, Handshake } from 'lucide-react';
 import { supportAudiences, supportMethods } from '@/constants/support';
-import { projects } from '@/constants/projects';
+import {
+  CapitalSelect,
+  generalCapital,
+} from '@/components/elements/capital-select';
 import { siteConfig } from '@/configs/site';
 import { SiteLink } from '@/components/elements/site-link';
 import { ImpactCalculator } from '@/components/elements/impact-calculator';
@@ -11,7 +14,7 @@ const methodIcons = [Landmark, Users, Award, Handshake];
 export function SupportContent() {
   const id = useId();
   const [selected, setSelected] = useState(0);
-  const [direction, setDirection] = useState('Общее развитие университета');
+  const [direction, setDirection] = useState(generalCapital);
   const audience = supportAudiences[selected] ?? supportAudiences[0];
   const emailHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent(audience.subject)}&body=${encodeURIComponent(`Здравствуйте!\n\nМеня интересует направление «${direction}». Хочу обсудить условия участия, договор пожертвования и доступные способы поддержки.\n\nМой вопрос: `)}`;
   return (
@@ -78,17 +81,12 @@ export function SupportContent() {
           <label htmlFor={`${id}-direction`}>
             Что вы&nbsp;хотите поддержать?
           </label>
-          <select
+          <CapitalSelect
             id={`${id}-direction`}
             value={direction}
-            onChange={(event) => setDirection(event.target.value)}
-          >
-            <option>Общее развитие университета</option>
-            {projects.map((project) => (
-              <option key={project.id}>{project.title}</option>
-            ))}
-            <option>Именной или корпоративный капитал</option>
-          </select>
+            onValueChange={setDirection}
+            withNamedCapital
+          />
           <a href={emailHref} className="button primary">
             Обсудить участие <ArrowUpRight size={19} aria-hidden="true" />
           </a>

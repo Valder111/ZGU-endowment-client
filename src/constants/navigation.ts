@@ -4,7 +4,7 @@ export const navigation = [
   { href: '/how-to-support/', label: 'Как поддержать', group: 'support' },
   {
     href: '/project/all-project/',
-    label: 'Целевые капиталы',
+    label: 'Целевой капитал',
     group: 'projects',
   },
   {

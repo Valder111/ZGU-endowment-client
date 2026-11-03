@@ -23,7 +23,8 @@ export function SiteFooter() {
           <div>
             <h3>Фонд</h3>
             <SiteLink href="/about/general-information/">О&nbsp;фонде</SiteLink>
-            <SiteLink href="/project/all-project/">Целевые капиталы</SiteLink>
+            <SiteLink href="/project/all-project/">Целевой капитал</SiteLink>
+            <SiteLink href="/anniversary/">65 лет университету</SiteLink>
             <SiteLink href="/how-to-support/">Как поддержать</SiteLink>
             <SiteLink href="/results/">Проекты и&nbsp;результаты</SiteLink>
             <SiteLink href="/about/constituent-the-documents/">

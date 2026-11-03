@@ -1,9 +1,10 @@
-export const fundraising = { target: 100_000_000, collected: 0 } as const;
+export const fundraising = { target: 100_000_000, collected: 50_000 } as const;
 
 export const fundActivity = [
   {
     id: 'directions',
     label: 'Направления поддержки',
+    cardLabel: 'направления поддержки',
     value: '4',
     unit: 'НАПРАВЛЕНИЯ',
     description:
@@ -15,11 +16,12 @@ export const fundActivity = [
   },
   {
     id: 'stages',
-    label: 'Этапа от вклада к развитию',
+    label: 'Этапы: от вклада к развитию',
+    cardLabel: 'этапа от вклада к развитию',
     value: '3',
     unit: 'ЭТАПА',
     description:
-      'Вклад формирует капитал, капитал передаётся в управление, доход помогает программам университета.',
+      'Пожертвования формируют вечный капитал,\nкапитал передаётся в управление,\nполученный доход помогает развиваться университету.',
     detail:
       'Понятный путь участия связывает сегодняшнее решение с возможностями для следующих поколений.',
     href: '/about/general-information/',
@@ -28,6 +30,7 @@ export const fundActivity = [
   {
     id: 'purpose',
     label: 'Общая цель',
+    cardLabel: 'общая цель',
     value: '1',
     unit: 'ЦЕЛЬ',
     description: 'Развитие Заполярного университета и будущее Севера.',
@@ -39,6 +42,7 @@ export const fundActivity = [
   {
     id: 'horizon',
     label: 'Долгий горизонт участия',
+    cardLabel: 'Бесконечно долгий горизонт участия',
     value: '∞',
     unit: 'ВОЗМОЖНОСТЕЙ',
     description:

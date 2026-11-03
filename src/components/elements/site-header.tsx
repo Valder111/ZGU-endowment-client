@@ -6,6 +6,7 @@ import { SiteLink } from '@/components/elements/site-link';
 import { DonateButton } from '@/components/elements/donate-button';
 import { cn } from '@/lib/utils';
 import type { PageDefinition } from '@/types/content';
+import { assets } from '@/constants/assets';
 export function SiteHeader({ page }: { page?: PageDefinition }) {
   const { accessible, toggleAccessible } = useSite();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,17 +18,35 @@ export function SiteHeader({ page }: { page?: PageDefinition }) {
     }
   }
   const group =
-    page?.kind === 'pending' || page?.kind === 'management'
-      ? 'about'
-      : page?.kind === 'reporting'
-        ? 'documents'
-        : page?.kind === 'project'
-          ? 'projects'
-          : page?.kind;
+    page?.kind === 'news-article'
+      ? 'news'
+      : page?.kind === 'pending' || page?.kind === 'management'
+        ? 'about'
+        : page?.kind === 'reporting'
+          ? 'documents'
+          : page?.kind === 'project'
+            ? 'projects'
+            : page?.kind;
   return (
     <header onKeyDown={handleKeyDown}>
+      <div className="anniversary-topline">
+        <div className="wrap">
+          <span>1961 — 2026</span>
+          <SiteLink href="/anniversary/">
+            Университету 65 лет. Продолжим историю вместе{' '}
+            <span aria-hidden="true">↗</span>
+          </SiteLink>
+        </div>
+      </div>
       <div className="wrap header-inner">
         <SiteLink className="brand" href="/" aria-label="Главная">
+          <img
+            className="university-brand-logo"
+            src={assets.universityLogo}
+            alt="Заполярный государственный университет"
+            width="171"
+            height="36"
+          />
           <FundBrand />
         </SiteLink>
         <div className="header-actions">

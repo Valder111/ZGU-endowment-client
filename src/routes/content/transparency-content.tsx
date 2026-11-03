@@ -1,13 +1,11 @@
 import { useId, useState } from 'react';
 import { FileText, ArrowUpRight, ShieldCheck } from 'lucide-react';
-import {
-  foundationCouncil,
-  foundationDocuments,
-} from '@/constants/transparency';
+import { foundationTeam, foundationDocuments } from '@/constants/transparency';
 import { SiteLink } from '@/components/elements/site-link';
 import { IncomeCycle } from '@/components/elements/income-cycle';
 import { readableText } from '@/utils/typography';
 import { siteConfig } from '@/configs/site';
+import { assets } from '@/constants/assets';
 
 const documentRequestHref = (topic: string) =>
   `mailto:${siteConfig.email}?subject=${encodeURIComponent(`Эндаумент-фонд ЗГУ: ${topic}`)}&body=${encodeURIComponent(`Здравствуйте!\n\nПрошу уточнить порядок получения сведений по теме «${topic}».\n\nМой вопрос: `)}`;
@@ -136,39 +134,49 @@ export function GovernanceContent() {
         <h2>Люди, которые задают направление</h2>
         <div>
           <p className="lead">
-            Фонд объединяет университет и&nbsp;партнёров Норильска
+            Фонд объединяет выпускников, друзей и&nbsp;партнёров университета
           </p>
           <p>
             Образование, исследования и&nbsp;университетская среда требуют
             общего взгляда в&nbsp;будущее. Команда связывает эти задачи
-            с&nbsp;участием выпускников, друзей и&nbsp;партнёров ЗГУ.
+            с&nbsp;участием университетского сообщества.
           </p>
         </div>
       </div>
       <section className="director-profile">
-        <span className="person-monogram" aria-hidden="true">
-          ЕК
-        </span>
+        <img
+          className="director-photo"
+          src={assets.directorPortrait}
+          alt="Елена Кистнер"
+          width="800"
+          height="1200"
+          loading="lazy"
+        />
         <div>
           <span className="eyebrow">ДИРЕКТОР ФОНДА</span>
           <h2>Елена Кистнер</h2>
           <p>
-            По&nbsp;вопросам деятельности фонда и&nbsp;партнёрства можно
-            направить обращение через общие контакты университета.
+            Важно не&nbsp;только сохранить связь с&nbsp;университетом,
+            но&nbsp;и&nbsp;дать этой связи продолжение — в&nbsp;возможностях для
+            новых поколений.
           </p>
         </div>
-        <a
+        <SiteLink
           className="text-link"
-          href={`mailto:${siteConfig.email}?subject=${encodeURIComponent('Обращение директору эндаумент-фонда ЗГУ')}`}
+          href="/philanthropists/history/#alumni-appeal"
         >
-          Написать обращение ↗
-        </a>
+          Обращение к&nbsp;выпускникам ↗
+        </SiteLink>
       </section>
-      <section className="editorial-section" aria-label="Совет фонда">
-        <span className="eyebrow">СОВЕТ ФОНДА</span>
-        <h2>Университет и&nbsp;город в&nbsp;диалоге</h2>
+      <section className="editorial-section" aria-label="Команда фонда">
+        <span className="eyebrow">ЛЮДИ ОБЩЕГО ДЕЛА</span>
+        <h2>
+          Разные знания.
+          <br />
+          Общее будущее
+        </h2>
         <div className="council-grid">
-          {foundationCouncil.map((person) => (
+          {foundationTeam.map((person) => (
             <article key={person.name}>
               <span className="person-monogram" aria-hidden="true">
                 {person.name

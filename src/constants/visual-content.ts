@@ -3,6 +3,8 @@ import type { PageDefinition, PageKind, ProjectId } from '@/types/content';
 
 const pageScenes: Record<PageKind, ArtworkScene> = {
   home: 'endowment',
+  anniversary: 'alumni',
+  'news-article': 'news',
   about: 'endowment',
   projects: 'science',
   project: 'students',

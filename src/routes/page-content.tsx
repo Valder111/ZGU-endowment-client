@@ -21,8 +21,14 @@ import {
 } from '@/routes/content/transparency-content';
 import { ResultsContent } from '@/routes/content/results-content';
 import { UniversityStories } from '@/components/elements/university-stories';
+import { AnniversaryContent } from '@/routes/content/anniversary-content';
+import { NewsArticleContent } from '@/routes/content/news-article-content';
 function InteriorContent({ page }: { page: PageDefinition }) {
   switch (page.kind) {
+    case 'anniversary':
+      return <AnniversaryContent />;
+    case 'news-article':
+      return page.newsId ? <NewsArticleContent id={page.newsId} /> : null;
     case 'support':
       return <SupportContent />;
     case 'documents':
@@ -96,6 +102,9 @@ export function PageContent({ page }: { page?: PageDefinition }) {
         title={page.title}
         eyebrow={page.eyebrow}
         scene={artworkForPage(page)}
+        className={
+          page.kind === 'anniversary' ? 'page-title-anniversary' : undefined
+        }
       />
       <section className="section">
         <InteriorContent page={page} />

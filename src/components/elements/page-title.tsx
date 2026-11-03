@@ -7,13 +7,15 @@ export function PageTitle({
   title,
   eyebrow,
   scene = 'endowment',
+  className,
 }: {
   title: string;
   eyebrow: string;
   scene?: ArtworkScene;
+  className?: string;
 }) {
   return (
-    <section className="page-title">
+    <section className={className ? `page-title ${className}` : 'page-title'}>
       <div className="wrap">
         <div className="page-title-art">
           <EditorialArtwork scene={scene} />

@@ -19,9 +19,9 @@ export function ImpactCalculator() {
           Посмотрите, как сумма капитала и&nbsp;выбранная ставка связаны
           с&nbsp;возможным доходом для программ.
         </p>
-        <p className="risk-note">
-          Расчёт по&nbsp;заданным параметрам. Доходность не&nbsp;гарантирована,
-          стоимость капитала может снижаться.
+        <p className="calculator-perspective">
+          Один вклад — много лет возможностей для тех, кто учится и&nbsp;создаёт
+          новое.
         </p>
       </div>
       <div className="calculator-controls">
@@ -44,7 +44,7 @@ export function ImpactCalculator() {
         <input
           id={`${id}-rate`}
           type="range"
-          min="-10"
+          min="0"
           max="15"
           step="1"
           value={rate}
@@ -70,9 +70,7 @@ export function ImpactCalculator() {
           aria-atomic="true"
         >
           <span>
-            {annual < 0
-              ? 'Расчётное снижение за год'
-              : 'Расчётный доход за год'}
+            Расчётный доход за год
             <strong data-testid="annual-income">{formatRubles(annual)}</strong>
           </span>
           <span>
@@ -84,9 +82,8 @@ export function ImpactCalculator() {
         </div>
         <p className="section-note">
           Сумма × ставка ÷ 100 × количество лет. Постоянные сумма и&nbsp;ставка,
-          без реинвестирования, комиссий, налогов и&nbsp;инфляции. При
-          отрицательном результате модель показывает снижение, а&nbsp;не
-          средства для распределения.
+          без реинвестирования, комиссий, налогов и&nbsp;инфляции. Расчёт
+          не&nbsp;является прогнозом доходности.
         </p>
       </div>
     </section>

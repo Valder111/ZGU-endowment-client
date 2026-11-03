@@ -2,6 +2,33 @@ import type { PageDefinition, PageGroup } from '@/types/content';
 /** Historical addresses intentionally share the same content as in the original site. */
 const pageGroups = [
   {
+    paths: ['/news/presidential-scholarship/'],
+    kind: 'news-article',
+    newsId: 'scholarship',
+    title: 'Никита Поляков — стипендиат Президента России',
+    eyebrow: 'ТАЛАНТЫ УНИВЕРСИТЕТА',
+  },
+  {
+    paths: ['/anniversary/'],
+    kind: 'anniversary',
+    title: 'Заполярному государственному — 65!',
+    eyebrow: 'ЗГУ — 65 ЛЕТ',
+  },
+  {
+    paths: ['/news/first-council/'],
+    kind: 'news-article',
+    newsId: 'council',
+    title: 'Первый совет фонда: начало общей истории',
+    eyebrow: 'ЖИЗНЬ ФОНДА',
+  },
+  {
+    paths: ['/news/endowment-horizon/'],
+    kind: 'news-article',
+    newsId: 'horizon',
+    title: 'Эндаументы университетов: горизонт 2036',
+    eyebrow: 'ОБРАЗОВАНИЕ И НАУКА',
+  },
+  {
     paths: ['/'],
     kind: 'home',
     title: 'БУДУЩЕЕ АРКТИКИНАЧИНАЕТСЯС ВАШЕГО ВКЛАДА',
@@ -65,7 +92,7 @@ const pageGroups = [
   {
     paths: ['/projects/', '/project/all-project/'],
     kind: 'projects',
-    title: 'Целевые капиталы и программы',
+    title: 'Целевой капитал',
     eyebrow: 'ВЫБЕРИТЕ БЛИЗКУЮ ЦЕЛЬ',
     showNote: true,
   },
@@ -79,8 +106,8 @@ const pageGroups = [
   {
     paths: ['/projects/campus/'],
     kind: 'project',
-    title: 'Кампус и студенческая среда',
-    eyebrow: 'УНИВЕРСИТЕТСКАЯ СРЕДА',
+    title: 'Инфраструктура для развития',
+    eyebrow: 'ИНФРАСТРУКТУРА',
     projectId: 'campus',
   },
   {
@@ -93,7 +120,7 @@ const pageGroups = [
   {
     paths: ['/projects/students/'],
     kind: 'project',
-    title: 'Стипендии для студентов Арктики',
+    title: 'Стипендии для талантов',
     eyebrow: 'ОБРАЗОВАНИЕ',
     projectId: 'students',
   },

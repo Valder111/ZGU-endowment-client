@@ -3,6 +3,7 @@ import { DonateButton } from '@/components/elements/donate-button';
 import { EditorialArtwork } from '@/assets/svg/editorial-artwork';
 import { SiteLink } from '@/components/elements/site-link';
 import { IncomeCycle } from '@/components/elements/income-cycle';
+import { EndowmentFlow } from '@/components/elements/endowment-flow';
 export function AboutContent() {
   return (
     <div className="wrap article-content">
@@ -58,6 +59,40 @@ export function AboutContent() {
           Управляющая компания ↗
         </SiteLink>
       </nav>
+      <section className="endowment-difference editorial-section">
+        <span className="eyebrow">БОЛЬШЕ, ЧЕМ РАЗОВАЯ ПОМОЩЬ</span>
+        <h2>
+          Пожертвование помогает сегодня.
+          <br />
+          <em>Эндаумент создаёт продолжение</em>
+        </h2>
+        <div className="difference-grid">
+          <article>
+            <span>01 / ПРЯМАЯ ПОМОЩЬ</span>
+            <h3>Решить задачу сейчас</h3>
+            <p>
+              Разовое пожертвование можно направить непосредственно на
+              согласованную нужду: событие, оборудование или помощь конкретной
+              программе.
+            </p>
+          </article>
+          <article>
+            <span>02 / ЦЕЛЕВОЙ КАПИТАЛ</span>
+            <h3>Создать источник поддержки</h3>
+            <p>
+              Вклад становится частью капитала. На развитие университета
+              направляется доход от управления, а сам капитал служит основой
+              долгосрочной поддержки.
+            </p>
+          </article>
+        </div>
+        <p className="difference-manifesto">
+          Помочь однажды — важно.
+          <br />
+          <strong>Создать возможность помогать годами — бесценно.</strong>
+        </p>
+      </section>
+      <EndowmentFlow />
       <Mechanism />
       <IncomeCycle />
     </div>

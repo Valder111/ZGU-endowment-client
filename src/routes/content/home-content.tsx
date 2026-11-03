@@ -7,12 +7,40 @@ import { CallToAction } from '@/components/elements/call-to-action';
 import { ProjectGrid } from '@/components/elements/project-grid';
 import { NewsGrid } from '@/components/elements/news-grid';
 import { SiteLink } from '@/components/elements/site-link';
+import {
+  UniversityLife,
+  AnniversaryTeaser,
+} from '@/components/elements/university-life';
+import { AlumniAppeal } from '@/components/elements/alumni-appeal';
+import { EndowmentFlow } from '@/components/elements/endowment-flow';
 export function HomeContent() {
   return (
     <>
       <Hero />
+      <AnniversaryTeaser />
       <Mission />
       <FundActivity />
+      <UniversityLife />
+      <section className="endowment-manifesto">
+        <div className="wrap">
+          <span className="eyebrow">ЭНДАУМЕНТ-ФОНД ЗГУ / СВЯЗЬ НАДОЛГО</span>
+          <h2>
+            Мерзлота уже не та.
+            <br />
+            <em>А эндаумент — навечно!</em>
+          </h2>
+          <p>
+            Север меняется. Университет развивается. Ваше участие становится
+            частью того, что продолжается.
+          </p>
+          <SiteLink
+            className="text-link"
+            href="/about/general-information/#endowment-flow"
+          >
+            Узнать, как устроен вечный вклад ↗
+          </SiteLink>
+        </div>
+      </section>
       <section className="section" id="directions">
         <div className="wrap">
           <div className="section-heading">
@@ -35,6 +63,10 @@ export function HomeContent() {
         </div>
       </section>
       <Mechanism />
+      <div className="wrap">
+        <EndowmentFlow />
+        <AlumniAppeal />
+      </div>
       <Community />
       <section className="section home-transparency">
         <div className="wrap">
@@ -54,7 +86,7 @@ export function HomeContent() {
             <SiteLink href="/about/governing-bodies/">
               <span>01 / ЛЮДИ</span>
               <h3>Команда фонда</h3>
-              <p>Совет фонда, директор и&nbsp;разделение функций</p>
+              <p>Люди, которые связывают идеи и&nbsp;участие</p>
               <span aria-hidden="true">↗</span>
             </SiteLink>
             <SiteLink href="/about/reporting/">

@@ -228,7 +228,6 @@
   display: block;
   margin-bottom: 10px;
 }
-.support-enquiry select,
 .faq-tools select {
   display: block;
   width: 100%;
@@ -882,7 +881,6 @@ h3 {
 .accessible .cycle-description p,
 .accessible .support-path li,
 .accessible .support-enquiry label,
-.accessible .support-enquiry select,
 .accessible .faq-tools select,
 .accessible .calculator-controls label,
 .accessible .requisites-list > div,

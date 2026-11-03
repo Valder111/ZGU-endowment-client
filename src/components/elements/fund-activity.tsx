@@ -6,9 +6,10 @@ import {
   Landmark,
   ArrowUpRight,
 } from 'lucide-react';
-import { fundActivity, fundraising } from '@/constants/fund-activity';
+import { fundActivity } from '@/constants/fund-activity';
+import { FundraisingCard } from '@/components/elements/fundraising-card';
 import { SiteLink } from '@/components/elements/site-link';
-import { formatRubles, readableText } from '@/utils/typography';
+import { readableText } from '@/utils/typography';
 
 const icons = [Coins, HeartHandshake, Layers3, Landmark];
 
@@ -16,10 +17,6 @@ export function FundActivity() {
   const [selected, setSelected] = useState(0);
   const panelId = useId();
   const current = fundActivity[selected] ?? fundActivity[0];
-  const progress = Math.min(
-    100,
-    Math.max(0, (fundraising.collected / fundraising.target) * 100),
-  );
   return (
     <section
       className="fund-activity"
@@ -33,31 +30,7 @@ export function FundActivity() {
             <h2 id={`${panelId}-heading`}>Вместе развиваем университет</h2>
           </div>
         </div>
-        <div
-          className="fundraising-summary"
-          role="group"
-          aria-label="Сбор целевого капитала"
-        >
-          <dl className="fundraising-amounts">
-            <div>
-              <dt>Собрано</dt>
-              <dd>{formatRubles(fundraising.collected)}</dd>
-            </div>
-            <div>
-              <dt>Цель сбора</dt>
-              <dd>{formatRubles(fundraising.target)}</dd>
-            </div>
-          </dl>
-          <div className="fundraising-progress">
-            <progress
-              value={fundraising.collected}
-              max={fundraising.target}
-              aria-label="Прогресс сбора"
-              aria-valuetext={`${formatRubles(fundraising.collected)} из ${formatRubles(fundraising.target)}`}
-            />
-            <span>{Math.round(progress)}% от&nbsp;цели</span>
-          </div>
-        </div>
+        <FundraisingCard />
         <div className="activity-layout">
           <div
             className="activity-metrics"
@@ -82,8 +55,13 @@ export function FundActivity() {
                       <ArrowUpRight size={17} />
                     </span>
                   </span>
-                  <span className="metric-value">{metric.value}</span>
-                  <span className="metric-label">{metric.label}</span>
+                  <span
+                    className="metric-value"
+                    aria-hidden={metric.id === 'horizon' ? true : undefined}
+                  >
+                    {metric.value}
+                  </span>
+                  <span className="metric-label">{metric.cardLabel}</span>
                 </button>
               );
             })}
@@ -132,7 +110,15 @@ export function FundActivity() {
                 >
                   <span className="eyebrow">0{index + 1} / ВАШЕ УЧАСТИЕ</span>
                   <h3>{metric.label}</h3>
-                  <p>{readableText(metric.description)}</p>
+                  <p
+                    className={
+                      metric.id === 'stages'
+                        ? 'activity-stage-lines'
+                        : undefined
+                    }
+                  >
+                    {readableText(metric.description)}
+                  </p>
                   <small>{readableText(metric.detail)}</small>
                   <SiteLink href={metric.href} className="text-link">
                     {metric.link} <ArrowUpRight size={17} aria-hidden="true" />

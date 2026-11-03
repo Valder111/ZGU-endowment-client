@@ -1,14 +1,19 @@
 import { news } from '@/constants/news';
+import { SiteLink } from '@/components/elements/site-link';
 export function NewsGrid() {
   return (
     <div className="news-grid">
       {news.map((item) => (
         <article className="news-card" key={item.href}>
-          <a href={item.href} target="_blank" rel="noopener noreferrer">
+          <SiteLink href={item.href}>
             <img src={item.image} alt="" loading="lazy" />
-            <span className="news-label">НОВОСТИ УНИВЕРСИТЕТА</span>
+            <span className="news-label">
+              {item.href.includes('presidential-scholarship')
+                ? 'ЛЮДИ УНИВЕРСИТЕТА'
+                : 'ЖИЗНЬ ФОНДА'}
+            </span>
             <h3>{item.title}</h3>
-          </a>
+          </SiteLink>
           <p>{item.description}</p>
         </article>
       ))}

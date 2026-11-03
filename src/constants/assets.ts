@@ -1,12 +1,26 @@
 import bear from '@/assets/svg/bearer.svg';
 import favicon from '@/assets/svg/fund-favicon.svg';
-import rectorNews from '@/assets/images/news-0.jpg';
-import openDayNews from '@/assets/images/news-1.jpg';
-import scholarshipNews from '@/assets/images/news-2.jpg';
+import researcher from '@/assets/images/editorial/student-researcher.webp';
+import engineering from '@/assets/images/editorial/engineering-laboratory.webp';
+import laboratory from '@/assets/images/editorial/research-in-action.webp';
+import universityLogo from '@/assets/images/editorial/zgu-official-white.svg';
+import governmentPlan from '@/assets/images/editorial/government-plan.webp';
+import directorPortrait from '@/assets/images/editorial/elena-kistner.webp';
+import universityCommunity from '@/assets/images/editorial/university-community.webp';
+import studentWorkshop from '@/assets/images/editorial/student-workshop.webp';
+import anniversaryLogo from '@/assets/images/editorial/anniversary-official-logo.svg';
+import anniversaryLogoWhite from '@/assets/images/editorial/anniversary-official-logo-white.svg';
 export const assets = {
   bear,
   favicon,
-  rectorNews,
-  openDayNews,
-  scholarshipNews,
+  researcher,
+  engineering,
+  laboratory,
+  universityLogo,
+  governmentPlan,
+  directorPortrait,
+  universityCommunity,
+  studentWorkshop,
+  anniversaryLogo,
+  anniversaryLogoWhite,
 } as const;

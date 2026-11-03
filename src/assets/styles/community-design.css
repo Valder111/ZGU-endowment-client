@@ -1,0 +1,1087 @@
+/* People, a northern identity, and a clear invitation to take part. */
+:root {
+  --ink: #183a50;
+  --community-mint: #b8e4dc;
+  --community-warm: #ffab80;
+}
+.button.primary {
+  background: #ffab80;
+  color: #173448;
+  min-height: 56px;
+  padding: 17px 28px;
+  font-size: 16px;
+  font-weight: 650;
+  box-shadow: 0 7px 24px #ffab801c;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+.button.primary:hover {
+  background: #ffc19f;
+  color: #173448;
+  box-shadow: 0 10px 30px #ffab8030;
+  transform: translateY(-2px);
+}
+.button.primary:focus-visible {
+  outline: 3px solid #168489;
+  outline-offset: 5px;
+}
+.anniversary-topline {
+  background: #bce5dc;
+  color: #173e50;
+  font-size: 13px;
+}
+.anniversary-topline .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 9px;
+}
+.anniversary-topline a {
+  display: inline-flex;
+  gap: 22px;
+  align-items: center;
+}
+.anniversary-topline a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.header-inner {
+  min-height: 112px;
+}
+.brand {
+  gap: 22px;
+}
+.brand .university-brand-logo {
+  width: 180px;
+  height: auto;
+  flex-shrink: 0;
+}
+.brand > .brand-fund {
+  border-left: 1px solid #c7e6e440;
+  padding-left: 22px;
+}
+.footer-brand > .brand-fund {
+  border: 0;
+  padding: 0;
+}
+.brand-fund > strong {
+  font-size: 21px;
+  letter-spacing: -0.035em;
+}
+.brand-fund > span {
+  font-size: 13px;
+}
+.navigation {
+  font-size: 14px;
+}
+.hero-kicker {
+  display: block;
+  max-width: 530px;
+  color: #c5e9e7;
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1.8;
+  letter-spacing: 0.12em;
+  margin-bottom: 26px;
+}
+.hero h1 {
+  font-size: clamp(37px, 4.4vw, 66px);
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+.hero-copy > p {
+  font-size: 20px;
+  line-height: 1.8;
+  max-width: 570px;
+  margin-top: 28px;
+}
+.hero-actions {
+  margin-top: 32px;
+  gap: 28px;
+}
+.hero-actions .text-link {
+  font-size: 16px;
+  color: #e2f5f1;
+}
+.hero-caption {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.hero-bottom {
+  font-size: 12px;
+  line-height: 1.7;
+  letter-spacing: 0.055em;
+}
+.hero-bottom > a {
+  color: #d5f1eb;
+}
+.mission h2 {
+  font-size: clamp(31px, 3.2vw, 47px);
+}
+.mission p {
+  font-size: 18px;
+  line-height: 1.8;
+}
+.activity-story p {
+  font-size: 16px;
+  line-height: 1.85;
+}
+.activity-story small {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.activity-stage-lines {
+  white-space: pre-line;
+}
+.metric-label {
+  font-size: 16px;
+}
+.fundraising-summary {
+  position: relative;
+  background: linear-gradient(120deg, #fff 45%, #f5fbf9);
+}
+.fundraising-amounts > div:first-child dd {
+  color: #15746e;
+}
+.fundraising-amounts dt {
+  font-size: 15px;
+}
+.fundraising-progress progress {
+  height: 9px;
+}
+.fundraising-progress > span {
+  font-size: 14px;
+}
+.project-card.aqua,
+.project-visual.aqua {
+  background: #83d5cd;
+  color: #183a50;
+}
+.project-card.blue,
+.project-visual.blue {
+  background: #78c4df;
+  color: #183a50;
+}
+.project-card.navy,
+.project-visual.navy {
+  background: #254c62;
+  color: #f2f8f5;
+}
+.project-card.orange,
+.project-visual.orange {
+  background: #edb28d;
+  color: #183a50;
+}
+.project-card p {
+  font-size: 17px;
+  line-height: 1.8;
+}
+.project-card h3 {
+  font-size: clamp(25px, 2.25vw, 34px);
+}
+.project-card .card-link {
+  font-size: 15px;
+  min-height: 44px;
+}
+.project-card {
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 45px #183a5017;
+}
+.project-photo-frame {
+  position: relative;
+  margin-block: 25px 30px;
+}
+.project-photo-frame > img {
+  width: 100%;
+  aspect-ratio: 1.1;
+  height: auto;
+  object-fit: cover;
+  border-radius: 14px;
+}
+.project-photo-glyph {
+  position: absolute;
+  bottom: -12px;
+  right: -12px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  color: #1d4d5c;
+  background: #f1f7ed;
+  border: 6px solid #ffffff50;
+}
+.project-photo-glyph .editorial-artwork {
+  margin: 0;
+  width: 100%;
+}
+.activity-story .eyebrow,
+.metric-card-top > span {
+  font-size: 12px;
+}
+.article-content p,
+.intro-grid p,
+.foundation-copy p,
+.perspectives-grid p {
+  font-size: 17px;
+  line-height: 1.9;
+}
+.article-content .lead {
+  font-size: clamp(21px, 2vw, 27px);
+  line-height: 1.65;
+}
+.life-copy h2 em,
+.appeal-copy h2 em,
+.anniversary-intro h2 em {
+  font-style: normal;
+  color: #3a7c7c;
+}
+.life-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6%;
+  align-items: center;
+}
+.life-main {
+  position: relative;
+  border-radius: 140px 18px 18px 18px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: #193f51;
+}
+.life-main > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 52% center;
+}
+.life-main:after {
+  content: '';
+  position: absolute;
+  inset: 55% 0 0;
+  background: linear-gradient(transparent, #102d3ad9);
+  pointer-events: none;
+}
+.life-photo-caption {
+  position: absolute;
+  z-index: 1;
+  inset: auto 30px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.8;
+  letter-spacing: 0.1em;
+}
+.life-photo-caption span:first-child {
+  font-size: 24px;
+  letter-spacing: -0.03em;
+}
+.life-copy h2 {
+  font-size: clamp(33px, 3.4vw, 50px);
+  line-height: 1.14;
+  margin-block: 20px 26px;
+}
+.life-copy > p {
+  font-size: 18px;
+  line-height: 1.85;
+  color: #486477;
+}
+.life-small-photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-block: 30px;
+}
+.life-small-photos figure {
+  margin: 0;
+  min-width: 0;
+}
+.life-small-photos img {
+  width: 100%;
+  aspect-ratio: 1.2;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.life-small-photos figcaption {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 10px;
+  color: #526e7c;
+}
+.alumni-appeal {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #f1f5f0;
+}
+.appeal-visual {
+  position: relative;
+  min-height: 650px;
+  background: #1a4054;
+  overflow: hidden;
+}
+.appeal-visual > img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  object-position: center 16%;
+}
+.appeal-visual:after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 0;
+  background: linear-gradient(transparent, #112d42e8);
+}
+.appeal-visual > p {
+  position: absolute;
+  z-index: 1;
+  bottom: 35px;
+  left: 32px;
+  right: 28px;
+  color: #fff;
+  font-size: 19px;
+  line-height: 1.7;
+}
+.appeal-copy {
+  padding: clamp(28px, 4vw, 60px);
+}
+.appeal-copy h2 {
+  font-size: clamp(30px, 3vw, 43px);
+  line-height: 1.18;
+  margin: 18px 0 28px;
+}
+.appeal-copy p {
+  font-size: 16px;
+  line-height: 1.9;
+  margin-bottom: 16px;
+}
+.appeal-copy .appeal-salutation {
+  font-size: 19px;
+  font-weight: 600;
+}
+.appeal-copy .appeal-invitation {
+  color: #245d60;
+  font-weight: 550;
+}
+.appeal-signature {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 26px;
+}
+.appeal-signature > div {
+  display: grid;
+  gap: 4px;
+}
+.appeal-signature strong {
+  font-size: 18px;
+  font-weight: 600;
+}
+.appeal-signature > div > span {
+  font-size: 12px;
+  color: #4c6d76;
+}
+.appeal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 26px;
+  margin-top: 30px;
+}
+.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 22px;
+  list-style: none;
+  margin: 36px 0 0;
+  padding: 0;
+}
+.flow-grid li {
+  position: relative;
+  padding: 28px 24px;
+  border: 1px solid #d1e0e0;
+  border-radius: 16px;
+  background: #f1f7f6;
+  min-width: 0;
+}
+.flow-order {
+  color: #537681;
+  font-size: 13px;
+}
+.flow-icon {
+  display: block;
+  margin-block: 23px;
+  color: #258684;
+}
+.flow-grid h3 {
+  font-size: 23px;
+  line-height: 1.25;
+  margin-bottom: 18px;
+}
+.flow-grid p {
+  font-size: 15px;
+  line-height: 1.85;
+  color: #4c6877;
+}
+.endowment-manifesto {
+  background: #173d50;
+  color: #edf9f5;
+  padding-block: 85px;
+  position: relative;
+  overflow: hidden;
+}
+.endowment-manifesto:after {
+  content: '';
+  position: absolute;
+  width: 560px;
+  height: 560px;
+  right: -220px;
+  top: -140px;
+  border: 1px solid #7acdb62b;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 65px #8cdac211,
+    0 0 0 135px #8cdac208;
+  pointer-events: none;
+}
+.endowment-manifesto .eyebrow {
+  color: #b1d6d0;
+}
+.endowment-manifesto h2 {
+  font-size: clamp(35px, 5vw, 76px);
+  line-height: 1.15;
+  margin: 25px 0 32px;
+  max-width: 1150px;
+}
+.endowment-manifesto h2 em {
+  font-style: normal;
+  color: #9fdec8;
+}
+.endowment-manifesto p {
+  font-size: 19px;
+  max-width: 650px;
+  line-height: 1.85;
+  color: #cfe3e0;
+}
+.endowment-manifesto .text-link {
+  margin-top: 26px;
+  color: #b5eadd;
+  font-size: 16px;
+}
+.flow-arrow {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  right: -27px;
+  top: 70px;
+  background: #fff;
+  border-radius: 50%;
+  color: #268a88;
+  z-index: 1;
+}
+.flow-arrow svg {
+  width: 18px;
+}
+.flow-arrow svg:last-child {
+  display: none;
+}
+.flow-return {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 28px;
+  border: 1px dashed #8bb7b9;
+  border-radius: 14px;
+  margin-top: 24px;
+}
+.flow-return > svg {
+  flex-shrink: 0;
+  color: #277e7c;
+}
+.flow-return p {
+  flex: 1;
+  font-size: 15px;
+  line-height: 1.8;
+}
+.flow-return strong {
+  display: block;
+}
+.flow-return .text-link {
+  flex-shrink: 0;
+}
+.capital-horizon {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  gap: 30px;
+  align-items: start;
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid #cfdfdf;
+}
+.capital-horizon p {
+  font-size: 15px;
+  color: #4c6877;
+  line-height: 1.8;
+}
+.endowment-difference > h2 {
+  font-size: clamp(30px, 3.3vw, 47px);
+  margin-block: 20px 35px;
+}
+.endowment-difference > h2 em {
+  font-style: normal;
+  color: #3c7e7b;
+}
+.difference-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.difference-grid article {
+  padding: 35px;
+  border-radius: 18px;
+  background: #f0f5f4;
+}
+.difference-grid article:last-child {
+  background: #dceddf;
+}
+.difference-grid article > span {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: #3d686f;
+}
+.difference-grid h3 {
+  margin-block: 20px;
+  font-size: 29px;
+}
+.difference-grid p {
+  font-size: 17px;
+}
+.endowment-difference .difference-manifesto {
+  font-size: clamp(25px, 2.5vw, 37px);
+  line-height: 1.55;
+  margin-block: 40px;
+  padding-left: 28px;
+  border-left: 3px solid #df9c76;
+}
+.difference-manifesto strong {
+  color: #31736f;
+  font-weight: 500;
+}
+.anniversary-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+.anniversary-intro h2 {
+  font-size: clamp(54px, 7vw, 100px);
+  line-height: 1.02;
+  margin-block: 25px;
+}
+.anniversary-intro p {
+  max-width: 490px;
+  margin-block: 25px 35px;
+  font-size: 21px;
+}
+.anniversary-photo {
+  position: relative;
+  margin: 65px 0 35px;
+  border-radius: 22px;
+  overflow: hidden;
+}
+.anniversary-photo-main {
+  width: 100%;
+  max-height: 540px;
+  object-fit: cover;
+  object-position: center 45%;
+}
+.anniversary-photo:after {
+  content: '';
+  position: absolute;
+  inset: 30% 0 0;
+  background: linear-gradient(transparent, #102e42d9);
+}
+.anniversary-photo p {
+  position: absolute;
+  z-index: 1;
+  bottom: 35px;
+  left: 40px;
+  right: 30px;
+  color: #fff;
+  font-size: clamp(25px, 3vw, 43px);
+  line-height: 1.3;
+}
+.anniversary-photo em {
+  font-style: normal;
+  color: #bcf0df;
+}
+.anniversary-gift {
+  max-width: 920px;
+}
+.anniversary-gift > h2 {
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1.15;
+}
+.anniversary-gift > p {
+  margin-block: 24px;
+}
+.anniversary-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+.anniversary-amounts > span {
+  padding: 12px 20px;
+  background: #edf5ef;
+  border: 1px solid #c9ddd1;
+  border-radius: 30px;
+  font-size: 14px;
+}
+.anniversary-closing {
+  padding: 55px;
+  border-radius: 22px;
+  background: #193d50;
+  color: #eef8f5;
+}
+.anniversary-closing h2 {
+  font-size: clamp(31px, 3.4vw, 49px);
+  margin: 20px 0 30px;
+}
+.anniversary-closing h2 > span {
+  color: #9fddcf;
+}
+.anniversary-closing .eyebrow {
+  color: #b9dbd3;
+}
+.anniversary-closing .text-link {
+  display: flex;
+  width: fit-content;
+  margin-top: 25px;
+}
+.anniversary-source {
+  font-size: 14px;
+}
+.director-profile {
+  grid-template-columns: 150px 1fr auto;
+}
+.director-photo {
+  width: 150px;
+  height: 190px;
+  object-fit: cover;
+  object-position: center 15%;
+  border-radius: 12px;
+}
+.council-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.fund-news-article > figure {
+  margin: 0 0 45px;
+}
+.fund-news-article > figure img {
+  width: 100%;
+  max-height: 600px;
+  object-fit: cover;
+  border-radius: 18px;
+}
+.fund-news-article figcaption {
+  font-size: 13px;
+  color: #536f7e;
+  margin-top: 14px;
+}
+.fund-news-copy {
+  max-width: 850px;
+  margin-inline: auto;
+}
+.fund-news-copy > p {
+  margin-bottom: 26px;
+}
+.news-card h3 {
+  font-size: clamp(23px, 2vw, 29px);
+  line-height: 1.3;
+}
+.news-card p {
+  font-size: 16px;
+  line-height: 1.8;
+}
+.news-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.donation-dialog {
+  width: min(620px, calc(100% - 32px));
+  padding: 38px;
+}
+.donation-dialog .donation-fields {
+  display: grid;
+  gap: 10px;
+  margin-block: 18px;
+}
+.donation-fields label {
+  font-size: 14px;
+  color: #466476;
+}
+.donation-fields input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #adc8ce;
+  border-radius: 9px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 16px;
+  color: #193d50;
+  background: #fff;
+}
+.donation-frequency,
+.donation-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 15px;
+}
+.donation-frequency button,
+.donation-amounts button {
+  border: 1px solid #afcbd0;
+  border-radius: 30px;
+  padding: 10px 16px;
+  min-height: 44px;
+  color: #193d50;
+  background: #fff;
+  font-size: 15px;
+}
+.donation-frequency button[aria-pressed='true'],
+.donation-amounts button[aria-pressed='true'] {
+  border-color: #267d7a;
+  background: #def0e8;
+  box-shadow: inset 0 0 0 1px #267d7a;
+}
+.donation-enquiry {
+  width: 100%;
+}
+.donation-enquiry[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: default;
+}
+.donation-routes {
+  margin-block: 22px;
+}
+.donation-routes .button.primary {
+  background: #edf5f1;
+  color: #193d50;
+  box-shadow: none;
+  font-size: 14px;
+}
+.donation-dialog .donation-routes .text-link {
+  font-size: 14px;
+}
+.accessible .hero-copy > p,
+.accessible .life-copy > p,
+.accessible .appeal-copy p {
+  font-size: 21px;
+}
+.accessible .hero-caption,
+.accessible .activity-story p {
+  font-size: 19px;
+}
+.accessible .cycle-steps {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 1101px) {
+  .activity-layout {
+    grid-template-columns: 0.85fr 1.15fr;
+  }
+  .activity-focus {
+    grid-template-columns: 0.8fr 1.2fr;
+    padding: 30px 25px;
+  }
+}
+@media (max-width: 1280px) {
+  .flow-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .flow-arrow {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .involvement-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .brand .university-brand-logo {
+    width: 145px;
+  }
+  .brand-fund > strong {
+    font-size: 19px;
+  }
+  .header-actions {
+    gap: 12px;
+  }
+  .life-layout {
+    gap: 35px;
+  }
+  .alumni-appeal {
+    grid-template-columns: 0.75fr 1.25fr;
+  }
+  .flow-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .flow-arrow {
+    display: none;
+  }
+  .director-profile {
+    grid-template-columns: 120px 1fr;
+  }
+  .director-photo {
+    width: 120px;
+    height: 165px;
+  }
+  .director-profile > .text-link {
+    grid-column: 2;
+  }
+}
+@media (max-width: 760px) {
+  .involvement-grid {
+    grid-template-columns: 1fr;
+  }
+  .anniversary-topline {
+    font-size: 11px;
+  }
+  .anniversary-topline .wrap > span {
+    display: none;
+  }
+  .anniversary-topline .wrap {
+    padding-block: 8px;
+  }
+  .header-inner {
+    min-height: 94px;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-block: 17px;
+  }
+  .brand {
+    gap: 12px;
+  }
+  .brand .university-brand-logo {
+    width: 115px;
+  }
+  .brand > .brand-fund {
+    padding-left: 12px;
+  }
+  .brand-fund > strong {
+    font-size: 16px;
+  }
+  .brand-fund > span {
+    font-size: 10px;
+  }
+  .header-actions {
+    margin-left: auto;
+  }
+  .header-actions .button.primary {
+    min-height: 44px;
+    padding: 11px 16px;
+    font-size: 13px;
+  }
+  .navigation {
+    font-size: 14px;
+  }
+  .hero-kicker {
+    font-size: 10px;
+    line-height: 1.8;
+    max-width: 380px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(34px, 7vw, 50px);
+  }
+  .hero-copy > p {
+    font-size: 18px;
+    line-height: 1.8;
+    margin-top: 24px;
+  }
+  .hero-actions {
+    gap: 18px;
+    margin-top: 25px;
+  }
+  .hero-actions .text-link {
+    font-size: 15px;
+  }
+  .hero-caption {
+    font-size: 15px;
+  }
+  .hero-bottom {
+    font-size: 11px;
+  }
+  .life-layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .life-main {
+    aspect-ratio: 1.15;
+    border-top-left-radius: 90px;
+  }
+  .life-copy h2 {
+    font-size: 36px;
+  }
+  .life-small-photos img {
+    aspect-ratio: 1.3;
+  }
+  .alumni-appeal {
+    grid-template-columns: 1fr;
+  }
+  .appeal-visual {
+    min-height: 460px;
+  }
+  .appeal-visual > img {
+    object-position: center 24%;
+  }
+  .appeal-copy {
+    padding: 32px 26px;
+  }
+  .appeal-copy h2 {
+    font-size: 33px;
+  }
+  .flow-grid {
+    gap: 16px;
+  }
+  .flow-grid li {
+    padding: 25px 22px;
+  }
+  .flow-grid h3 {
+    font-size: 23px;
+  }
+  .flow-return {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 23px;
+  }
+  .flow-return p {
+    flex-basis: calc(100% - 45px);
+  }
+  .flow-return .text-link {
+    margin-left: 40px;
+  }
+  .capital-horizon {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .difference-grid {
+    grid-template-columns: 1fr;
+  }
+  .difference-grid article {
+    padding: 28px;
+  }
+  .difference-grid h3 {
+    font-size: 27px;
+  }
+  .anniversary-intro {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .anniversary-photo {
+    margin-top: 45px;
+  }
+  .anniversary-photo-main {
+    min-height: 400px;
+    object-position: 52% center;
+  }
+  .anniversary-photo p {
+    left: 24px;
+    right: 24px;
+    bottom: 27px;
+    font-size: 28px;
+  }
+  .anniversary-closing {
+    padding: 35px 25px;
+  }
+  .council-grid {
+    grid-template-columns: 1fr;
+  }
+  .donation-dialog {
+    padding: 36px 25px 25px;
+  }
+  .donation-dialog h2 {
+    font-size: 30px;
+  }
+}
+@media (max-width: 480px) {
+  .accessible .cycle-steps {
+    grid-template-columns: 1fr;
+  }
+  .header-inner {
+    row-gap: 16px;
+  }
+  .brand .university-brand-logo {
+    width: 105px;
+  }
+  .brand-fund > strong {
+    font-size: 15px;
+  }
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 16px;
+  }
+  .header-actions .access {
+    margin-right: auto;
+  }
+  .flow-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .flow-arrow {
+    display: grid;
+    top: auto;
+    right: calc(50% - 15px);
+    bottom: -28px;
+  }
+  .flow-arrow svg:first-child {
+    display: none;
+  }
+  .flow-arrow svg:last-child {
+    display: block;
+  }
+  .director-profile {
+    grid-template-columns: 1fr;
+  }
+  .director-profile > .text-link {
+    grid-column: 1;
+  }
+  .director-photo {
+    width: 130px;
+    height: 170px;
+  }
+  .fundraising-amounts dd {
+    font-size: 26px;
+  }
+  .appeal-actions .button.primary,
+  .anniversary-intro .button.primary,
+  .anniversary-closing .button.primary {
+    width: 100%;
+    white-space: normal;
+    gap: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button.primary,
+  .project-card {
+    transition: none;
+  }
+  .button.primary:hover,
+  .project-card:hover {
+    transform: none;
+  }
+}

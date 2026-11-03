@@ -1,0 +1,687 @@
+:root {
+  --anniversary-sky: url('../images/editorial/anniversary-official-background.webp');
+}
+
+.anniversary-teaser {
+  background:
+    linear-gradient(100deg, #061c3340, #081e3a66 41%, #091a31dd 73%, #0a172aef),
+    linear-gradient(
+      0deg,
+      #081729b3,
+      transparent 38%,
+      transparent 80%,
+      #0817294d
+    ),
+    #0b2038 var(--anniversary-sky) center 46% / cover;
+  color: #f5fcff;
+  overflow: hidden;
+  scroll-margin-top: 25px;
+}
+
+.anniversary-teaser-inner {
+  display: grid;
+  align-items: center;
+  width: min(1570px, calc(100% - clamp(64px, 9vw, 160px)));
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+  gap: clamp(36px, 4.3vw, 82px);
+  padding-block: clamp(38px, 4vw, 68px);
+}
+
+.anniversary-teaser-copy {
+  min-width: 0;
+  padding-block: 20px;
+}
+
+.anniversary-teaser h2 {
+  color: #f5fcff;
+  font-size: clamp(34px, 3.65vw, 61px);
+  line-height: 1.16;
+  margin-block: 18px 24px;
+  text-wrap: balance;
+}
+
+.anniversary-teaser h2 em {
+  color: #aff1de;
+  font-style: normal;
+}
+
+.anniversary-teaser .eyebrow {
+  color: #b8e8eb;
+}
+
+.anniversary-teaser p {
+  color: #e1edf4;
+  max-width: 600px;
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+
+.anniversary-teaser .anniversary-orbits {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.anniversary-teaser .orbit-sky {
+  background: transparent;
+}
+
+.anniversary-teaser .orbit-sky::before {
+  mask-image: radial-gradient(ellipse at center, #000 28%, transparent 68%);
+}
+
+.anniversary-teaser .orbit-numeral > span {
+  font-size: clamp(82px, 38cqi, 330px);
+}
+
+.anniversary-teaser .orbit-controls {
+  width: min(100%, 600px);
+  margin-inline: auto;
+  border: 0;
+  padding: 0 4px 5px;
+}
+
+.anniversary-teaser .orbit-controls button {
+  border-color: #b1e9f333;
+  background: #071e32c9;
+}
+
+.anniversary-teaser .orbit-controls button[data-active='true'] {
+  border-color: var(--orbit-accent);
+  background: #174052;
+}
+
+.anniversary-orbits {
+  --orbit-accent: #aff6de;
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  border: 1px solid #2e5364;
+  border-radius: clamp(19px, 2.4vw, 32px);
+  background: #0b2435;
+  color: #fff;
+  box-shadow: 0 26px 55px -27px #113a52a1;
+}
+
+.anniversary-orbits [data-orbit='0'] {
+  --orbit-accent: #a7f5d7;
+  --orbit-period: 11s;
+  --orbit-phase: -4s;
+}
+
+.anniversary-orbits [data-orbit='1'] {
+  --orbit-accent: #a9d9ff;
+  --orbit-period: 15s;
+  --orbit-phase: -9s;
+}
+
+.anniversary-orbits [data-orbit='2'] {
+  --orbit-accent: #ffd0ab;
+  --orbit-period: 18s;
+  --orbit-phase: -6s;
+}
+
+.orbit-sky {
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  aspect-ratio: 540 / 340;
+  overflow: hidden;
+  border-radius: inherit;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+  background:
+    radial-gradient(ellipse at 44% 78%, #12566630 0%, transparent 60%),
+    linear-gradient(110deg, #0a2033c9, #0c233cb0 62%, #161e3dbc),
+    #0c2134 var(--anniversary-sky) center / cover;
+}
+
+.orbit-sky::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 27% 48%, #59ebcb35, transparent 42%),
+    radial-gradient(ellipse at 78% 72%, #75bdfd39, transparent 37%),
+    radial-gradient(1px 1px at 18% 23%, #b8f7ed 80%, transparent),
+    radial-gradient(1px 1px at 36% 66%, #bddfff 80%, transparent),
+    radial-gradient(1px 1px at 51% 27%, #dfedff 80%, transparent),
+    radial-gradient(1px 1px at 73% 73%, #b8f7ed 80%, transparent),
+    radial-gradient(1px 1px at 81% 33%, #ffe6d1 80%, transparent);
+  background-size:
+    auto,
+    auto,
+    111px 131px,
+    143px 121px,
+    161px 139px,
+    171px 157px,
+    117px 153px;
+  opacity: 0.7;
+  animation: orbit-aurora 13s ease-in-out infinite alternate;
+}
+
+.orbit-masthead,
+.orbit-yearline {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  color: #d6eeed;
+  font-size: clamp(9px, 2cqi, 12px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.orbit-masthead {
+  inset: 8% auto auto 5%;
+}
+
+.orbit-motion {
+  position: absolute;
+  z-index: 3;
+  inset: 3% 3% auto auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #9bd5d24d;
+  border-radius: 50%;
+  color: #e9fdf7;
+  background: #0d2939;
+  cursor: pointer;
+}
+
+.orbit-motion:hover {
+  background: #1b4a58;
+}
+
+.orbit-yearline {
+  inset: auto 5% 5%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orbit-yearline i {
+  width: 24px;
+  height: 1px;
+  background: #9df4d9;
+}
+
+.orbit-numeral {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  pointer-events: none;
+  transition: transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.orbit-numeral > span {
+  padding-inline-end: 0.09em;
+  color: #e7fff6;
+  background: linear-gradient(
+    155deg,
+    #fffdf4 22%,
+    #c7ffeb 46%,
+    #68d8c6 77%,
+    #6fa4c8
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: clamp(82px, 38cqi, 230px);
+  font-weight: 550;
+  line-height: 0.88;
+  letter-spacing: -0.11em;
+  filter: drop-shadow(0 8px 24px #062a3d74);
+}
+
+.orbit-numeral small {
+  margin-top: 0.8em;
+  color: #d5f4ef;
+  font-size: clamp(9px, 2.15cqi, 13px);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+}
+
+.orbit-sky[data-preview='true'] .orbit-numeral {
+  transform: translateX(-23%) scale(0.68);
+}
+
+.orbit-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.orbit-grid,
+.orbit-line,
+.orbit-light,
+.orbit-satellite,
+.orbit-hit {
+  fill: none;
+}
+
+.orbit-grid {
+  stroke: #c1efeb22;
+  stroke-dasharray: 2 5;
+}
+
+.orbit-line {
+  stroke: var(--orbit-accent);
+  stroke-width: 0.9;
+  opacity: 0.45;
+  transition:
+    opacity 180ms ease,
+    stroke-width 180ms ease;
+}
+
+[data-orbit='1'] .orbit-line {
+  stroke-dasharray: 4 5;
+}
+
+[data-orbit='2'] .orbit-line {
+  stroke-dasharray: 1 4;
+}
+
+.orbit-track[data-active='true'] .orbit-line {
+  stroke-width: 1.7;
+  opacity: 1;
+}
+
+.orbit-tilt {
+  transform-origin: center;
+  animation: orbit-tilt 9s var(--orbit-phase) ease-in-out infinite alternate;
+}
+
+.orbit-sky:hover .orbit-tilt,
+.orbit-sky[data-preview='true'] .orbit-tilt,
+.orbit-sky[data-paused='true'] .orbit-tilt,
+.orbit-sky[data-paused='true'] .orbit-light,
+.orbit-sky[data-paused='true'] .orbit-satellite,
+.orbit-sky[data-paused='true']::before {
+  animation-play-state: paused;
+}
+
+.orbit-light,
+.orbit-satellite {
+  stroke: var(--orbit-accent);
+  stroke-linecap: round;
+  animation: orbit-travel var(--orbit-period) var(--orbit-phase) linear infinite;
+}
+
+.orbit-light {
+  stroke-width: 2;
+  stroke-dasharray: 12 88;
+  opacity: 0.65;
+}
+
+.orbit-satellite {
+  stroke-width: 6;
+  stroke-dasharray: 0.1 99.9;
+  filter: drop-shadow(0 0 6px var(--orbit-accent));
+}
+
+.orbit-hit {
+  pointer-events: stroke;
+  stroke: transparent;
+  stroke-width: 16;
+  cursor: pointer;
+}
+
+.orbit-photo-slot {
+  position: absolute;
+  z-index: 2;
+  inset: 20% 5% 15% auto;
+  width: 48%;
+  pointer-events: none;
+}
+
+.orbit-photo {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #c9f6eab3;
+  border-radius: clamp(12px, 3cqi, 21px);
+  background: #102c3e;
+  box-shadow: 0 13px 34px #06142198;
+  animation: orbit-photo-in 430ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.orbit-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.orbit-photo figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 24px 10px 9px;
+  color: #fff;
+  background: linear-gradient(transparent, #081a28 78%);
+  font-size: clamp(10px, 2.5cqi, 15px);
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.orbit-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 9px;
+  border-top: 1px solid #2e5364;
+}
+
+.orbit-controls button {
+  flex: 1 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 7px 9px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  color: #e2f2f6;
+  background: #ffffff08;
+  font-size: clamp(12px, 1.1vw, 15px);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.orbit-controls button[data-active='true'] {
+  border-color: var(--orbit-accent);
+  background: #ffffff19;
+}
+
+.orbit-controls button:focus-visible,
+.orbit-motion:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.orbit-control-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--orbit-accent);
+  box-shadow: 0 0 9px var(--orbit-accent);
+}
+
+.anniversary-intro {
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+}
+
+.anniversary-intro h2 {
+  font-size: clamp(31px, 3.75vw, 58px);
+  overflow-wrap: break-word;
+}
+
+.page-title-anniversary h1 {
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.anniversary-story {
+  display: grid;
+  grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.35fr);
+  gap: clamp(26px, 5vw, 70px);
+  margin-block: 45px;
+  padding: clamp(24px, 5vw, 58px);
+  border: 1px solid #e3e2d7;
+  border-radius: 26px;
+  background: #f9f7f0;
+}
+
+.anniversary-story h2 {
+  margin-top: 14px;
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 1.14;
+}
+
+.anniversary-story-logo {
+  width: clamp(88px, 12vw, 148px);
+  height: auto;
+  margin-top: 22px;
+}
+
+.anniversary-photo .anniversary-photo-logo {
+  position: absolute;
+  z-index: 1;
+  inset: 6% 5% auto auto;
+  width: clamp(88px, 14vw, 178px);
+  height: auto;
+  filter: drop-shadow(0 3px 12px #051826c7);
+}
+
+.anniversary-story-copy {
+  display: grid;
+  gap: 18px;
+}
+
+.anniversary-story-copy blockquote {
+  margin: 4px 0;
+  padding: 8px 0 8px 18px;
+  border-inline-start: 3px solid #448f85;
+  color: #265f61;
+  font-size: clamp(17px, 1.7vw, 23px);
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.capital-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 49px;
+  padding: 10px 14px;
+  border: 1px solid #adc8ce;
+  border-radius: 13px;
+  background: #fff;
+  color: #193d50;
+  font-size: 16px;
+  line-height: 1.35;
+  text-align: start;
+  cursor: pointer;
+}
+
+.capital-select-trigger svg,
+.capital-select-option svg {
+  flex: none;
+}
+
+.capital-select-trigger[data-state='open'] {
+  border-color: #408b86;
+  box-shadow: 0 0 0 3px #e3f3ef;
+}
+
+.capital-select-trigger[data-state='open'] svg {
+  transform: rotate(180deg);
+}
+
+.capital-select-panel {
+  z-index: 200;
+  width: var(--radix-select-trigger-width);
+  max-height: var(--radix-select-content-available-height);
+  overflow: hidden;
+  border: 1px solid #b9d4d5;
+  border-radius: 17px;
+  background: #fff;
+  color: #193d50;
+  box-shadow: 0 14px 34px #113a522c;
+  transform-origin: var(--radix-select-content-transform-origin);
+  animation: capital-select-in 170ms ease-out both;
+}
+
+.capital-select-options {
+  padding: 5px;
+  overscroll-behavior: contain;
+}
+
+.capital-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  min-height: 44px;
+  padding: 8px 11px;
+  border-radius: 11px;
+  font-size: 16px;
+  line-height: 1.35;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.capital-select-option[data-state='checked'] {
+  color: #195d56;
+  font-weight: 600;
+}
+
+.capital-select-option[data-highlighted] {
+  background: #e0f3ee;
+  color: #193d50;
+}
+
+.accessible .capital-select-trigger,
+.accessible .capital-select-option {
+  font-size: 18px;
+}
+
+.accessible .orbit-motion {
+  display: none;
+}
+
+@keyframes orbit-aurora {
+  from {
+    transform: translate(-3%, 2%) rotate(-5deg);
+  }
+  to {
+    transform: translate(4%, -3%) rotate(6deg);
+  }
+}
+
+@keyframes orbit-tilt {
+  from {
+    transform: rotate(-5deg);
+  }
+  to {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes orbit-travel {
+  to {
+    stroke-dashoffset: 100;
+  }
+}
+
+@keyframes orbit-photo-in {
+  from {
+    opacity: 0;
+    transform: translateX(9%) scale(0.93);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes capital-select-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 880px) {
+  .anniversary-teaser {
+    background-image:
+      linear-gradient(
+        180deg,
+        #081a30f2,
+        #081a30d9 40%,
+        #081a308c 73%,
+        #081a30ce
+      ),
+      var(--anniversary-sky);
+  }
+
+  .anniversary-teaser-inner {
+    width: min(650px, calc(100% - 40px));
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+
+  .anniversary-teaser-copy {
+    grid-row: 1;
+    padding-block: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .page-title-anniversary h1 {
+    font-size: clamp(26px, 7.6vw, 48px);
+  }
+
+  .anniversary-intro,
+  .anniversary-story {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .anniversary-teaser h2 {
+    font-size: clamp(29px, 6vw, 44px);
+  }
+
+  .anniversary-teaser .eyebrow {
+    font-size: 10px;
+  }
+
+  .anniversary-teaser p {
+    font-size: 16px;
+  }
+
+  .anniversary-teaser .button.primary {
+    font-size: 14px;
+    padding-inline: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-motion {
+    display: none;
+  }
+
+  .orbit-sky::before,
+  .orbit-tilt,
+  .orbit-light,
+  .orbit-satellite,
+  .orbit-photo,
+  .capital-select-panel {
+    animation: none;
+  }
+
+  .orbit-numeral,
+  .orbit-line,
+  .orbit-controls button {
+    transition: none;
+  }
+}

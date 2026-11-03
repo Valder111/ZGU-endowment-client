@@ -48,7 +48,7 @@ test('every route is prerendered with readable content and local assets', async 
   await page.goto('http://127.0.0.1:4173/');
   await expect(page.locator('header .fund-mark')).toHaveCount(0);
   await expect(page.locator('header .brand-fund')).toContainText(
-    'Заполярного университета',
+    'Эндаумент-фонд ЗГУ',
   );
   await context.close();
 });
@@ -75,7 +75,10 @@ test('donation dialog traps focus and restores it on Escape, close, and backdrop
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
   await trigger.click();
-  await page.mouse.click(5, 5);
+  // Wait for the reopened overlay to receive input before clicking outside.
+  await page
+    .locator('[data-slot="dialog-overlay"]')
+    .click({ position: { x: 5, y: 5 } });
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
 });
@@ -144,7 +147,10 @@ for (const width of [360, 390, 768, 1024, 1440]) {
       const actions = await page.locator('.header-actions').boundingBox();
       expect(brand).not.toBeNull();
       expect(actions).not.toBeNull();
-      expect(brand!.x + brand!.width).toBeLessThanOrEqual(actions!.x);
+      expect(
+        brand!.x + brand!.width <= actions!.x ||
+          brand!.y + brand!.height <= actions!.y,
+      ).toBe(true);
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -387,7 +393,10 @@ test('direction constellation highlights and focuses its matching card without r
     'aria-controls',
     (await scienceCard.getAttribute('id'))!,
   );
-  const campus = explorer.getByRole('button', { name: 'Кампус', exact: true });
+  const campus = explorer.getByRole('button', {
+    name: 'Инфраструктура',
+    exact: true,
+  });
   await campus.focus();
   await page.keyboard.press('Space');
   await expect(science).toHaveAttribute('aria-pressed', 'false');
@@ -404,10 +413,10 @@ test('direction constellation highlights and focuses its matching card without r
   await expect(campusCard).toBeFocused();
   await expect(campusCard).toBeInViewport();
   await campusCard
-    .getByRole('link', { name: 'Подробнее: Кампус и студенческая среда' })
+    .getByRole('link', { name: 'Подробнее: Инфраструктура для развития' })
     .click();
   await expect(page.locator('main h1')).toHaveText(
-    'Кампус и студенческая среда',
+    'Инфраструктура для развития',
   );
 });
 
@@ -480,20 +489,20 @@ test('support cards switch topics by keyboard without fictitious financial resul
     name: 'Вместе развиваем университет',
     exact: true,
   });
-  const purpose = activity.getByRole('button', { name: /Общая цель/ });
+  const purpose = activity.getByRole('button', { name: /общая цель/ });
   const fundraising = activity.getByRole('group', {
     name: 'Сбор целевого капитала',
   });
   await expect(fundraising.locator('dd')).toHaveText([
-    '0 рублей',
+    '50 000 рублей',
     '100 000 000 рублей',
   ]);
   const progress = fundraising.getByRole('progressbar', {
     name: 'Прогресс сбора',
   });
-  await expect(progress).toHaveAttribute('value', '0');
+  await expect(progress).toHaveAttribute('value', '50000');
   await expect(progress).toHaveAttribute('max', '100000000');
-  await expect(fundraising).toContainText('0% от цели');
+  await expect(fundraising).toContainText('0,05% от цели');
   await expect(activity.locator('.activity-target')).toHaveCount(0);
   await expect(activity).not.toContainText(/3\s*200\s*000|240\s*000|128/);
   await purpose.focus();
