@@ -38,10 +38,20 @@ test('anniversary invitation preserves the chosen contribution in an enquiry', a
   await expect(
     options.getByRole('option', { name: 'Общее развитие университета' }),
   ).toBeFocused();
-  for (let index = 0; index < 3; index++)
+  const chosenCapital = 'Инфраструктура для развития';
+  for (const name of [
+    'Стипендии для талантов',
+    'Наука и инженерия для Арктики',
+    chosenCapital,
+  ]) {
     await page.keyboard.press('ArrowDown');
+    // Radix moves focus asynchronously after the key event.
+    await expect(
+      options.getByRole('option', { name, exact: true }),
+    ).toBeFocused();
+  }
   await page.keyboard.press('Enter');
-  await expect(direction).toHaveText('Инфраструктура для развития');
+  await expect(direction).toHaveText(chosenCapital);
   const href = new URL(
     (await dialog
       .getByRole('link', { name: 'Обсудить вклад' })
@@ -50,9 +60,7 @@ test('anniversary invitation preserves the chosen contribution in an enquiry', a
   expect(href.protocol).toBe('mailto:');
   expect(href.searchParams.get('body')).toContain('3000 рублей');
   expect(href.searchParams.get('body')).toContain('Регулярно');
-  expect(href.searchParams.get('body')).toContain(
-    'Инфраструктура для развития',
-  );
+  expect(href.searchParams.get('body')).toContain(chosenCapital);
   await expect(dialog).toContainText('не списывает средства');
 });
 
