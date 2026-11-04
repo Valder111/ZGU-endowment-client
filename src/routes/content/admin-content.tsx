@@ -280,6 +280,8 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
           </div>
           <form
             className="staff-card staff-form staff-login-form"
+            method="post"
+            action={staffBase ? `${staffBase}/login` : undefined}
             onSubmit={signIn}
           >
             <h2>Вход в панель</h2>

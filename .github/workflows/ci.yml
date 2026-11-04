@@ -25,10 +25,12 @@ jobs:
         run: npm run build
         env:
           BASE_PATH: /pages-preview/
+          VITE_API_BASE_URL: https://staff-api.example.test/api/v1
       - name: Verify static Pages website
         run: npm run test:pages
         env:
           PLAYWRIGHT_CHANNEL: chromium
+          VITE_API_BASE_URL: https://staff-api.example.test/api/v1
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

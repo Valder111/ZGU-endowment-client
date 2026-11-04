@@ -9,6 +9,20 @@ const output = path.resolve('dist');
 const routes = JSON.parse(
   await readFile('tests/fixtures/original-pages.json', 'utf8'),
 );
+const staffApiBase = process.env.VITE_API_BASE_URL?.trim();
+if (staffApiBase) {
+  const url = URL.parse(staffApiBase);
+  assert(
+    url?.protocol === 'https:' &&
+      /^\/(?:.*\/)?api\/v1\/?$/.test(url.pathname) &&
+      !url.username &&
+      !url.password &&
+      !url.search &&
+      !url.hash &&
+      !/^(?:localhost\.?|127(?:\.\d+){3}|\[::1\])$/i.test(url.hostname),
+    'Pages needs a public HTTPS VITE_API_BASE_URL ending in /api/v1',
+  );
+}
 const index = await readFile(path.join(output, 'index.html'), 'utf8');
 const base = index.match(/<script\b[^>]*src="([^"?]+)assets\/[^"?]+\.js"/)?.[1];
 assert(
@@ -107,6 +121,16 @@ try {
     const result = await page.goto(siteUrl(route.path));
     assert.equal(result.status(), 200, route.path);
     await expect(page.locator('main h1')).toHaveText(route.title);
+    if (staffApiBase && ['/admin/', '/moderator/'].includes(route.path)) {
+      await expect(page.getByLabel('Рабочая почта')).toBeVisible();
+      await expect(page.getByLabel('Пароль', { exact: true })).toBeVisible();
+      const form = page.locator('.staff-login-form');
+      await expect(form).toHaveAttribute('method', 'post');
+      await expect(form).toHaveAttribute(
+        'action',
+        `${staffApiBase.replace(/\/$/, '')}/login`,
+      );
+    }
   }
   await page.goto(siteUrl('/projects/alumni/'));
   await page.reload();
