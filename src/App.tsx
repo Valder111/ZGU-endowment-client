@@ -8,6 +8,7 @@ import { DonationDialog } from '@/components/dialogs/donation-dialog';
 import { PageContent } from '@/routes/page-content';
 import { resolvePage } from '@/routes/resolve-page';
 import { projects } from '@/constants/projects';
+import { AdminContent } from '@/routes/content/admin-content';
 import type { PageDefinition } from '@/types/content';
 
 function Site({ page }: { page?: PageDefinition }) {
@@ -31,6 +32,13 @@ function Site({ page }: { page?: PageDefinition }) {
 }
 export function App({ pathname }: { pathname: string }) {
   const page = resolvePage(pathname);
+  if (page?.kind === 'admin') {
+    return (
+      <AdminContent
+        initialPanel={page.path === '/moderator/' ? 'moderator' : 'admin'}
+      />
+    );
+  }
   const initialProject =
     page?.kind === 'projects' ? projects[0].id : page?.projectId;
   return (

@@ -24,11 +24,8 @@ import { ResultsContent } from '@/routes/content/results-content';
 import { UniversityStories } from '@/components/elements/university-stories';
 import { AnniversaryContent } from '@/routes/content/anniversary-content';
 import { NewsArticleContent } from '@/routes/content/news-article-content';
-import { AdminContent } from '@/routes/content/admin-content';
 function InteriorContent({ page }: { page: PageDefinition }) {
   switch (page.kind) {
-    case 'admin':
-      return <AdminContent />;
     case 'anniversary':
       return <AnniversaryContent />;
     case 'news-article':
@@ -86,6 +83,7 @@ function InteriorContent({ page }: { page: PageDefinition }) {
           </p>
         </div>
       );
+    case 'admin':
     case 'home':
       return null;
   }

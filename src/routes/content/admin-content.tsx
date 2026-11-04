@@ -1,427 +1,412 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type FormEvent,
+  type MouseEvent,
+} from 'react';
+import {
+  ArrowLeft,
+  CalendarDays,
+  FileText,
+  FolderKanban,
+  LogOut,
+  ShieldCheck,
+  UserRound,
+  Users,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { generalCapital, projects } from '@/constants/projects';
+import { StaffFeedback, StaffLoad } from '@/components/staff/staff-controls';
+import { ContentWorkspace } from '@/components/staff/content-workspace';
 import {
-  apiBase,
-  apiMisconfigured,
+  collections,
+  type Collection,
+} from '@/components/staff/content-fields';
+import { UsersWorkspace } from '@/components/staff/users-workspace';
+import { roleLabels } from '@/constants/staff';
+import {
   StaffApiError,
-  staffRequest,
-} from '@/utils/admin-api';
+  staffBase,
+  staffBaseInvalid,
+  staffFetch,
+  type StaffProfile,
+  type StaffRequest,
+  type StaffSession,
+} from '@/api/staff';
 import {
-  loadDraft,
-  saveDraft,
-  type NewsDraft,
-  type PaymentDraft,
-} from '@/utils/admin-drafts';
+  invalidStaffForm,
+  useStaffAction,
+} from '@/hooks/requests/mutations/use-staff-action';
+import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
+import { localPath, sitePath } from '@/utils/paths';
 
-type StaffSession = { token: string; email: string; role: string };
-const blankNews: NewsDraft = { title: '', summary: '', body: '', photo: null };
-const blankPayment: PaymentDraft = {
-  amount: '',
-  date: '',
-  direction: generalCapital,
+type Panel = 'admin' | 'moderator';
+const titles = { admin: 'Панель администратора', moderator: 'Панель редакции' };
+const sectionIcons = {
+  news: FileText,
+  events: CalendarDays,
+  projects: FolderKanban,
 };
-const photoTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const sections = ['news', 'events', 'projects'] as const;
 
-function actionError(error: unknown, fallback: string) {
-  if (error instanceof StaffApiError) {
-    if (error.status === 401)
-      return 'Проверьте данные входа или войдите заново.';
-    if (error.status === 403)
-      return 'Для этого действия нужны права сотрудника фонда.';
-  }
-  return fallback;
-}
-
-function PhotoPreview({ file }: { file: File }) {
-  const preview = useRef<HTMLImageElement>(null);
-  useEffect(() => {
-    const image = preview.current;
-    if (!image) return;
-    const url = URL.createObjectURL(file);
-    image.src = url;
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
-  return (
-    <img
-      className="admin-preview"
-      ref={preview}
-      alt="Предпросмотр фотографии новости"
-    />
-  );
-}
-
-function NewsEditor({ session }: { session: StaffSession | null }) {
-  const photoInput = useRef<HTMLInputElement>(null);
-  const [draft, setDraft] = useState(blankNews);
-  const [record, setRecord] = useState<{
-    id: string;
-    owner: string;
-    hasPhoto: boolean;
-  } | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState('');
-  const blocked = Boolean(record && session && record.owner !== session.email);
-
-  async function submit(event: FormEvent<HTMLFormElement>) {
+function StaffProfileForm({
+  request,
+  profile,
+  onPasswordChange,
+}: {
+  request: StaffRequest;
+  profile: StaffProfile;
+  onPasswordChange: () => void;
+}) {
+  const action = useStaffAction();
+  function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (busy || blocked || (apiBase && !session)) return;
-    const form = event.currentTarget;
-    const fields = {
-      title: draft.title.trim(),
-      summary: draft.summary.trim(),
-      body: draft.body.trim(),
-    };
-    if (!fields.title || !fields.body) {
-      setStatus('Укажите заголовок и текст новости.');
-      return;
-    }
-    setBusy(true);
-    setStatus('');
-    try {
-      if (!session) {
-        await saveDraft('news', { ...fields, photo: draft.photo });
-        setStatus('Черновик новости сохранён в этом браузере.');
-        return;
-      }
-      let current = record;
-      if (!current) {
-        const response = await staffRequest(
-          '/news',
-          { ...fields, status: 'draft' },
-          session.token,
-        );
-        const { id } = await response.json();
-        if (typeof id !== 'string' || !id) throw new Error('Missing news id');
-        current = { id, owner: session.email, hasPhoto: false };
-        setRecord(current);
-      }
-      const path = `/news/${encodeURIComponent(current.id)}`;
-      if (draft.photo && !current.hasPhoto) {
-        const upload = new FormData();
-        upload.set('file', draft.photo);
-        await staffRequest(`${path}/media`, upload, session.token);
-        setRecord({ ...current, hasPhoto: true });
-      }
-      await staffRequest(`${path}/publish`, undefined, session.token);
-      setRecord(null);
-      setDraft(blankNews);
-      form.reset();
-      setStatus('Новость опубликована в API фонда.');
-    } catch (error) {
-      setStatus(
-        actionError(
-          error,
-          session
-            ? 'Публикация не завершилась. Если черновик был создан, повторите отправку из этой формы.'
-            : 'Браузер не смог сохранить черновик новости.',
-        ),
-      );
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function restore() {
-    setBusy(true);
-    try {
-      const saved = await loadDraft('news');
-      if (saved) {
-        if (photoInput.current) photoInput.current.value = '';
-        setDraft(saved);
-      }
-      setStatus(
-        saved ? 'Черновик загружен.' : 'Сохранённого черновика пока нет.',
-      );
-    } catch {
-      setStatus('Браузер не смог загрузить черновик.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <form className="admin-card" onSubmit={submit}>
-      <h2>Новая новость</h2>
-      <p>
-        {session
-          ? 'После публикации запись появится в API фонда. Публичная лента этого сайта обновляется при сборке.'
-          : 'Текст и фотография сохраняются в черновике этого браузера.'}
-      </p>
-      <label>
-        Заголовок
-        <input
-          required
-          maxLength={255}
-          readOnly={!!record || busy}
-          value={draft.title}
-          onChange={(event) =>
-            setDraft({ ...draft, title: event.target.value })
-          }
-        />
-      </label>
-      <label>
-        Краткое описание
-        <input
-          readOnly={!!record || busy}
-          value={draft.summary}
-          onChange={(event) =>
-            setDraft({ ...draft, summary: event.target.value })
-          }
-        />
-      </label>
-      <label>
-        Текст новости
-        <textarea
-          rows={7}
-          required
-          readOnly={!!record || busy}
-          value={draft.body}
-          onChange={(event) => setDraft({ ...draft, body: event.target.value })}
-        />
-      </label>
-      <label>
-        Фотография
-        <input
-          type="file"
-          ref={photoInput}
-          accept={photoTypes.join(',')}
-          disabled={busy || record?.hasPhoto}
-          onChange={(event) => {
-            const photo = event.target.files?.[0] ?? null;
-            if (
-              photo &&
-              (!photoTypes.includes(photo.type) ||
-                photo.size > 10 * 1024 * 1024 ||
-                !photo.size)
-            ) {
-              event.target.value = '';
-              setDraft({ ...draft, photo: null });
-              setStatus(
-                'Выберите фото JPEG, PNG, WebP или GIF размером до 10 МБ.',
-              );
-              return;
-            }
-            setDraft({ ...draft, photo });
-            setStatus('');
-          }}
-        />
-      </label>
-      {draft.photo && (
-        <figure>
-          <PhotoPreview file={draft.photo} />
-          <figcaption>{draft.photo.name}</figcaption>
-          <Button
-            variant="ghost"
-            disabled={busy || record?.hasPhoto}
-            onClick={() => {
-              if (photoInput.current) photoInput.current.value = '';
-              setDraft({ ...draft, photo: null });
-            }}
-          >
-            Убрать фото
-          </Button>
-        </figure>
-      )}
-      <div className="admin-actions">
-        <Button type="submit" variant="brand" disabled={busy || blocked}>
-          {busy
-            ? 'Подождите…'
-            : record
-              ? 'Завершить публикацию'
-              : session
-                ? 'Опубликовать новость'
-                : 'Сохранить черновик новости'}
-        </Button>
-        {!session && (
-          <Button variant="outline" onClick={restore} disabled={busy}>
-            Открыть черновик
-          </Button>
-        )}
-      </div>
-      <p role="status">
-        {blocked
-          ? 'Войдите под учётной записью, создавшей этот черновик.'
-          : status}
-      </p>
-    </form>
-  );
-}
-
-function PaymentEditor() {
-  const [draft, setDraft] = useState(blankPayment);
-  const [status, setStatus] = useState('');
-  const [busy, setBusy] = useState(false);
-
-  async function changeStorage(save: boolean) {
-    setBusy(true);
-    try {
-      if (save) {
-        await saveDraft('payment', draft);
-        setStatus('Черновик платежа сохранён в этом браузере.');
-      } else {
-        const saved = await loadDraft('payment');
-        if (saved) setDraft(saved);
-        setStatus(
-          saved
-            ? 'Черновик платежа загружен.'
-            : 'Сохранённого черновика пока нет.',
-        );
-      }
-    } catch {
-      setStatus('Хранилище браузера недоступно.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <form
-      className="admin-card"
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (!busy) void changeStorage(true);
-      }}
-    >
-      <h2>Новый платёж</h2>
-      <p>
-        Локальная заготовка для учёта. Сохранение черновика не проводит оплату.
-      </p>
-      <label>
-        Сумма, ₽
-        <input
-          type="number"
-          inputMode="decimal"
-          min="0.01"
-          max="999999999.99"
-          step="0.01"
-          required
-          value={draft.amount}
-          onChange={(event) =>
-            setDraft({ ...draft, amount: event.target.value })
-          }
-        />
-      </label>
-      <label>
-        Направление поддержки
-        <select
-          value={draft.direction}
-          onChange={(event) =>
-            setDraft({ ...draft, direction: event.target.value })
-          }
-        >
-          {[generalCapital, ...projects.map(({ title }) => title)].map(
-            (title) => (
-              <option key={title}>{title}</option>
-            ),
-          )}
-        </select>
-      </label>
-      <label>
-        Дата
-        <input
-          type="date"
-          required
-          value={draft.date}
-          onChange={(event) => setDraft({ ...draft, date: event.target.value })}
-        />
-      </label>
-      <div className="admin-actions">
-        <Button type="submit" variant="brand" disabled={busy}>
-          Сохранить черновик платежа
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => void changeStorage(false)}
-          disabled={busy}
-        >
-          Открыть черновик платежа
-        </Button>
-      </div>
-      <p role="status">{status}</p>
-    </form>
-  );
-}
-
-export function AdminContent() {
-  const [session, setSession] = useState<StaffSession | null>(null);
-  const [status, setStatus] = useState('');
-  const [busy, setBusy] = useState(false);
-
-  async function signIn(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (busy) return;
-    const form = event.currentTarget;
-    const data = new FormData(form);
-    setBusy(true);
-    setStatus('');
-    try {
-      const response = await staffRequest('/login', {
-        email: String(data.get('email') ?? '').trim(),
-        password: String(data.get('password') ?? ''),
+    const data = new FormData(event.currentTarget);
+    const current = String(data.get('current_password') ?? '');
+    const password = String(data.get('password') ?? '');
+    void action.run(async () => {
+      if (password !== data.get('confirmation'))
+        invalidStaffForm('Новые пароли не совпадают.');
+      if (new TextEncoder().encode(password).length > 72)
+        invalidStaffForm('Пароль слишком длинный. Используйте до 72 байт.');
+      await request('/me', {
+        method: 'PATCH',
+        body: { current_password: current, password },
       });
-      const staff: StaffSession = await response.json();
-      if (
-        !staff.token ||
-        !staff.email ||
-        !['admin', 'moderator'].includes(staff.role)
-      ) {
-        throw new StaffApiError(403);
-      }
-      form.reset();
-      setSession(staff);
-    } catch (error) {
-      setStatus(actionError(error, 'Не удалось связаться с API фонда.'));
-    } finally {
-      setBusy(false);
-    }
+      onPasswordChange();
+    }, '');
   }
-
   return (
-    <div className="wrap admin-content">
-      {apiBase && !session && (
-        <form className="admin-card admin-login" onSubmit={signIn}>
-          <h2>Вход для сотрудников</h2>
-          <label>
-            Рабочая почта
-            <input type="email" name="email" autoComplete="username" required />
-          </label>
-          <label>
-            Пароль
+    <div className="staff-profile">
+      <div className="staff-workspace-heading">
+        <div>
+          <h2>Мой профиль</h2>
+          <p>
+            {profile.first_name} {profile.last_name} ·{' '}
+            {roleLabels[profile.role]}
+          </p>
+        </div>
+      </div>
+      <form className="staff-card staff-form" onSubmit={save}>
+        <h3>Сменить пароль</h3>
+        <p className="staff-hint">После смены пароля нужно войти заново.</p>
+        <fieldset disabled={action.pending}>
+          <label className="staff-field">
+            Текущий пароль
             <input
+              name="current_password"
               type="password"
-              name="password"
-              autoComplete="current-password"
               required
-              minLength={8}
+              autoComplete="current-password"
             />
           </label>
-          <Button type="submit" variant="brand" disabled={busy}>
-            {busy ? 'Вход…' : 'Войти'}
-          </Button>
-          <p role="status">{status}</p>
-        </form>
-      )}
-      {session ? (
-        <div className="admin-session">
-          <p>Вы вошли как {session.email}</p>
-          <Button variant="outline" onClick={() => setSession(null)}>
-            Выйти
+          <label className="staff-field">
+            Новый пароль
+            <input
+              name="password"
+              type="password"
+              minLength={8}
+              maxLength={72}
+              required
+              autoComplete="new-password"
+            />
+          </label>
+          <label className="staff-field">
+            Повторите новый пароль
+            <input
+              name="confirmation"
+              type="password"
+              minLength={8}
+              maxLength={72}
+              required
+              autoComplete="new-password"
+            />
+          </label>
+        </fieldset>
+        <StaffFeedback error={action.error} />
+        <div className="staff-actions">
+          <Button type="submit" variant="brand" disabled={action.pending}>
+            Изменить пароль
           </Button>
         </div>
-      ) : (
-        !apiBase && (
-          <p className="admin-mode">
-            {apiMisconfigured
-              ? 'Адрес API задан неверно. Доступны локальные черновики.'
-              : 'Режим локальных черновиков. Подключите API фонда для публикации новостей.'}
-          </p>
-        )
-      )}
-      <div className="admin-grid" hidden={!!apiBase && !session}>
-        <NewsEditor session={session} />
-        <PaymentEditor />
-      </div>
+      </form>
     </div>
+  );
+}
+
+export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
+  const [panel, setPanel] = useState(initialPanel);
+  const [collection, setCollection] = useState<Collection>('news');
+  const [showProfile, setShowProfile] = useState(false);
+  const [{ session, status }, setAuth] = useState<{
+    session: StaffSession | null;
+    status: string;
+  }>({ session: null, status: '' });
+  const login = useStaffAction();
+  const token = session?.token;
+
+  const request: StaffRequest = useCallback(
+    async <T,>(path: string, options?: Parameters<StaffRequest>[1]) => {
+      try {
+        return await staffFetch<T>(path, options, token);
+      } catch (error) {
+        if (
+          error instanceof StaffApiError &&
+          error.status === 401 &&
+          !options?.signal?.aborted
+        ) {
+          setAuth((current) =>
+            current.session?.token === token
+              ? { session: null, status: 'Сессия завершилась. Войдите заново.' }
+              : current,
+          );
+        }
+        throw error;
+      }
+    },
+    [token],
+  );
+
+  const profile = useStaffResource<StaffProfile>(request, token ? '/me' : null);
+  const current = profile.data;
+  const effectivePanel = current?.role === 'moderator' ? 'moderator' : panel;
+
+  useEffect(() => {
+    function onPopState() {
+      setPanel(
+        localPath(window.location.pathname) === '/moderator/'
+          ? 'moderator'
+          : 'admin',
+      );
+      setShowProfile(false);
+    }
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  function navigate(next: Panel, replace = false) {
+    if (next !== panel) {
+      const href = sitePath(`/${next}/`);
+      if (replace) window.history.replaceState(null, '', href);
+      else window.history.pushState(null, '', href);
+    }
+    setPanel(next);
+    setShowProfile(false);
+    document.title = `${titles[next]} – Эндаумент-фонд ЗГУ`;
+  }
+
+  function panelLink(event: MouseEvent<HTMLAnchorElement>, next: Panel) {
+    if (
+      event.button ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey
+    )
+      return;
+    event.preventDefault();
+    navigate(next);
+  }
+
+  function signIn(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setAuth({ session: null, status: '' });
+    void login.run(async () => {
+      const staff = await staffFetch<StaffSession>('/login', {
+        method: 'POST',
+        body: {
+          email: String(data.get('email') ?? '').trim(),
+          password: String(data.get('password') ?? ''),
+        },
+      });
+      if (!staff?.token || !['admin', 'moderator'].includes(staff.role))
+        throw new StaffApiError(403);
+      form.reset();
+      if (staff.role === 'moderator') navigate('moderator', true);
+      setCollection('news');
+      setAuth({ session: staff, status: '' });
+    }, '');
+  }
+
+  function signOut(message: string) {
+    setAuth({ session: null, status: message });
+    setShowProfile(false);
+  }
+
+  return (
+    <main className="staff-shell">
+      <div className="staff-top">
+        <a className="staff-brand" href={sitePath('/')}>
+          <span aria-hidden="true">
+            <ShieldCheck />
+          </span>
+          <strong>
+            Эндаумент-фонд ЗГУ<small>Рабочее пространство</small>
+          </strong>
+        </a>
+        {session && (
+          <div className="staff-account">
+            <span>{current?.email ?? session.email}</span>
+            <Button
+              variant="outline"
+              onClick={() => signOut('Вы вышли из панели.')}
+            >
+              <LogOut /> Выйти
+            </Button>
+          </div>
+        )}
+      </div>
+      {!session ? (
+        <div className="staff-login-layout">
+          <div className="staff-login-intro">
+            <span className="staff-kicker">ДЛЯ СОТРУДНИКОВ ФОНДА</span>
+            <h1>{titles[panel]}</h1>
+            <p>
+              {panel === 'admin'
+                ? 'Управляйте учётными записями и доступом сотрудников.'
+                : 'Управляйте новостями, событиями, проектами и фотографиями.'}
+            </p>
+            <a
+              href={sitePath(`/${panel === 'admin' ? 'moderator' : 'admin'}/`)}
+              className="staff-panel-link"
+              onClick={(event) =>
+                panelLink(event, panel === 'admin' ? 'moderator' : 'admin')
+              }
+            >
+              {titles[panel === 'admin' ? 'moderator' : 'admin']} ↗
+            </a>
+          </div>
+          <form
+            className="staff-card staff-form staff-login-form"
+            onSubmit={signIn}
+          >
+            <h2>Вход в панель</h2>
+            {staffBase ? (
+              <>
+                <fieldset disabled={login.pending}>
+                  <label className="staff-field">
+                    Рабочая почта
+                    <input
+                      name="email"
+                      type="email"
+                      autoComplete="username"
+                      required
+                    />
+                  </label>
+                  <label className="staff-field">
+                    Пароль
+                    <input
+                      name="password"
+                      type="password"
+                      autoComplete="current-password"
+                      required
+                      minLength={8}
+                    />
+                  </label>
+                </fieldset>
+                <StaffFeedback error={login.error} notice={status} />
+                <Button type="submit" variant="brand" disabled={login.pending}>
+                  {login.pending ? 'Вход…' : 'Войти'}
+                </Button>
+              </>
+            ) : (
+              <p className="staff-hint">
+                {staffBaseInvalid
+                  ? 'Адрес API фонда задан неверно.'
+                  : 'Для входа настройте адрес API фонда.'}
+              </p>
+            )}
+          </form>
+        </div>
+      ) : (
+        <div className="staff-layout">
+          <nav className="staff-nav" aria-label="Разделы рабочей панели">
+            {current?.role === 'admin' && (
+              <a
+                href={sitePath('/admin/')}
+                aria-current={
+                  effectivePanel === 'admin' && !showProfile
+                    ? 'page'
+                    : undefined
+                }
+                onClick={(event) => panelLink(event, 'admin')}
+              >
+                <Users /> Сотрудники
+              </a>
+            )}
+            <a
+              href={sitePath('/moderator/')}
+              aria-current={
+                effectivePanel === 'moderator' && !showProfile
+                  ? 'page'
+                  : undefined
+              }
+              onClick={(event) => panelLink(event, 'moderator')}
+            >
+              <FileText /> Редакция
+            </a>
+            {effectivePanel === 'moderator' && !showProfile && (
+              <div className="staff-nav-sections">
+                {sections.map((item) => {
+                  const Icon = sectionIcons[item];
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      aria-pressed={collection === item}
+                      onClick={() => setCollection(item)}
+                    >
+                      <Icon /> {collections[item].label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            <button
+              type="button"
+              aria-pressed={showProfile}
+              onClick={() => setShowProfile(true)}
+            >
+              <UserRound /> Мой профиль
+            </button>
+            <a className="staff-site-link" href={sitePath('/')}>
+              <ArrowLeft /> На сайт
+            </a>
+          </nav>
+          <div className="staff-main">
+            <h1>{titles[effectivePanel]}</h1>
+            <StaffLoad {...profile}>
+              {current?.is_active ? (
+                showProfile ? (
+                  <StaffProfileForm
+                    request={request}
+                    profile={current}
+                    onPasswordChange={() =>
+                      signOut('Пароль изменён. Войдите с новым паролем.')
+                    }
+                  />
+                ) : effectivePanel === 'admin' ? (
+                  <UsersWorkspace
+                    request={request}
+                    profile={current}
+                    refreshProfile={profile.reload}
+                  />
+                ) : (
+                  <ContentWorkspace
+                    key={collection}
+                    request={request}
+                    collection={collection}
+                  />
+                )
+              ) : (
+                <StaffFeedback error="Эта учётная запись неактивна." />
+              )}
+            </StaffLoad>
+          </div>
+        </div>
+      )}
+    </main>
   );
 }

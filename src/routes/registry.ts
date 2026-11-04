@@ -5,7 +5,13 @@ const pageGroups = [
   {
     paths: ['/admin/'],
     kind: 'admin',
-    title: 'Панель фонда',
+    title: 'Панель администратора',
+    eyebrow: 'РАБОЧИЙ РАЗДЕЛ',
+  },
+  {
+    paths: ['/moderator/'],
+    kind: 'admin',
+    title: 'Панель редакции',
     eyebrow: 'РАБОЧИЙ РАЗДЕЛ',
   },
   {
