@@ -30,8 +30,8 @@ import type {
   FileUpdatePayload,
   PublishCreateData,
   PublishCreateError,
-} from "./data-contracts";
-import { HttpClient, type RequestParams } from "./http-client";
+} from './data-contracts';
+import { HttpClient, type RequestParams } from './http-client';
 
 export class Documents<
   SecurityDataType = unknown,
@@ -52,9 +52,9 @@ export class Documents<
   documentsList = (params: RequestParams = {}) =>
     this.request<DocumentsListData, DocumentsListError>({
       path: `/documents`,
-      method: "GET",
+      method: 'GET',
       secure: true,
-      format: "json",
+      format: 'json',
       ...params,
     });
   /**
@@ -77,11 +77,11 @@ export class Documents<
   ) =>
     this.request<DocumentsCreateData, DocumentsCreateError>({
       path: `/documents`,
-      method: "POST",
+      method: 'POST',
       body: data,
       secure: true,
-      type: "multipart/form-data",
-      format: "json",
+      type: 'multipart/form-data',
+      format: 'json',
       ...params,
     });
   /**
@@ -102,9 +102,9 @@ export class Documents<
   documentsDetail = (id: string, params: RequestParams = {}) =>
     this.request<DocumentsDetailData, DocumentsDetailError>({
       path: `/documents/${id}`,
-      method: "GET",
+      method: 'GET',
       secure: true,
-      format: "json",
+      format: 'json',
       ...params,
     });
   /**
@@ -125,7 +125,7 @@ export class Documents<
   documentsDelete = (id: string, params: RequestParams = {}) =>
     this.request<DocumentsDeleteData, DocumentsDeleteError>({
       path: `/documents/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       secure: true,
       ...params,
     });
@@ -151,10 +151,10 @@ export class Documents<
   ) =>
     this.request<DocumentsPartialUpdateData, DocumentsPartialUpdateError>({
       path: `/documents/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: body,
       secure: true,
-      type: "application/json",
+      type: 'application/json',
       ...params,
     });
   /**
@@ -175,7 +175,7 @@ export class Documents<
   contentList = (id: string, params: RequestParams = {}) =>
     this.request<ContentListData, ContentListError>({
       path: `/documents/${id}/content`,
-      method: "GET",
+      method: 'GET',
       secure: true,
       ...params,
     });
@@ -201,11 +201,11 @@ export class Documents<
   ) =>
     this.request<FileUpdateData, FileUpdateError>({
       path: `/documents/${id}/file`,
-      method: "PUT",
+      method: 'PUT',
       body: data,
       secure: true,
-      type: "multipart/form-data",
-      format: "json",
+      type: 'multipart/form-data',
+      format: 'json',
       ...params,
     });
   /**
@@ -226,7 +226,7 @@ export class Documents<
   publishCreate = (id: string, params: RequestParams = {}) =>
     this.request<PublishCreateData, PublishCreateError>({
       path: `/documents/${id}/publish`,
-      method: "POST",
+      method: 'POST',
       secure: true,
       ...params,
     });

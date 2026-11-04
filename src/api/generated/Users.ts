@@ -23,8 +23,8 @@ import type {
   UsersListError,
   UsersPartialUpdateData,
   UsersPartialUpdateError,
-} from "./data-contracts";
-import { HttpClient, type RequestParams } from "./http-client";
+} from './data-contracts';
+import { HttpClient, type RequestParams } from './http-client';
 
 export class Users<
   SecurityDataType = unknown,
@@ -45,9 +45,9 @@ export class Users<
   usersList = (params: RequestParams = {}) =>
     this.request<UsersListData, UsersListError>({
       path: `/users`,
-      method: "GET",
+      method: 'GET',
       secure: true,
-      format: "json",
+      format: 'json',
       ...params,
     });
   /**
@@ -68,11 +68,11 @@ export class Users<
   usersCreate = (body: ApiUserCreateRequest, params: RequestParams = {}) =>
     this.request<UsersCreateData, UsersCreateError>({
       path: `/users`,
-      method: "POST",
+      method: 'POST',
       body: body,
       secure: true,
-      type: "application/json",
-      format: "json",
+      type: 'application/json',
+      format: 'json',
       ...params,
     });
   /**
@@ -93,9 +93,9 @@ export class Users<
   usersDetail = (id: string, params: RequestParams = {}) =>
     this.request<UsersDetailData, UsersDetailError>({
       path: `/users/${id}`,
-      method: "GET",
+      method: 'GET',
       secure: true,
-      format: "json",
+      format: 'json',
       ...params,
     });
   /**
@@ -116,7 +116,7 @@ export class Users<
   usersDelete = (id: string, params: RequestParams = {}) =>
     this.request<UsersDeleteData, UsersDeleteError>({
       path: `/users/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       secure: true,
       ...params,
     });
@@ -143,10 +143,10 @@ export class Users<
   ) =>
     this.request<UsersPartialUpdateData, UsersPartialUpdateError>({
       path: `/users/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: body,
       secure: true,
-      type: "application/json",
+      type: 'application/json',
       ...params,
     });
 }

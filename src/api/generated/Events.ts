@@ -37,8 +37,8 @@ import type {
   MediaUpdateData,
   MediaUpdateError,
   MediaUpdatePayload,
-} from "./data-contracts";
-import { HttpClient, type RequestParams } from "./http-client";
+} from './data-contracts';
+import { HttpClient, type RequestParams } from './http-client';
 
 export class Events<
   SecurityDataType = unknown,
@@ -56,8 +56,8 @@ export class Events<
   eventsList = (params: RequestParams = {}) =>
     this.request<EventsListData, EventsListError>({
       path: `/events`,
-      method: "GET",
-      format: "json",
+      method: 'GET',
+      format: 'json',
       ...params,
     });
   /**
@@ -78,11 +78,11 @@ export class Events<
   eventsCreate = (body: ApiEventCreateRequest, params: RequestParams = {}) =>
     this.request<EventsCreateData, EventsCreateError>({
       path: `/events`,
-      method: "POST",
+      method: 'POST',
       body: body,
       secure: true,
-      type: "application/json",
-      format: "json",
+      type: 'application/json',
+      format: 'json',
       ...params,
     });
   /**
@@ -100,8 +100,8 @@ export class Events<
   eventsDetail = (id: string, params: RequestParams = {}) =>
     this.request<EventsDetailData, EventsDetailError>({
       path: `/events/${id}`,
-      method: "GET",
-      format: "json",
+      method: 'GET',
+      format: 'json',
       ...params,
     });
   /**
@@ -122,7 +122,7 @@ export class Events<
   eventsDelete = (id: string, params: RequestParams = {}) =>
     this.request<EventsDeleteData, EventsDeleteError>({
       path: `/events/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       secure: true,
       ...params,
     });
@@ -148,10 +148,10 @@ export class Events<
   ) =>
     this.request<EventsPartialUpdateData, EventsPartialUpdateError>({
       path: `/events/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: body,
       secure: true,
-      type: "application/json",
+      type: 'application/json',
       ...params,
     });
   /**
@@ -172,7 +172,7 @@ export class Events<
   finishCreate = (id: string, params: RequestParams = {}) =>
     this.request<FinishCreateData, FinishCreateError>({
       path: `/events/${id}/finish`,
-      method: "POST",
+      method: 'POST',
       secure: true,
       ...params,
     });
@@ -191,8 +191,8 @@ export class Events<
   mediaList = (id: string, params: RequestParams = {}) =>
     this.request<MediaListData, MediaListError>({
       path: `/events/${id}/media`,
-      method: "GET",
-      format: "json",
+      method: 'GET',
+      format: 'json',
       ...params,
     });
   /**
@@ -217,11 +217,11 @@ export class Events<
   ) =>
     this.request<MediaCreateData, MediaCreateError>({
       path: `/events/${id}/media`,
-      method: "POST",
+      method: 'POST',
       body: data,
       secure: true,
-      type: "multipart/form-data",
-      format: "json",
+      type: 'multipart/form-data',
+      format: 'json',
       ...params,
     });
   /**
@@ -247,11 +247,11 @@ export class Events<
   ) =>
     this.request<MediaUpdateData, MediaUpdateError>({
       path: `/events/${id}/media/${mediaId}`,
-      method: "PUT",
+      method: 'PUT',
       body: data,
       secure: true,
-      type: "multipart/form-data",
-      format: "json",
+      type: 'multipart/form-data',
+      format: 'json',
       ...params,
     });
   /**
@@ -272,7 +272,7 @@ export class Events<
   mediaDelete = (id: string, mediaId: string, params: RequestParams = {}) =>
     this.request<MediaDeleteData, MediaDeleteError>({
       path: `/events/${id}/media/${mediaId}`,
-      method: "DELETE",
+      method: 'DELETE',
       secure: true,
       ...params,
     });
@@ -295,7 +295,7 @@ export class Events<
   ) =>
     this.request<MediaContentListData, MediaContentListError>({
       path: `/events/${id}/media/${mediaId}/content`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
 }

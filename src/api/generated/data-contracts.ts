@@ -36,7 +36,7 @@ export interface ApiEventUpdateRequest {
 
 export interface ApiNewsCreateRequest {
   body: string;
-  status: "draft" | "published" | "archived";
+  status: 'draft' | 'published' | 'archived';
   summary?: string;
   title: string;
 }
@@ -55,7 +55,7 @@ export interface ApiProjectCreateRequest {
   name: string;
   short_description?: string;
   starts_at?: string;
-  status: "draft" | "published" | "completed" | "archived";
+  status: 'draft' | 'published' | 'completed' | 'archived';
   /** @example "150000.00" */
   target_amount?: string;
 }
@@ -78,7 +78,7 @@ export interface ApiUserAdminUpdateRequest {
    * @maxLength 72
    */
   password?: string;
-  role?: "admin" | "moderator";
+  role?: 'admin' | 'moderator';
 }
 
 export interface ApiUserCreateRequest {
@@ -90,7 +90,7 @@ export interface ApiUserCreateRequest {
    * @maxLength 72
    */
   password: string;
-  role: "admin" | "moderator";
+  role: 'admin' | 'moderator';
 }
 
 export interface ApiUserLoginRequest {

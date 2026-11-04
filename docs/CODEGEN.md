@@ -40,20 +40,20 @@ npx swagger-typescript-api generate --axios --path ../server/docs/swagger.json -
 Рядом с запуском CLI ищет `swagger-typescript-api.config.ts`. Другой файл указывается флагом `--custom-config`. Поля конфига перекрывают флаги командной строки.
 
 ```ts
-import type { GenerateApiParams } from "swagger-typescript-api";
+import type { GenerateApiParams } from 'swagger-typescript-api';
 
 const config: GenerateApiParams = {
-  input: "../server/docs/swagger.json",
-  output: "./src/api/generated",
-  fileName: "index.ts",
-  httpClientType: "axios",
+  input: '../server/docs/swagger.json',
+  output: './src/api/generated',
+  fileName: 'index.ts',
+  httpClientType: 'axios',
   modular: true,
   moduleNameFirstTag: true,
   generateResponses: true,
   extractRequestBody: true,
   extractResponseBody: true,
   extractResponseError: true,
-  enumStyle: "union",
+  enumStyle: 'union',
   typeOnlyImports: true,
 };
 

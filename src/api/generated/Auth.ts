@@ -19,8 +19,8 @@ import type {
   LoginCreateError,
   PatchAuthData,
   PatchAuthError,
-} from "./data-contracts";
-import { HttpClient, type RequestParams } from "./http-client";
+} from './data-contracts';
+import { HttpClient, type RequestParams } from './http-client';
 
 export class Auth<
   SecurityDataType = unknown,
@@ -41,10 +41,10 @@ export class Auth<
   loginCreate = (body: ApiUserLoginRequest, params: RequestParams = {}) =>
     this.request<LoginCreateData, LoginCreateError>({
       path: `/login`,
-      method: "POST",
+      method: 'POST',
       body: body,
-      type: "application/json",
-      format: "json",
+      type: 'application/json',
+      format: 'json',
       ...params,
     });
   /**
@@ -64,9 +64,9 @@ export class Auth<
   getAuth = (params: RequestParams = {}) =>
     this.request<GetAuthData, GetAuthError>({
       path: `/me`,
-      method: "GET",
+      method: 'GET',
       secure: true,
-      format: "json",
+      format: 'json',
       ...params,
     });
   /**
@@ -86,10 +86,10 @@ export class Auth<
   patchAuth = (body: ApiUserUpdateRequest, params: RequestParams = {}) =>
     this.request<PatchAuthData, PatchAuthError>({
       path: `/me`,
-      method: "PATCH",
+      method: 'PATCH',
       body: body,
       secure: true,
-      type: "application/json",
+      type: 'application/json',
       ...params,
     });
 }

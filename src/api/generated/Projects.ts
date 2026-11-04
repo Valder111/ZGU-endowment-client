@@ -37,8 +37,8 @@ import type {
   ProjectsListError,
   ProjectsPartialUpdateData,
   ProjectsPartialUpdateError,
-} from "./data-contracts";
-import { HttpClient, type RequestParams } from "./http-client";
+} from './data-contracts';
+import { HttpClient, type RequestParams } from './http-client';
 
 export class Projects<
   SecurityDataType = unknown,
@@ -56,8 +56,8 @@ export class Projects<
   projectsList = (params: RequestParams = {}) =>
     this.request<ProjectsListData, ProjectsListError>({
       path: `/projects`,
-      method: "GET",
-      format: "json",
+      method: 'GET',
+      format: 'json',
       ...params,
     });
   /**
@@ -80,11 +80,11 @@ export class Projects<
   ) =>
     this.request<ProjectsCreateData, ProjectsCreateError>({
       path: `/projects`,
-      method: "POST",
+      method: 'POST',
       body: body,
       secure: true,
-      type: "application/json",
-      format: "json",
+      type: 'application/json',
+      format: 'json',
       ...params,
     });
   /**
@@ -102,8 +102,8 @@ export class Projects<
   projectsDetail = (id: string, params: RequestParams = {}) =>
     this.request<ProjectsDetailData, ProjectsDetailError>({
       path: `/projects/${id}`,
-      method: "GET",
-      format: "json",
+      method: 'GET',
+      format: 'json',
       ...params,
     });
   /**
@@ -124,7 +124,7 @@ export class Projects<
   projectsDelete = (id: string, params: RequestParams = {}) =>
     this.request<ProjectsDeleteData, ProjectsDeleteError>({
       path: `/projects/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       secure: true,
       ...params,
     });
@@ -150,10 +150,10 @@ export class Projects<
   ) =>
     this.request<ProjectsPartialUpdateData, ProjectsPartialUpdateError>({
       path: `/projects/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: body,
       secure: true,
-      type: "application/json",
+      type: 'application/json',
       ...params,
     });
   /**
@@ -174,7 +174,7 @@ export class Projects<
   completeCreate = (id: string, params: RequestParams = {}) =>
     this.request<CompleteCreateData, CompleteCreateError>({
       path: `/projects/${id}/complete`,
-      method: "POST",
+      method: 'POST',
       secure: true,
       ...params,
     });
@@ -193,8 +193,8 @@ export class Projects<
   mediaList = (id: string, params: RequestParams = {}) =>
     this.request<MediaListOutput, MediaListFails>({
       path: `/projects/${id}/media`,
-      method: "GET",
-      format: "json",
+      method: 'GET',
+      format: 'json',
       ...params,
     });
   /**
@@ -219,11 +219,11 @@ export class Projects<
   ) =>
     this.request<MediaCreateOutput, MediaCreateFails>({
       path: `/projects/${id}/media`,
-      method: "POST",
+      method: 'POST',
       body: data,
       secure: true,
-      type: "multipart/form-data",
-      format: "json",
+      type: 'multipart/form-data',
+      format: 'json',
       ...params,
     });
   /**
@@ -249,11 +249,11 @@ export class Projects<
   ) =>
     this.request<MediaUpdateOutput, MediaUpdateFails>({
       path: `/projects/${id}/media/${mediaId}`,
-      method: "PUT",
+      method: 'PUT',
       body: data,
       secure: true,
-      type: "multipart/form-data",
-      format: "json",
+      type: 'multipart/form-data',
+      format: 'json',
       ...params,
     });
   /**
@@ -274,7 +274,7 @@ export class Projects<
   mediaDelete = (id: string, mediaId: string, params: RequestParams = {}) =>
     this.request<MediaDeleteOutput, MediaDeleteFails>({
       path: `/projects/${id}/media/${mediaId}`,
-      method: "DELETE",
+      method: 'DELETE',
       secure: true,
       ...params,
     });
@@ -297,7 +297,7 @@ export class Projects<
   ) =>
     this.request<MediaContentListOutput, MediaContentListFails>({
       path: `/projects/${id}/media/${mediaId}/content`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
 }

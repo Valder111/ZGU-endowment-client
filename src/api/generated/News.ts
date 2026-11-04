@@ -37,8 +37,8 @@ import type {
   NewsPartialUpdateError,
   PublishCreateFail,
   PublishCreateResult,
-} from "./data-contracts";
-import { HttpClient, type RequestParams } from "./http-client";
+} from './data-contracts';
+import { HttpClient, type RequestParams } from './http-client';
 
 export class News<
   SecurityDataType = unknown,
@@ -56,8 +56,8 @@ export class News<
   newsList = (params: RequestParams = {}) =>
     this.request<NewsListData, NewsListError>({
       path: `/news`,
-      method: "GET",
-      format: "json",
+      method: 'GET',
+      format: 'json',
       ...params,
     });
   /**
@@ -77,11 +77,11 @@ export class News<
   newsCreate = (body: ApiNewsCreateRequest, params: RequestParams = {}) =>
     this.request<NewsCreateData, NewsCreateError>({
       path: `/news`,
-      method: "POST",
+      method: 'POST',
       body: body,
       secure: true,
-      type: "application/json",
-      format: "json",
+      type: 'application/json',
+      format: 'json',
       ...params,
     });
   /**
@@ -99,8 +99,8 @@ export class News<
   newsDetail = (id: string, params: RequestParams = {}) =>
     this.request<NewsDetailData, NewsDetailError>({
       path: `/news/${id}`,
-      method: "GET",
-      format: "json",
+      method: 'GET',
+      format: 'json',
       ...params,
     });
   /**
@@ -121,7 +121,7 @@ export class News<
   newsDelete = (id: string, params: RequestParams = {}) =>
     this.request<NewsDeleteData, NewsDeleteError>({
       path: `/news/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       secure: true,
       ...params,
     });
@@ -147,10 +147,10 @@ export class News<
   ) =>
     this.request<NewsPartialUpdateData, NewsPartialUpdateError>({
       path: `/news/${id}`,
-      method: "PATCH",
+      method: 'PATCH',
       body: body,
       secure: true,
-      type: "application/json",
+      type: 'application/json',
       ...params,
     });
   /**
@@ -168,8 +168,8 @@ export class News<
   mediaList = (id: string, params: RequestParams = {}) =>
     this.request<MediaListResult, MediaListFail>({
       path: `/news/${id}/media`,
-      method: "GET",
-      format: "json",
+      method: 'GET',
+      format: 'json',
       ...params,
     });
   /**
@@ -194,11 +194,11 @@ export class News<
   ) =>
     this.request<MediaCreateResult, MediaCreateFail>({
       path: `/news/${id}/media`,
-      method: "POST",
+      method: 'POST',
       body: data,
       secure: true,
-      type: "multipart/form-data",
-      format: "json",
+      type: 'multipart/form-data',
+      format: 'json',
       ...params,
     });
   /**
@@ -224,11 +224,11 @@ export class News<
   ) =>
     this.request<MediaUpdateResult, MediaUpdateFail>({
       path: `/news/${id}/media/${mediaId}`,
-      method: "PUT",
+      method: 'PUT',
       body: data,
       secure: true,
-      type: "multipart/form-data",
-      format: "json",
+      type: 'multipart/form-data',
+      format: 'json',
       ...params,
     });
   /**
@@ -249,7 +249,7 @@ export class News<
   mediaDelete = (id: string, mediaId: string, params: RequestParams = {}) =>
     this.request<MediaDeleteResult, MediaDeleteFail>({
       path: `/news/${id}/media/${mediaId}`,
-      method: "DELETE",
+      method: 'DELETE',
       secure: true,
       ...params,
     });
@@ -272,7 +272,7 @@ export class News<
   ) =>
     this.request<MediaContentListResult, MediaContentListFail>({
       path: `/news/${id}/media/${mediaId}/content`,
-      method: "GET",
+      method: 'GET',
       ...params,
     });
   /**
@@ -293,7 +293,7 @@ export class News<
   publishCreate = (id: string, params: RequestParams = {}) =>
     this.request<PublishCreateResult, PublishCreateFail>({
       path: `/news/${id}/publish`,
-      method: "POST",
+      method: 'POST',
       secure: true,
       ...params,
     });
