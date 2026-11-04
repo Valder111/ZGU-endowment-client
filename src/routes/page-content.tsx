@@ -12,6 +12,7 @@ import { PageTitle } from '@/components/elements/page-title';
 import { SiteLink } from '@/components/elements/site-link';
 import { artworkForPage } from '@/constants/visual-content';
 import { DirectionExplorer } from '@/components/elements/direction-explorer';
+import { CapitalFormation } from '@/components/elements/capital-formation';
 import { SupportContent } from '@/routes/content/support-content';
 import {
   DocumentsContent,
@@ -23,8 +24,11 @@ import { ResultsContent } from '@/routes/content/results-content';
 import { UniversityStories } from '@/components/elements/university-stories';
 import { AnniversaryContent } from '@/routes/content/anniversary-content';
 import { NewsArticleContent } from '@/routes/content/news-article-content';
+import { AdminContent } from '@/routes/content/admin-content';
 function InteriorContent({ page }: { page: PageDefinition }) {
   switch (page.kind) {
+    case 'admin':
+      return <AdminContent />;
     case 'anniversary':
       return <AnniversaryContent />;
     case 'news-article':
@@ -58,7 +62,15 @@ function InteriorContent({ page }: { page: PageDefinition }) {
     case 'projects':
       return (
         <div className="wrap article-content">
+          {page.showCapitalFormation && (
+            <p className="capital-formation-jump">
+              <SiteLink className="text-link" href="#capital-formation">
+                К схеме формирования капитала ↓
+              </SiteLink>
+            </p>
+          )}
           <DirectionExplorer />
+          {page.showCapitalFormation && <CapitalFormation />}
         </div>
       );
     case 'news':

@@ -11,6 +11,7 @@
 @import './editorial-update.css' layer(components);
 @import './community-design.css' layer(components);
 @import './anniversary-update.css' layer(components);
+@import './site-edition.css' layer(components);
 
 @custom-variant dark (&:is(.dark *));
 

@@ -3,6 +3,7 @@
 }
 
 .anniversary-teaser {
+  position: relative;
   background:
     linear-gradient(100deg, #061c3340, #081e3a66 41%, #091a31dd 73%, #0a172aef),
     linear-gradient(
@@ -18,7 +19,23 @@
   scroll-margin-top: 25px;
 }
 
+.hero:has(+ .anniversary-teaser)::before {
+  background:
+    linear-gradient(to bottom, transparent 82%, #0b1b2d),
+    linear-gradient(90deg, #102844c9, #1028448a 48%, #10284426);
+}
+
+.hero + .anniversary-teaser::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: clamp(64px, 9vw, 160px);
+  background: linear-gradient(#0b1b2d, transparent);
+  pointer-events: none;
+}
+
 .anniversary-teaser-inner {
+  position: relative;
   display: grid;
   align-items: center;
   width: min(1570px, calc(100% - clamp(64px, 9vw, 160px)));

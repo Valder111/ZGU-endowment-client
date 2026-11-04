@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
-import { hydrateRoot } from 'react-dom/client';
-import { createRoot } from 'react-dom/client';
+import { flushSync } from 'react-dom';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { App } from '@/App';
 import { localPath } from '@/utils/paths';
 import { assets } from '@/constants/assets';
@@ -23,5 +23,11 @@ const application = (
     <App pathname={pathname} />
   </StrictMode>
 );
-if (root.hasChildNodes()) hydrateRoot(root, application);
-else createRoot(root).render(application);
+if (root.hasChildNodes()) {
+  hydrateRoot(root, application);
+} else {
+  // The preview mounts into an empty page, so fragment targets only exist after rendering.
+  flushSync(() => createRoot(root).render(application));
+  const target = document.getElementById(window.location.hash.slice(1));
+  target?.scrollIntoView({ behavior: 'instant' });
+}

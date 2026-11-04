@@ -23,6 +23,7 @@ export interface FaqItem {
 }
 export type PageKind =
   | 'home'
+  | 'admin'
   | 'anniversary'
   | 'news-article'
   | 'about'
@@ -47,7 +48,7 @@ export interface PageDefinition {
   eyebrow: string;
   projectId?: ProjectId;
   newsId?: 'council' | 'horizon' | 'scholarship';
-  showNote?: boolean;
+  showCapitalFormation?: boolean;
 }
 
 export type PageGroup = Omit<PageDefinition, 'path'> & {

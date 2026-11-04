@@ -114,7 +114,6 @@ export function ProjectContent({ id }: { id: ProjectId }) {
               <p>{readableText(item.text)}</p>
               <svg viewBox="0 0 100 30" fill="none" aria-hidden="true">
                 <path d="M0 15h85m-12-12 12 12-12 12" />
-                <circle cx="25" cy="15" r="4" />
               </svg>
             </article>
           ))}

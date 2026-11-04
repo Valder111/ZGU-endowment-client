@@ -1,5 +1,4 @@
 import { Hero } from '@/components/elements/hero';
-import { Mission } from '@/components/elements/mission';
 import { FundActivity } from '@/components/elements/fund-activity';
 import { Mechanism } from '@/components/elements/mechanism';
 import { Community } from '@/components/elements/community';
@@ -12,13 +11,16 @@ import {
   AnniversaryTeaser,
 } from '@/components/elements/university-life';
 import { AlumniAppeal } from '@/components/elements/alumni-appeal';
+import { RectorAppeal } from '@/components/elements/rector-appeal';
 import { EndowmentFlow } from '@/components/elements/endowment-flow';
 export function HomeContent() {
   return (
     <>
       <Hero />
       <AnniversaryTeaser />
-      <Mission />
+      <div className="wrap">
+        <AlumniAppeal full />
+      </div>
       <FundActivity />
       <UniversityLife />
       <section className="endowment-manifesto">
@@ -65,7 +67,7 @@ export function HomeContent() {
       <Mechanism />
       <div className="wrap">
         <EndowmentFlow />
-        <AlumniAppeal />
+        <RectorAppeal />
       </div>
       <Community />
       <section className="section home-transparency">

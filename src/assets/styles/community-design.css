@@ -227,6 +227,8 @@
 }
 .project-photo-glyph {
   position: absolute;
+  display: grid;
+  place-items: center;
   bottom: -12px;
   right: -12px;
   width: 100px;
@@ -238,7 +240,9 @@
 }
 .project-photo-glyph .editorial-artwork {
   margin: 0;
-  width: 100%;
+  display: block;
+  width: 84%;
+  height: 84%;
 }
 .activity-story .eyebrow,
 .metric-card-top > span {

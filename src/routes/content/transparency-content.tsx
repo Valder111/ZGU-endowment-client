@@ -1,6 +1,10 @@
 import { useId, useState } from 'react';
 import { FileText, ArrowUpRight, ShieldCheck } from 'lucide-react';
-import { foundationTeam, foundationDocuments } from '@/constants/transparency';
+import {
+  foundationTeam,
+  foundationMembers,
+  foundationDocuments,
+} from '@/constants/transparency';
 import { SiteLink } from '@/components/elements/site-link';
 import { IncomeCycle } from '@/components/elements/income-cycle';
 import { readableText } from '@/utils/typography';
@@ -168,28 +172,41 @@ export function GovernanceContent() {
           Обращение к&nbsp;выпускникам ↗
         </SiteLink>
       </section>
-      <section className="editorial-section" aria-label="Команда фонда">
-        <span className="eyebrow">ЛЮДИ ОБЩЕГО ДЕЛА</span>
-        <h2>
-          Разные знания.
-          <br />
-          Общее будущее
-        </h2>
-        <div className="council-grid">
-          {foundationTeam.map((person) => (
-            <article key={person.name}>
-              <span className="person-monogram" aria-hidden="true">
-                {person.name
-                  .split(' ')
-                  .map((word) => word[0])
-                  .join('')}
-              </span>
-              <h3>{person.name}</h3>
-              <p>{readableText(person.role)}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      {[
+        {
+          id: 'foundation-team',
+          title: 'Команда фонда',
+          people: foundationTeam,
+        },
+        {
+          id: 'foundation-members',
+          title: 'Состав фонда',
+          people: foundationMembers,
+        },
+      ].map(({ id, title, people }) => (
+        <section className="editorial-section" key={id} aria-labelledby={id}>
+          <h2 id={id}>{title}</h2>
+          <div className="council-grid team-grid">
+            {people.map((person) => (
+              <article key={person.name}>
+                <img
+                  className="team-portrait"
+                  src={person.image}
+                  alt=""
+                  loading="lazy"
+                  style={
+                    'position' in person
+                      ? { objectPosition: person.position }
+                      : undefined
+                  }
+                />
+                <h3>{person.name}</h3>
+                <p>{readableText(person.role)}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
       <section className="editorial-section" aria-label="Разделение функций">
         <span className="eyebrow">РАЗДЕЛЕНИЕ ФУНКЦИЙ</span>
         <h2>Каждому участнику – своя роль</h2>

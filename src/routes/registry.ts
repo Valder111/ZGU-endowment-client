@@ -1,6 +1,13 @@
 import type { PageDefinition, PageGroup } from '@/types/content';
+import { editorialNews } from '@/constants/editorial-news';
 /** Historical addresses intentionally share the same content as in the original site. */
 const pageGroups = [
+  {
+    paths: ['/admin/'],
+    kind: 'admin',
+    title: 'Панель фонда',
+    eyebrow: 'РАБОЧИЙ РАЗДЕЛ',
+  },
   {
     paths: ['/news/presidential-scholarship/'],
     kind: 'news-article',
@@ -18,14 +25,14 @@ const pageGroups = [
     paths: ['/news/first-council/'],
     kind: 'news-article',
     newsId: 'council',
-    title: 'Первый совет фонда: начало общей истории',
+    title: editorialNews.council.title,
     eyebrow: 'ЖИЗНЬ ФОНДА',
   },
   {
     paths: ['/news/endowment-horizon/'],
     kind: 'news-article',
     newsId: 'horizon',
-    title: 'Эндаументы университетов: горизонт 2036',
+    title: editorialNews.horizon.title,
     eyebrow: 'ОБРАЗОВАНИЕ И НАУКА',
   },
   {
@@ -94,7 +101,7 @@ const pageGroups = [
     kind: 'projects',
     title: 'Целевой капитал',
     eyebrow: 'ВЫБЕРИТЕ БЛИЗКУЮ ЦЕЛЬ',
-    showNote: true,
+    showCapitalFormation: true,
   },
   {
     paths: ['/projects/alumni/'],
@@ -140,7 +147,6 @@ const pageGroups = [
     kind: 'projects',
     title: 'Инициативы ЗГУ',
     eyebrow: 'НАПРАВЛЕНИЯ ПОДДЕРЖКИ',
-    showNote: false,
   },
   {
     paths: ['/about/company-information/'],

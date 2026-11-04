@@ -1,19 +1,20 @@
 import type { NewsItem } from '@/types/content';
 import { assets } from '@/constants/assets';
+import { editorialNews } from '@/constants/editorial-news';
+import councilPhoto from '@/assets/images/editorial/fund-first-council.webp';
+import governmentPhoto from '@/assets/images/editorial/government-plan-university.webp';
 export const news: readonly NewsItem[] = [
   {
-    title: 'Первый совет фонда: начало общей истории',
-    description:
-      'Решение о начале сбора средств открывает новый этап развития Эндаумент-фонда ЗГУ.',
+    title: editorialNews.council.title,
+    description: editorialNews.council.subtitle,
     href: '/news/first-council/',
-    image: assets.universityCommunity,
+    image: councilPhoto,
   },
   {
-    title: 'Эндаументы университетов: горизонт 2036',
-    description:
-      'План развития целевых капиталов связывает поддержку образования, науки и долгосрочное участие выпускников.',
+    title: editorialNews.horizon.title,
+    description: editorialNews.horizon.subtitle,
     href: '/news/endowment-horizon/',
-    image: assets.governmentPlan,
+    image: governmentPhoto,
   },
   {
     title: 'Никита Поляков – стипендиат Президента России',
@@ -38,27 +39,17 @@ export const fundNewsArticles = {
       'https://polaruniversity.ru/news/studentam/stipendiaty_rossii_gordost_zgu/',
   },
   council: {
-    title: 'Первый совет фонда: начало общей истории',
-    image: assets.universityCommunity,
-    caption: 'Сообщество Заполярного университета',
-    lead: 'Совет Эндаумент-фонда ЗГУ принял решение о начале сбора средств для формирования целевого капитала.',
-    paragraphs: [
-      'Для университета это начало долгосрочной истории участия выпускников, друзей и партнёров. Общая цель – создать основу поддержки талантов, исследований и инфраструктуры, которая будет работать на будущие поколения.',
-      'Целевой капитал формируется из пожертвований и передаётся в доверительное управление. В перспективе доход от его управления становится источником поддержки университета. На этапе формирования приоритетом остаётся рост капитала.',
-      'Присоединиться можно лично, вместе с однокурсниками или от имени компании. Выберите близкую задачу и обсудите условия участия с командой фонда.',
-    ],
+    ...editorialNews.council,
+    image: councilPhoto,
+    caption: 'Первое заседание Совета Эндаумент-фонда ЗГУ',
+    width: 1500,
+    height: 1125,
   },
   horizon: {
-    title: 'Эндаументы университетов: горизонт 2036',
-    image: assets.governmentPlan,
-    caption: 'Развитие целевых капиталов в сфере образования и науки',
-    lead: 'Развитие университетских эндаументов входит в долгосрочную повестку поддержки образования и науки.',
-    paragraphs: [
-      'Заместитель председателя Правительства России Дмитрий Чернышенко утвердил план мероприятий по развитию фондов целевого капитала. Горизонт этой работы – 2036 год.',
-      'Для университетов эндаумент – возможность выстраивать устойчивые связи с выпускниками и партнёрами, объединять пожертвования и планировать поддержку на долгий срок. Его ценность – в продолжении: сегодняшнее участие становится частью капитала, доход от которого может помогать следующим поколениям.',
-      'Для Заполярного университета этот подход связан с задачами Арктики: развитием инженерного образования, исследовательской работы и возможностей для молодых специалистов.',
-    ],
-    source:
-      'https://ef.misis.ru/new/zamestitel-predsedatelya-pravitelstva-dmitriy-chernyshenko-utverdil-plan-meropriyatiy-po-razvitiyu-f/',
+    ...editorialNews.horizon,
+    image: governmentPhoto,
+    caption: 'Работа в лаборатории Заполярного государственного университета',
+    width: 1500,
+    height: 1000,
   },
 } as const;

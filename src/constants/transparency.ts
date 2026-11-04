@@ -1,10 +1,38 @@
+import tarasevich from '@/assets/images/editorial/team-tarasevich.webp';
+import zemzyulina from '@/assets/images/editorial/team-zemzyulina.webp';
+import belyaev from '@/assets/images/editorial/team-belyaev.webp';
+import makukha from '@/assets/images/editorial/team-makukha.webp';
+import mironov from '@/assets/images/editorial/team-mironov.webp';
+import blinova from '@/assets/images/editorial/team-blinova.webp';
+
 export const foundationTeam = [
   {
     name: 'Аркадий Тарасевич',
     role: 'Проректор по научной работе и международной деятельности ЗГУ',
+    image: tarasevich,
   },
-  { name: 'Наталья Земзюлина', role: 'Команда фонда' },
-  { name: 'Игорь Беляев', role: 'Команда фонда' },
+  { name: 'Наталья Земзюлина', role: 'Команда фонда', image: zemzyulina },
+  { name: 'Игорь Беляев', role: 'Команда фонда', image: belyaev },
+] as const;
+
+export const foundationMembers = [
+  {
+    name: 'Анна Макуха',
+    role: 'Директор фонда целевого капитала «Наш Норильск»',
+    image: makukha,
+    position: 'center',
+  },
+  {
+    name: 'Максим Миронов',
+    role: 'Директор Агентства развития Норильска',
+    image: mironov,
+    position: 'center 10%',
+  },
+  {
+    name: 'Светлана Блинова',
+    role: 'Директор Политехнического колледжа ЗГУ',
+    image: blinova,
+  },
 ] as const;
 
 export const foundationDocuments = [

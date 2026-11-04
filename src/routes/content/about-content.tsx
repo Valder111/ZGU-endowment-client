@@ -93,6 +93,14 @@ export function AboutContent() {
         </p>
       </section>
       <EndowmentFlow />
+      <p id="capital-formation">
+        <SiteLink
+          className="text-link"
+          href="/project/all-project/#capital-formation"
+        >
+          Схема формирования целевого капитала ↗
+        </SiteLink>
+      </p>
       <Mechanism />
       <IncomeCycle />
     </div>
