@@ -407,6 +407,20 @@ test('direction constellation highlights and focuses its matching card without r
   await expect(page.locator('.project-card[data-selected="true"]')).toHaveCount(
     1,
   );
+  await scienceCard.click({ position: { x: 20, y: 24 } });
+  await expect(science).toHaveAttribute('aria-pressed', 'true');
+  await expect(explorer.getByRole('status')).toContainText('02 / Наука');
+  await page
+    .locator('header')
+    .getByRole('button', { name: 'Сделать вклад' })
+    .click();
+  const donation = page.getByRole('dialog');
+  await expect(
+    donation.getByRole('combobox', { name: 'Направление поддержки' }),
+  ).toHaveText('Наука и инженерия для Арктики');
+  await page.keyboard.press('Escape');
+  await expect(donation).toBeHidden();
+  await campusCard.click({ position: { x: 20, y: 24 } });
   await explorer
     .getByRole('link', { name: 'Перейти к выбранной карточке' })
     .click();
@@ -418,6 +432,13 @@ test('direction constellation highlights and focuses its matching card without r
   await expect(page.locator('main h1')).toHaveText(
     'Инфраструктура для развития',
   );
+  await page
+    .locator('main')
+    .getByRole('button', { name: 'Сделать вклад' })
+    .click();
+  await expect(
+    donation.getByRole('combobox', { name: 'Направление поддержки' }),
+  ).toHaveText('Инфраструктура для развития');
 });
 
 test('FAQ search filters answers, handles no results, and resets', async ({
@@ -451,12 +472,31 @@ test('endowment journey switches explanations by keyboard on home and about page
     const mechanism = page.getByRole('region', {
       name: 'Как работает эндаумент',
     });
+    const routeControls = mechanism.getByRole('group', {
+      name: 'Маршрут вашего вклада',
+    });
+    const progress = mechanism.locator('.steps-progress');
+    const initialWidth = await progress.evaluate((bar) => bar.style.width);
+    await routeControls.scrollIntoViewIfNeeded();
+    expect(await progress.evaluate((bar) => bar.style.width)).toBe(
+      initialWidth,
+    );
+    await routeControls
+      .getByRole('button', { name: 'Развитие', exact: true })
+      .click();
+    await expect(
+      routeControls.getByRole('button', { name: 'Развитие', exact: true }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    expect(await progress.evaluate((bar) => bar.style.width)).toBe('100%');
     const capital = mechanism.getByRole('button', {
       name: 'Подробнее об этапе: Капитал',
     });
     await capital.focus();
     await page.keyboard.press('Enter');
     await expect(capital).toHaveAttribute('aria-pressed', 'true');
+    await expect(
+      routeControls.getByRole('button', { name: 'Капитал', exact: true }),
+    ).toHaveAttribute('aria-pressed', 'true');
     await expect(
       mechanism.getByRole('region', {
         name: 'Подробнее: Капитал',
@@ -589,7 +629,7 @@ test('small donations question is searchable and opens with the keyboard', async
     .fill('немного денег');
   const question = page
     .locator('.faq summary')
-    .filter({ hasText: 'Почему даже немного денег — это важно?' });
+    .filter({ hasText: 'Почему даже немного денег – это важно?' });
   await question.focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('.faq details:visible')).toHaveAttribute(

@@ -63,7 +63,7 @@ export function ContactsContent() {
             быть рядом
           </h2>
           <p>
-            Университет в&nbsp;Норильске. Идеи и&nbsp;связи — далеко за&nbsp;его
+            Университет в&nbsp;Норильске. Идеи и&nbsp;связи – далеко за&nbsp;его
             пределами.
           </p>
           <span className="postcard-coordinate">

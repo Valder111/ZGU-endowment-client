@@ -68,7 +68,6 @@ function Scene({ scene }: { scene: ArtworkScene }) {
           <path d="M116 269h280M165 150l14-5v20l-14 5Zm34-12 14-5v20l-14 5Zm-34 47 14-5v20l-14 5Zm34-12 14-5v20l-14 5Zm-34 47 14-5v20l-14 5Zm34-12 14-5v20l-14 5ZM270 136l16 6v22l-16-6Zm28 10 16 6v22l-16-6Zm-28 31 16 6v22l-16-6Zm28 10 16 6v22l-16-6Zm-30 82v-39l36 13v26m42-65 17 6m-17 15 17 6" />
           <g className="art-float">
             <path className="art-accent" d="M100 230v-67m-20 22 20-22 20 22" />
-            <circle className="art-accent-fill" cx="100" cy="243" r="4" />
           </g>
         </>
       );

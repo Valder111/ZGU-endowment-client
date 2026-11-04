@@ -2,25 +2,25 @@
 :root {
   --ink: #183a50;
   --community-mint: #b8e4dc;
-  --community-warm: #ffab80;
+  --community-warm: #f2d3c1;
 }
 .button.primary {
-  background: #ffab80;
+  background: var(--community-warm);
   color: #173448;
   min-height: 56px;
   padding: 17px 28px;
   font-size: 16px;
   font-weight: 650;
-  box-shadow: 0 7px 24px #ffab801c;
+  box-shadow: 0 7px 24px #f2d3c11c;
   transition:
     background 0.2s,
     transform 0.2s,
     box-shadow 0.2s;
 }
 .button.primary:hover {
-  background: #ffc19f;
+  background: #f8e1d4;
   color: #173448;
-  box-shadow: 0 10px 30px #ffab8030;
+  box-shadow: 0 10px 30px #f2d3c130;
   transform: translateY(-2px);
 }
 .button.primary:focus-visible {
@@ -185,6 +185,25 @@
 .project-card .card-link {
   font-size: 15px;
   min-height: 44px;
+}
+.project-select {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.project-select ~ .card-link {
+  position: relative;
+  z-index: 3;
+}
+.project-select:focus-visible {
+  outline: 3px solid #1d3754;
+  outline-offset: 4px;
+}
+.no-js .project-select {
+  display: none;
 }
 .project-card {
   transition:
@@ -488,8 +507,6 @@
   height: 30px;
   right: -27px;
   top: 70px;
-  background: #fff;
-  border-radius: 50%;
   color: #268a88;
   z-index: 1;
 }

@@ -263,8 +263,7 @@
 .orbit-grid,
 .orbit-line,
 .orbit-light,
-.orbit-satellite,
-.orbit-hit {
+.orbit-satellite {
   fill: none;
 }
 
@@ -326,13 +325,6 @@
   stroke-width: 6;
   stroke-dasharray: 0.1 99.9;
   filter: drop-shadow(0 0 6px var(--orbit-accent));
-}
-
-.orbit-hit {
-  pointer-events: stroke;
-  stroke: transparent;
-  stroke-width: 16;
-  cursor: pointer;
 }
 
 .orbit-photo-slot {

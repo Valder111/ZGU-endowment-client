@@ -1,4 +1,6 @@
 import type { Project } from '@/types/content';
+export const generalCapital = 'Общее развитие университета';
+
 export const projects = [
   {
     id: 'students',
@@ -36,7 +38,7 @@ export const projects = [
     number: '04',
     title: 'Связь выпускников',
     description:
-      'Выпускники, студенты и партнёры ЗГУ — вместе ради новых возможностей.',
+      'Выпускники, студенты и партнёры ЗГУ – вместе ради новых возможностей.',
     color: 'orange',
     symbol: '∞',
   },

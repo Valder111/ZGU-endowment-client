@@ -10,7 +10,7 @@ export function AnniversaryContent() {
     <div className="wrap article-content anniversary-page">
       <section className="anniversary-intro">
         <div>
-          <span className="eyebrow">1961 — 2026 / НАША АЛЬМА-МАТЕР</span>
+          <span className="eyebrow">1961 – 2026 / НАША АЛЬМА-МАТЕР</span>
           <h2>
             История <em>продолжается</em>
           </h2>
@@ -47,7 +47,7 @@ export function AnniversaryContent() {
         aria-labelledby="anniversary-story-title"
       >
         <div>
-          <span className="eyebrow">1961 — 2026 / НАШ ПУТЬ</span>
+          <span className="eyebrow">1961 – 2026 / НАШ ПУТЬ</span>
           <h2 id="anniversary-story-title">Люди, которые меняют Север</h2>
           <img
             className="anniversary-story-logo"
@@ -69,7 +69,7 @@ export function AnniversaryContent() {
           </p>
           <p>
             На Севере мы дорожим каждым и способны разглядеть таланты. Именно
-            поэтому мы создали фонд целевого капитала — чтобы вовремя создать
+            поэтому мы создали фонд целевого капитала – чтобы вовремя создать
             благоприятные условия для тех, кто в чём-то по-настоящему хорош. Это
             возможность заложить основу для развития талантов.
           </p>

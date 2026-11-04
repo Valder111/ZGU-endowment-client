@@ -19,7 +19,7 @@ export function Hero() {
             </span>
           </h1>
           <p>
-            Ваша поддержка становится частью перемен — в&nbsp;образовании, науке
+            Ваша поддержка становится частью перемен – в&nbsp;образовании, науке
             и&nbsp;жизни за&nbsp;полярным кругом.
           </p>
           <div className="hero-actions">
@@ -49,16 +49,16 @@ export function Hero() {
           <div className="hero-caption">
             <span className="caption-dot"></span>
             <span>
-              В&nbsp;центре — люди
+              В&nbsp;центре – люди
               <br />
-              <b>Впереди — возможности</b>
+              <b>Впереди – возможности</b>
             </span>
             <span className="caption-arrow">↗</span>
           </div>
         </div>
         <div className="hero-bottom">
           <SiteLink href="/anniversary/">
-            ЗГУ — 65 ЛЕТ. ИСТОРИЯ ПРОДОЛЖАЕТСЯ ↗
+            ЗГУ – 65 ЛЕТ. ИСТОРИЯ ПРОДОЛЖАЕТСЯ ↗
           </SiteLink>
           <span>НОРИЛЬСК · 69° С. Ш.</span>
           <a href="#directions" aria-label="Далее">

@@ -1,13 +1,18 @@
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import { projects } from '@/constants/projects';
 import { SiteLink } from '@/components/elements/site-link';
 import { ProjectGlyph } from '@/components/elements/project-glyph';
 import { ProjectGrid } from '@/components/elements/project-grid';
+import { useSite } from '@/hooks/use-site';
 
 const labels = ['Образование', 'Наука', 'Инфраструктура', 'Сообщество'];
 
 export function DirectionExplorer() {
-  const [selected, setSelected] = useState(0);
+  const { activeProject, setActiveProject } = useSite();
+  const selected = Math.max(
+    0,
+    projects.findIndex(({ id }) => id === activeProject),
+  );
   const instanceId = useId();
   const current = projects[selected] ?? projects[0];
   return (
@@ -58,7 +63,7 @@ export function DirectionExplorer() {
                 type="button"
                 aria-pressed={selected === index}
                 aria-controls={`${instanceId}-${project.id}`}
-                onClick={() => setSelected(index)}
+                onClick={() => setActiveProject(project.id)}
               >
                 <span className="direction-node-icon" aria-hidden="true">
                   <ProjectGlyph id={project.id} />
@@ -94,7 +99,11 @@ export function DirectionExplorer() {
           </SiteLink>
         </div>
       </section>
-      <ProjectGrid activeId={current.id} idPrefix={instanceId} />
+      <ProjectGrid
+        activeId={current.id}
+        idPrefix={instanceId}
+        onSelect={setActiveProject}
+      />
     </>
   );
 }

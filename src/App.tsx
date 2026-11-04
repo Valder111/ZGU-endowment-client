@@ -7,10 +7,12 @@ import { SiteFooter } from '@/components/elements/site-footer';
 import { DonationDialog } from '@/components/dialogs/donation-dialog';
 import { PageContent } from '@/routes/page-content';
 import { resolvePage } from '@/routes/resolve-page';
-function Site({ pathname }: { pathname: string }) {
+import { projects } from '@/constants/projects';
+import type { PageDefinition } from '@/types/content';
+
+function Site({ page }: { page?: PageDefinition }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { accessible } = useSite();
-  const page = resolvePage(pathname);
   useMotion(rootRef, accessible);
   return (
     <div ref={rootRef}>
@@ -28,9 +30,12 @@ function Site({ pathname }: { pathname: string }) {
   );
 }
 export function App({ pathname }: { pathname: string }) {
+  const page = resolvePage(pathname);
+  const initialProject =
+    page?.kind === 'projects' ? projects[0].id : page?.projectId;
   return (
-    <SiteProvider>
-      <Site pathname={pathname} />
+    <SiteProvider initialProject={initialProject}>
+      <Site page={page} />
     </SiteProvider>
   );
 }

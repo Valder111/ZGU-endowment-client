@@ -20,7 +20,7 @@ export function Mechanism() {
               ПОДДЕРЖКА
             </span>
             <h2>
-              Вклад сегодня —
+              Вклад сегодня –
               <br />
               возможности навсегда
             </h2>
@@ -34,7 +34,13 @@ export function Mechanism() {
           </p>
         </div>
         <div className="steps interactive-steps">
-          <div className="steps-progress" aria-hidden="true"></div>
+          <div
+            className="steps-progress"
+            aria-hidden="true"
+            style={{
+              width: `${((selected + 1) / mechanismSteps.length) * 100}%`,
+            }}
+          />
           {mechanismSteps.map((step, index) => (
             <article key={step.id} data-active={selected === index}>
               <span>
@@ -63,30 +69,25 @@ export function Mechanism() {
           ))}
         </div>
         <div className="journey-explanation">
-          <div className="journey-indicator" aria-hidden="true">
+          <div className="journey-indicator">
             <span>МАРШРУТ ВАШЕГО ВКЛАДА</span>
-            <svg viewBox="0 0 260 84" fill="none">
-              <path d="M35 42h190" />
-              {[35, 130, 225].map((x, index) => (
-                <g key={x} className={selected === index ? 'is-active' : ''}>
-                  <circle cx={x} cy="42" r="10" />
-                  <path d={`M${x - 3} 42h6m-3-3v6`} />
-                </g>
+            <div
+              className="journey-controls"
+              role="group"
+              aria-label="Маршрут вашего вклада"
+            >
+              {mechanismSteps.map((step, index) => (
+                <button
+                  key={step.id}
+                  type="button"
+                  aria-pressed={selected === index}
+                  aria-controls={`${instanceId}-${step.id}`}
+                  onClick={() => setSelected(index)}
+                >
+                  <span className="journey-dot" aria-hidden="true" />
+                  {step.label}
+                </button>
               ))}
-              <g
-                className="journey-marker"
-                style={{
-                  transform: `translate(${35 + selected * 95}px, 42px)`,
-                }}
-              >
-                <circle r="17" />
-                <circle r="5" />
-              </g>
-            </svg>
-            <div>
-              <span>Вклад</span>
-              <span>Капитал</span>
-              <span>Развитие</span>
             </div>
           </div>
           <div

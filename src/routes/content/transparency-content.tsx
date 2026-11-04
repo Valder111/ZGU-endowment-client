@@ -19,7 +19,7 @@ export function DocumentsContent() {
         <h2>Доверие начинается с&nbsp;открытости</h2>
         <div>
           <p className="lead">
-            Условия участия, сведения о&nbsp;фонде и&nbsp;использовании дохода —
+            Условия участия, сведения о&nbsp;фонде и&nbsp;использовании дохода –
             основа осознанного решения о&nbsp;поддержке.
           </p>
           <p>
@@ -157,7 +157,7 @@ export function GovernanceContent() {
           <h2>Елена Кистнер</h2>
           <p>
             Важно не&nbsp;только сохранить связь с&nbsp;университетом,
-            но&nbsp;и&nbsp;дать этой связи продолжение — в&nbsp;возможностях для
+            но&nbsp;и&nbsp;дать этой связи продолжение – в&nbsp;возможностях для
             новых поколений.
           </p>
         </div>
@@ -192,7 +192,7 @@ export function GovernanceContent() {
       </section>
       <section className="editorial-section" aria-label="Разделение функций">
         <span className="eyebrow">РАЗДЕЛЕНИЕ ФУНКЦИЙ</span>
-        <h2>Каждому участнику — своя роль</h2>
+        <h2>Каждому участнику – своя роль</h2>
         <div className="role-grid">
           <article>
             <span>01 / ФОНД</span>
@@ -287,7 +287,7 @@ export function ReportingContent() {
         <h2>Результаты, которые можно проверить</h2>
         <div>
           <p className="lead">
-            Размер капитала, результат управления, расходы и&nbsp;программы —
+            Размер капитала, результат управления, расходы и&nbsp;программы –
             ключевые темы финансовой отчётности.
           </p>
           <p>

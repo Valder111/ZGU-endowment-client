@@ -6,9 +6,11 @@ import type { ProjectId } from '@/types/content';
 export function ProjectGrid({
   activeId,
   idPrefix,
+  onSelect,
 }: {
   activeId?: ProjectId;
   idPrefix?: string;
+  onSelect?: (id: ProjectId) => void;
 }) {
   return (
     <div className="project-grid">
@@ -25,6 +27,15 @@ export function ProjectGrid({
               idPrefix ? `${idPrefix}-${project.id}-title` : undefined
             }
           >
+            {onSelect && (
+              <button
+                className="project-select"
+                type="button"
+                aria-label={`Выбрать направление: ${project.title}`}
+                aria-pressed={activeId === project.id}
+                onClick={() => onSelect(project.id)}
+              />
+            )}
             <div className="card-top">
               <span>{project.category}</span>
               <span className="card-number">{project.number}</span>

@@ -158,35 +158,40 @@ test('support path keeps the chosen audience and capital in the email', async ({
   await expect(page.locator('form[action], iframe')).toHaveCount(0);
 });
 
-test('each jubilee orbit reveals a distinct photo and supports keyboard dismissal', async ({
+test('jubilee photos open only on button activation and support keyboard dismissal', async ({
   page,
 }) => {
   await page.goto('/#university-anniversary');
   const gallery = page.getByRole('group', {
-    name: 'Созвездие ЗГУ — юбилейная фотогалерея',
+    name: 'Созвездие ЗГУ – юбилейная фотогалерея',
   });
   await gallery.scrollIntoViewIfNeeded();
 
-  for (const [index, alt] of [
-    'Участники полевой школы с инструментами на практике',
-    'Исследовательница работает с оборудованием в лаборатории геомеханики',
-    'Студент работает с механической деталью в мастерской',
-  ].entries()) {
-    const point = await gallery
-      .locator('.orbit-hit')
-      .nth(index)
-      .evaluate((node) => {
-        const orbit = node as SVGEllipseElement;
-        const matrix = orbit.getScreenCTM()!;
-        for (let part = 0; part < 32; part++) {
-          const { x, y } = orbit
-            .getPointAtLength((orbit.getTotalLength() * part) / 32)
-            .matrixTransform(matrix);
-          if (document.elementFromPoint(x, y) === orbit) return { x, y };
-        }
-        throw new Error('Could not reach orbit with a pointer');
-      });
-    await page.mouse.move(point.x, point.y);
+  const point = await gallery
+    .locator('.orbit-line')
+    .first()
+    .evaluate((node) => {
+      const orbit = node as SVGEllipseElement;
+      const { x, y } = orbit
+        .getPointAtLength(0)
+        .matrixTransform(orbit.getScreenCTM()!);
+      return { x, y };
+    });
+  await page.mouse.move(point.x, point.y);
+  await page.mouse.click(point.x, point.y);
+  await expect(gallery.getByRole('img')).toHaveCount(0);
+  await gallery.getByRole('button', { name: 'Люди', exact: true }).hover();
+  await expect(gallery.getByRole('img')).toHaveCount(0);
+
+  for (const [name, alt] of [
+    ['Люди', 'Участники полевой школы с инструментами на практике'],
+    [
+      'Наука',
+      'Исследовательница работает с оборудованием в лаборатории геомеханики',
+    ],
+    ['Инженерия', 'Студент работает с механической деталью в мастерской'],
+  ]) {
+    await gallery.getByRole('button', { name, exact: true }).click();
     const image = gallery.getByRole('img', { name: alt, exact: true });
     await expect(image).toBeVisible();
     await expect(image).toHaveJSProperty('complete', true);
@@ -197,8 +202,9 @@ test('each jubilee orbit reveals a distinct photo and supports keyboard dismissa
 
   const science = gallery.getByRole('button', { name: 'Наука', exact: true });
   await science.focus();
-  await expect(gallery.getByRole('img')).toHaveAttribute('alt', /геомеханики/);
+  await expect(gallery.getByRole('img')).toHaveAttribute('alt', /мастерской/);
   await page.keyboard.press('Enter');
+  await expect(gallery.getByRole('img')).toHaveAttribute('alt', /геомеханики/);
   await expect(science).toHaveAttribute('aria-pressed', 'true');
   await page.keyboard.press('Escape');
   await expect(gallery.getByRole('img')).toHaveCount(0);
@@ -217,7 +223,7 @@ test('jubilee photo gallery can be used by touch with orbits paused', async ({
     const page = await context.newPage();
     await page.goto('http://127.0.0.1:4173/anniversary/');
     const gallery = page.getByRole('group', {
-      name: 'Созвездие ЗГУ — юбилейная фотогалерея',
+      name: 'Созвездие ЗГУ – юбилейная фотогалерея',
     });
     await gallery
       .getByRole('button', { name: 'Остановить движение орбит' })
@@ -348,7 +354,7 @@ test('FAQ combines category and normalized Russian search', async ({
   await expect(page.locator('.faq details:visible')).toHaveCount(1);
 });
 
-test('income cycle switches the visible explanation by keyboard', async ({
+test('income cycle responds to clicks on the card body and to keyboard selection', async ({
   page,
 }) => {
   await page.goto('/about/reporting/');
@@ -356,6 +362,11 @@ test('income cycle switches the visible explanation by keyboard', async ({
     name: 'Как доход становится поддержкой',
   });
   await expect(cycle.locator('.cycle-description:visible')).toHaveCount(1);
+  const second = cycle.getByRole('button', {
+    name: '02 План использования дохода',
+  });
+  await second.locator('..').click({ position: { x: 20, y: 160 } });
+  await expect(second).toHaveAttribute('aria-pressed', 'true');
   const last = cycle.getByRole('button', { name: '06 Публичный отчёт' });
   await last.focus();
   await page.keyboard.press('Enter');

@@ -87,9 +87,9 @@ export function AboutContent() {
           </article>
         </div>
         <p className="difference-manifesto">
-          Помочь однажды — важно.
+          Помочь однажды – важно.
           <br />
-          <strong>Создать возможность помогать годами — бесценно.</strong>
+          <strong>Создать возможность помогать годами – бесценно.</strong>
         </p>
       </section>
       <EndowmentFlow />

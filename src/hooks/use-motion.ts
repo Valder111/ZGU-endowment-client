@@ -171,25 +171,6 @@ export function useMotion(
                 reveal([element], element),
               );
             });
-          all('.steps').forEach((steps) => {
-            const bar = steps.querySelector('.steps-progress');
-            if (desktop && bar)
-              gsap.fromTo(
-                bar,
-                { scaleX: 0 },
-                {
-                  scaleX: 1,
-                  transformOrigin: 'left center',
-                  ease: 'none',
-                  scrollTrigger: {
-                    trigger: steps,
-                    start: 'top 85%',
-                    end: 'bottom 50%',
-                    scrub: 0.5,
-                  },
-                },
-              );
-          });
           gsap.to('.reading-progress', {
             scaleX: 1,
             ease: 'none',

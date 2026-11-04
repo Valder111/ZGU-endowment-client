@@ -26,9 +26,9 @@ export function UniversityLife() {
         <div className="life-copy">
           <span className="eyebrow">ВОТ РАДИ КОГО ВСЁ НАЧИНАЕТСЯ</span>
           <h2 id="university-life-title">
-            Север — это люди.
+            Север – это люди.
             <br />
-            <em>Будущее — тоже</em>
+            <em>Будущее – тоже</em>
           </h2>
           <p>
             Те, кто сегодня учится и пробует, завтра будут находить решения для
@@ -43,7 +43,7 @@ export function UniversityLife() {
                 width="1200"
                 height="800"
               />
-              <figcaption>От идеи — к прототипу</figcaption>
+              <figcaption>От идеи – к прототипу</figcaption>
             </figure>
             <figure>
               <img
@@ -53,7 +53,7 @@ export function UniversityLife() {
                 width="1200"
                 height="800"
               />
-              <figcaption>От вопроса — к открытию</figcaption>
+              <figcaption>От вопроса – к открытию</figcaption>
             </figure>
           </div>
           <DonateButton label="Помочь новым открытиям" />
@@ -74,14 +74,14 @@ export function AnniversaryTeaser() {
         <AnniversaryOrbits />
         <div className="anniversary-teaser-copy">
           <span className="eyebrow">
-            1961 — 2026 / УНИВЕРСИТЕТ, КОТОРЫЙ НАС ОБЪЕДИНЯЕТ
+            1961 – 2026 / УНИВЕРСИТЕТ, КОТОРЫЙ НАС ОБЪЕДИНЯЕТ
           </span>
           <h2 id="anniversary-teaser-title">
-            Лучший подарок —<br />
+            Лучший подарок –<br />
             <em>будущее с продолжением</em>
           </h2>
           <p>
-            Заполярному государственному — 65! Поздравьте университет
+            Заполярному государственному – 65! Поздравьте университет
             и&nbsp;поддержите тех, чья история здесь только начинается.
           </p>
           <SiteLink className="button primary" href="/anniversary/">

@@ -10,7 +10,7 @@ export function SiteFooter() {
             <SiteLink
               className="brand footer-brand"
               href="/"
-              aria-label="Эндаумент-фонд Заполярного университета — главная"
+              aria-label="Эндаумент-фонд Заполярного университета – главная"
             >
               <FundBrand />
             </SiteLink>

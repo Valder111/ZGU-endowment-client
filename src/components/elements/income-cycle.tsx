@@ -30,10 +30,14 @@ export function IncomeCycle() {
               <span className="cycle-number">0{index + 1}</span>
               <span>{readableText(step.title)}</span>
             </button>
-            <div id={`${id}-step-${index}`} className="cycle-description">
-              <span className="eyebrow">{step.who}</span>
-              <p>{readableText(step.text)}</p>
-              <strong>{readableText(step.result)}</strong>
+            <div id={`${id}-step-${index}`} className="cycle-panel">
+              <div>
+                <div className="cycle-description">
+                  <span className="eyebrow">{step.who}</span>
+                  <p>{readableText(step.text)}</p>
+                  <strong>{readableText(step.result)}</strong>
+                </div>
+              </div>
             </div>
           </li>
         ))}

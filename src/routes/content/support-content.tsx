@@ -1,10 +1,8 @@
 import { useId, useState } from 'react';
 import { ArrowUpRight, Landmark, Users, Award, Handshake } from 'lucide-react';
 import { supportAudiences, supportMethods } from '@/constants/support';
-import {
-  CapitalSelect,
-  generalCapital,
-} from '@/components/elements/capital-select';
+import { CapitalSelect } from '@/components/elements/capital-select';
+import { generalCapital } from '@/constants/projects';
 import { siteConfig } from '@/configs/site';
 import { SiteLink } from '@/components/elements/site-link';
 import { ImpactCalculator } from '@/components/elements/impact-calculator';

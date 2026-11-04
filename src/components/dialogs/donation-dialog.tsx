@@ -10,17 +10,18 @@ import { Button } from '@/components/ui/button';
 import { useSite } from '@/hooks/use-site';
 import { SiteLink } from '@/components/elements/site-link';
 import { siteConfig } from '@/configs/site';
-import {
-  CapitalSelect,
-  generalCapital,
-} from '@/components/elements/capital-select';
+import { CapitalSelect } from '@/components/elements/capital-select';
 import { formatNumber } from '@/utils/typography';
 export function DonationDialog() {
-  const { donationOpen, setDonationOpen } = useSite();
+  const {
+    donationOpen,
+    setDonationOpen,
+    donationDirection: direction,
+    setDonationDirection: setDirection,
+  } = useSite();
   const opener = useRef<HTMLElement | null>(null);
   const id = useId();
   const [amount, setAmount] = useState('1000');
-  const [direction, setDirection] = useState(generalCapital);
   const [frequency, setFrequency] = useState('Разово');
   const validAmount = Number(amount) > 0 && Number.isFinite(Number(amount));
   const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${amount} рублей.\nФормат: ${frequency}.\nНаправление: ${direction}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;

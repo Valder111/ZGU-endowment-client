@@ -5,14 +5,14 @@ const pageGroups = [
     paths: ['/news/presidential-scholarship/'],
     kind: 'news-article',
     newsId: 'scholarship',
-    title: 'Никита Поляков — стипендиат Президента России',
+    title: 'Никита Поляков – стипендиат Президента России',
     eyebrow: 'ТАЛАНТЫ УНИВЕРСИТЕТА',
   },
   {
     paths: ['/anniversary/'],
     kind: 'anniversary',
-    title: 'Заполярному государственному — 65!',
-    eyebrow: 'ЗГУ — 65 ЛЕТ',
+    title: 'Заполярному государственному – 65!',
+    eyebrow: 'ЗГУ – 65 ЛЕТ',
   },
   {
     paths: ['/news/first-council/'],

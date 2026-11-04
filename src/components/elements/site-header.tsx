@@ -31,7 +31,7 @@ export function SiteHeader({ page }: { page?: PageDefinition }) {
     <header onKeyDown={handleKeyDown}>
       <div className="anniversary-topline">
         <div className="wrap">
-          <span>1961 — 2026</span>
+          <span>1961 – 2026</span>
           <SiteLink href="/anniversary/">
             Университету 65 лет. Продолжим историю вместе{' '}
             <span aria-hidden="true">↗</span>

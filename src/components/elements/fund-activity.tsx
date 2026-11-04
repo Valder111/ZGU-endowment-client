@@ -130,7 +130,7 @@ export function FundActivity() {
         </div>
         <div className="activity-bottom">
           <p>
-            Участие начинается с&nbsp;близкой вам идеи. Продолжение —
+            Участие начинается с&nbsp;близкой вам идеи. Продолжение –
             в&nbsp;образовании, науке и&nbsp;новых связях.
           </p>
           <SiteLink href="/about/reporting/" className="text-link">

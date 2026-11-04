@@ -37,16 +37,14 @@ const orbits = [
 export function AnniversaryOrbits() {
   const id = useId();
   const [pinned, setPinned] = useState<number | null>(null);
-  const [preview, setPreview] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
-  const active = preview ?? pinned;
+  const active = pinned;
   const photo = active === null ? null : orbits[active];
 
   useEffect(() => {
     if (active === null) return;
     function dismiss(event: KeyboardEvent) {
       if (event.key !== 'Escape') return;
-      setPreview(null);
       setPinned(null);
     }
     window.addEventListener('keydown', dismiss);
@@ -54,20 +52,14 @@ export function AnniversaryOrbits() {
   }, [active]);
 
   function selectOrbit(index: number) {
-    setPreview(null);
     setPinned((previous) => (previous === index ? null : index));
   }
 
   return (
     <div
       className="anniversary-orbits"
-      aria-label="Созвездие ЗГУ — юбилейная фотогалерея"
+      aria-label="Созвездие ЗГУ – юбилейная фотогалерея"
       role="group"
-      onPointerLeave={() => setPreview(null)}
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget))
-          setPreview(null);
-      }}
     >
       <div
         className="orbit-sky"
@@ -130,17 +122,6 @@ export function AnniversaryOrbits() {
                     pathLength="100"
                     className="orbit-satellite"
                   />
-                  <ellipse
-                    className="orbit-hit"
-                    cx="270"
-                    cy="170"
-                    rx={rx}
-                    ry={ry}
-                    onPointerEnter={(event) => {
-                      if (event.pointerType === 'mouse') setPreview(index);
-                    }}
-                    onClick={() => selectOrbit(index)}
-                  />
                 </g>
               </g>
             );
@@ -172,10 +153,6 @@ export function AnniversaryOrbits() {
             data-active={active === index}
             aria-pressed={pinned === index}
             aria-controls={`${id}-photo`}
-            onPointerEnter={(event) => {
-              if (event.pointerType === 'mouse') setPreview(index);
-            }}
-            onFocus={() => setPreview(index)}
             onClick={() => selectOrbit(index)}
           >
             <span className="orbit-control-dot" aria-hidden="true" />

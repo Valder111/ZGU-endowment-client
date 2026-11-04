@@ -13,7 +13,7 @@ const stories = [
   {
     label: 'ИНЖЕНЕРИЯ',
     title: 'Задачи Севера становятся практикой',
-    text: '«Лига арктических инженеров» — проект практического обучения ЗГУ и «Норникеля». Узнайте, с какими задачами работают будущие инженеры.',
+    text: '«Лига арктических инженеров» – проект практического обучения ЗГУ и «Норникеля». Узнайте, с какими задачами работают будущие инженеры.',
     href: 'https://polaruniversity.ru/news/liga-arkticheskikh-inzhenerov/',
     link: 'Инженерный проект на сайте ЗГУ',
     direction: '/projects/science/',
@@ -36,7 +36,7 @@ export function UniversityStories() {
     >
       <div className="section-heading">
         <div>
-          <span className="eyebrow">ЗА&nbsp;КАЖДОЙ ИДЕЕЙ — ЛЮДИ</span>
+          <span className="eyebrow">ЗА&nbsp;КАЖДОЙ ИДЕЕЙ – ЛЮДИ</span>
           <h2>Истории, с&nbsp;которых всё начинается</h2>
         </div>
         <SiteLink className="text-link" href="/news/">

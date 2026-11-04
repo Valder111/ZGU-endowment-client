@@ -346,6 +346,7 @@
   margin: 28px 0;
 }
 .cycle-steps li {
+  position: relative;
   min-width: 0;
   border: 1px solid #c7d7dd;
   border-radius: 12px;
@@ -373,6 +374,17 @@
   min-height: 64px;
   font-size: 17px;
   line-height: 1.4;
+  cursor: pointer;
+}
+html:not(.no-js) .cycle-steps button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+}
+.cycle-steps button:focus-visible::after {
+  outline: 2px solid #137f83;
+  outline-offset: 2px;
 }
 .cycle-number {
   flex-shrink: 0;
@@ -397,8 +409,34 @@
   font-size: 11px;
   letter-spacing: 0.07em;
 }
-html:not(.no-js) .cycle-steps li[data-active='false'] .cycle-description {
-  display: none;
+html:not(.no-js) .cycle-panel {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 280ms ease,
+    opacity 200ms ease,
+    visibility 0s;
+}
+html:not(.no-js) .cycle-panel > div {
+  min-height: 0;
+  overflow: hidden;
+}
+html:not(.no-js) .cycle-steps li[data-active='false'] .cycle-panel {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows 280ms ease,
+    opacity 180ms ease,
+    visibility 0s 280ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cycle-steps li,
+  html:not(.no-js) .cycle-panel,
+  html:not(.no-js) .cycle-steps li[data-active='false'] .cycle-panel {
+    transition: none;
+  }
 }
 .requisites-section {
   padding: 36px;

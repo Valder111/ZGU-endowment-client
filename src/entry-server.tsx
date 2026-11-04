@@ -11,6 +11,6 @@ export function render(pathname: string) {
   const title =
     page?.kind === 'home'
       ? siteConfig.name
-      : `${page?.title ?? 'Страница не найдена'} — ${siteConfig.name}`;
+      : `${page?.title ?? 'Страница не найдена'} – ${siteConfig.name}`;
   return { html: renderToString(<App pathname={pathname} />), title };
 }

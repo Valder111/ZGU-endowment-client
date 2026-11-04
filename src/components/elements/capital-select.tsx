@@ -1,8 +1,6 @@
 import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDown } from 'lucide-react';
-import { projects } from '@/constants/projects';
-
-export const generalCapital = 'Общее развитие университета';
+import { generalCapital, projects } from '@/constants/projects';
 
 const capitalOptions = [generalCapital, ...projects.map(({ title }) => title)];
 

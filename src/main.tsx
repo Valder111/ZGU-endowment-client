@@ -15,7 +15,7 @@ const page = resolvePage(pathname);
 document.title =
   page?.kind === 'home'
     ? siteConfig.name
-    : `${page?.title ?? 'Страница не найдена'} — ${siteConfig.name}`;
+    : `${page?.title ?? 'Страница не найдена'} – ${siteConfig.name}`;
 const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
 if (favicon) favicon.href = assets.favicon;
 const application = (

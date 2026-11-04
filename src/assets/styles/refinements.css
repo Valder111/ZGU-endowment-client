@@ -205,37 +205,47 @@
   color: #397385;
   text-align: center;
 }
-.journey-indicator svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  stroke: #9bbcc5;
-  stroke-width: 1.4;
+.journey-controls {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 14px;
 }
-.journey-indicator svg g > circle {
-  fill: #fff;
+.journey-controls::before {
+  content: '';
+  position: absolute;
+  inset: 21px calc(100% / 6) auto;
+  border-top: 1px solid #9bbcc5;
+  pointer-events: none;
 }
-.journey-indicator svg g.is-active > circle {
-  stroke: #137f83;
-}
-.journey-indicator > div {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 10px;
+.journey-controls button {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 12px 0 6px;
+  border-radius: 9px;
   color: #397385;
-  font-size: 10px;
+  font-size: inherit;
+  cursor: pointer;
 }
-.journey-marker {
-  transition: transform 0.5s ease-in-out;
+.journey-dot {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #80aab4;
+  border-radius: 50%;
+  background: #fff;
+  transition:
+    background-color 220ms,
+    box-shadow 220ms;
 }
-.journey-marker circle:first-child {
-  fill: #2bc6c5;
-  opacity: 0.2;
-  stroke: none;
-}
-.journey-marker circle:last-child {
-  fill: #137f83;
-  stroke: none;
+.journey-controls button[aria-pressed='true'] .journey-dot {
+  border-color: #137f83;
+  background: #137f83;
+  box-shadow:
+    inset 0 0 0 3px #fff,
+    0 0 0 4px #d5efed;
 }
 .journey-story {
   min-height: 170px;
