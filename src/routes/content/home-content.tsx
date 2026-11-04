@@ -5,6 +5,7 @@ import { Community } from '@/components/elements/community';
 import { CallToAction } from '@/components/elements/call-to-action';
 import { ProjectGrid } from '@/components/elements/project-grid';
 import { NewsGrid } from '@/components/elements/news-grid';
+import { PublishedContent } from '@/components/elements/published-content';
 import { SiteLink } from '@/components/elements/site-link';
 import {
   UniversityLife,
@@ -120,6 +121,7 @@ export function HomeContent() {
             </SiteLink>
           </div>
           <NewsGrid />
+          <PublishedContent collection="news" limit={3} />
         </div>
       </section>
       <CallToAction />

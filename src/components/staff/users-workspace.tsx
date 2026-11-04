@@ -1,10 +1,13 @@
-import { useState, type FormEvent } from 'react';
+import { useCallback, useState, type FormEvent } from 'react';
 import { Plus, RefreshCw } from 'lucide-react';
 import {
-  staffRecordPath,
+  staffApi,
+  validProfile,
   type StaffProfile,
   type StaffRequest,
 } from '@/api/staff';
+import type { RequestParams } from '@/api/generated/http-client';
+import type { ApiUserAdminUpdateRequest } from '@/api/generated/data-contracts';
 import { roleLabels } from '@/constants/staff';
 import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
 import {
@@ -21,15 +24,19 @@ export function UsersWorkspace({
 }: {
   request: StaffRequest;
   profile: StaffProfile;
-  refreshProfile: () => void;
+  refreshProfile: () => Promise<void>;
 }) {
   const [selected, setSelected] = useState<string>();
   const [search, setSearch] = useState('');
   const creating = selected === 'new';
-  const recordPath =
-    selected && !creating ? staffRecordPath('users', selected) : null;
-  const users = useStaffResource<StaffProfile[]>(request, '/users');
-  const detail = useStaffResource<StaffProfile>(request, recordPath);
+  const recordId = selected && !creating ? selected : '';
+  const users = useStaffResource(request, staffApi.users.usersList);
+  const loadUser = useCallback(
+    (params: RequestParams) =>
+      staffApi.users.usersDetail(encodeURIComponent(recordId), params),
+    [recordId],
+  );
+  const detail = useStaffResource(request, loadUser, Boolean(recordId));
   const action = useStaffAction();
   const user = detail.data;
   const self = user?.id === profile.id;
@@ -39,34 +46,41 @@ export function UsersWorkspace({
     const data = new FormData(event.currentTarget);
     void action.run(
       async () => {
+        const role = String(data.get('role') ?? user?.role ?? 'moderator');
+        if (role !== 'admin' && role !== 'moderator')
+          invalidStaffForm('Выберите роль сотрудника.');
         const values = {
           first_name: String(data.get('first_name') ?? '').trim(),
           last_name: String(data.get('last_name') ?? '').trim(),
           email: String(data.get('email') ?? '').trim(),
-          role: String(data.get('role') ?? user?.role ?? 'moderator'),
+          role,
         };
         if (!values.first_name || !values.last_name || !values.email)
           invalidStaffForm('Укажите имя, фамилию и рабочую почту.');
         const password = String(data.get('password') ?? '');
         if (password && new TextEncoder().encode(password).length > 72)
           invalidStaffForm('Пароль слишком длинный. Используйте до 72 байт.');
-        const body: Record<string, string | boolean> = {};
-        for (const [field, value] of Object.entries(values)) {
-          if (value !== user?.[field as keyof typeof values])
-            body[field] = value;
-        }
-        if (password) body.password = password;
-        if (recordPath) {
+        if (recordId) {
+          const body: ApiUserAdminUpdateRequest = {};
+          for (const field of ['first_name', 'last_name', 'email'] as const) {
+            if (values[field] !== user?.[field]) body[field] = values[field];
+          }
+          if (role !== user?.role) body.role = role;
+          if (password) body.password = password;
           if (!Object.keys(body).length)
             invalidStaffForm('Внесите изменения перед сохранением.');
-          await request(recordPath, { method: 'PATCH', body });
+          await request(
+            staffApi.users.usersPartialUpdate(
+              encodeURIComponent(recordId),
+              body,
+            ),
+          );
           detail.reload();
-          if (self) refreshProfile();
+          if (self) await refreshProfile();
         } else {
-          const created = await request<StaffProfile>('/users', {
-            method: 'POST',
-            body,
-          });
+          const created = await request(
+            staffApi.users.usersCreate({ ...values, role, password }),
+          );
           setSelected(created.id);
         }
         users.reload();
@@ -76,7 +90,7 @@ export function UsersWorkspace({
   }
 
   function toggleActive() {
-    if (!user || !recordPath || self) return;
+    if (!user || !recordId || self) return;
     if (
       user.is_active &&
       !window.confirm(
@@ -87,10 +101,11 @@ export function UsersWorkspace({
     void action.run(
       async () => {
         await request(
-          recordPath,
           user.is_active
-            ? { method: 'DELETE' }
-            : { method: 'PATCH', body: { is_active: true } },
+            ? staffApi.users.usersDelete(encodeURIComponent(recordId))
+            : staffApi.users.usersPartialUpdate(encodeURIComponent(recordId), {
+                is_active: true,
+              }),
         );
         detail.reload();
         users.reload();
@@ -137,7 +152,7 @@ export function UsersWorkspace({
         >
           <StaffLoad {...users}>
             <StaffList
-              rows={(users.data ?? []).map((account) => ({
+              rows={(users.data ?? []).filter(validProfile).map((account) => ({
                 id: account.id,
                 title: `${account.first_name} ${account.last_name}`,
                 subtitle: `${account.email} · ${roleLabels[account.role]}`,

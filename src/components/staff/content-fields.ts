@@ -1,7 +1,8 @@
 import type { ContentRecord } from '@/api/staff';
+import type { Collection } from '@/api/staff-content';
 import { invalidStaffForm } from '@/hooks/requests/mutations/use-staff-action';
 
-export type Collection = 'news' | 'events' | 'projects';
+export type { Collection } from '@/api/staff-content';
 
 export const statusLabels: Record<string, string> = {
   draft: 'Черновик',
@@ -15,9 +16,9 @@ export const statusLabels: Record<string, string> = {
 };
 
 type Field = {
-  key: string;
+  key: keyof ContentRecord;
   label: string;
-  kind?: 'textarea' | 'datetime-local' | 'amount' | 'currency';
+  kind?: 'textarea' | 'datetime-local' | 'amount' | 'currency' | 'year';
   options?: string[];
   defaultValue?: string;
   required?: boolean;
@@ -45,7 +46,7 @@ export const collections: Record<
     titleKey: 'title' | 'name';
     statusKey: 'status' | 'publication_status';
     fields: Field[];
-    transition: { path: string; label: string; completed: string };
+    transition: { label: string; completed: string };
   }
 > = {
   news: {
@@ -65,7 +66,6 @@ export const collections: Record<
       },
     ],
     transition: {
-      path: 'publish',
       label: 'Опубликовать',
       completed: 'published',
     },
@@ -101,7 +101,6 @@ export const collections: Record<
       },
     ],
     transition: {
-      path: 'finish',
       label: 'Завершить событие',
       completed: 'finished',
     },
@@ -139,12 +138,42 @@ export const collections: Record<
       },
     ],
     transition: {
-      path: 'complete',
       label: 'Завершить проект',
       completed: 'completed',
     },
   },
+  documents: {
+    label: 'Документы',
+    create: 'Новый документ',
+    titleKey: 'title',
+    statusKey: 'status',
+    fields: [
+      { key: 'title', label: 'Заголовок', required: true, maxLength: 255 },
+      { key: 'description', label: 'Описание', kind: 'textarea' },
+      { key: 'category', label: 'Категория', maxLength: 100 },
+      { key: 'reporting_year', label: 'Год отчётности', kind: 'year' },
+      {
+        key: 'status',
+        label: 'Статус публикации',
+        options: publicationOptions,
+        mode: 'create',
+      },
+    ],
+    transition: { label: 'Опубликовать', completed: 'published' },
+  },
 };
+
+export function documentFile(data: FormData) {
+  const file = data.get('file');
+  if (
+    !(file instanceof File) ||
+    !file.size ||
+    file.size > 20 * 1024 * 1024 ||
+    !/\.(pdf|docx?)$/i.test(file.name)
+  )
+    invalidStaffForm('Выберите файл PDF, DOC или DOCX размером до 20 МиБ.');
+  return file;
+}
 
 export function contentPayload(
   fields: Field[],
@@ -154,7 +183,7 @@ export function contentPayload(
   const payload: Record<string, string> = {};
   for (const field of fields) {
     const raw = String(data.get(field.key) ?? '').trim();
-    const previous = current?.[field.key] ?? '';
+    const previous = String(current?.[field.key] ?? '');
     if (!raw) {
       if (field.required && (!current || field.key !== 'type'))
         invalidStaffForm(`Заполните поле «${field.label}».`);
@@ -173,6 +202,11 @@ export function contentPayload(
       value = date.toISOString();
     }
     if (field.kind === 'currency') value = raw.toUpperCase();
+    if (
+      field.kind === 'year' &&
+      (!/^\d{4}$/.test(raw) || Number(raw) < 1900 || Number(raw) > 2100)
+    )
+      invalidStaffForm('Укажите год отчётности от 1900 до 2100.');
     if (field.kind === 'amount') {
       value = raw.replace(',', '.');
       if (!/^\d+(\.\d+)?$/.test(value) || !/[1-9]/.test(value)) {

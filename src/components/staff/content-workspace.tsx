@@ -1,21 +1,21 @@
-import { useState, type FormEvent } from 'react';
+import { useCallback, useState, type FormEvent } from 'react';
 import { Plus, RefreshCw } from 'lucide-react';
-import {
-  staffRecordPath,
-  type ContentRecord,
-  type StaffRequest,
-} from '@/api/staff';
+import type { StaffRequest } from '@/api/staff';
+import { collectionApi } from '@/api/staff-content';
+import type { RequestParams } from '@/api/generated/http-client';
 import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
 import { useStaffAction } from '@/hooks/requests/mutations/use-staff-action';
 import { Button } from '@/components/ui/button';
 import {
   collections,
   contentPayload,
+  documentFile,
   statusLabels,
   type Collection,
 } from './content-fields';
 import { StaffFeedback, StaffList, StaffLoad } from './staff-controls';
 import { StaffMedia } from './staff-media';
+import { StaffDocumentFile } from './staff-document-file';
 
 function dateLabel(value?: string) {
   return value
@@ -34,14 +34,17 @@ export function ContentWorkspace({
   request: StaffRequest;
 }) {
   const config = collections[collection];
+  const api = collectionApi[collection];
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<string | 'new'>();
-  const recordPath =
-    selected && selected !== 'new'
-      ? staffRecordPath(collection, selected)
-      : null;
-  const list = useStaffResource<ContentRecord[]>(request, `/${collection}`);
-  const detail = useStaffResource<ContentRecord>(request, recordPath);
+  const recordId =
+    selected && selected !== 'new' ? encodeURIComponent(selected) : '';
+  const list = useStaffResource(request, api.list);
+  const loadRecord = useCallback(
+    (params: RequestParams) => api.detail(recordId, params),
+    [api, recordId],
+  );
+  const detail = useStaffResource(request, loadRecord, Boolean(recordId));
   const action = useStaffAction();
   const item = detail.data;
   const creating = selected === 'new';
@@ -58,26 +61,26 @@ export function ContentWorkspace({
     void action.run(
       async () => {
         const body = contentPayload(fields, data, item);
-        if (recordPath) {
-          await request(recordPath, { method: 'PATCH', body });
+        if (recordId) {
+          await request(api.update(recordId, body));
           detail.reload();
         } else {
-          const created = await request<ContentRecord>(`/${collection}`, {
-            method: 'POST',
-            body,
-          });
+          const created = await request(
+            api.create(
+              body,
+              collection === 'documents' ? documentFile(data) : undefined,
+            ),
+          );
           setSelected(created.id);
         }
         list.reload();
       },
-      creating
-        ? 'Запись создана. Фотографии можно добавить ниже.'
-        : 'Изменения сохранены.',
+      creating ? 'Запись создана.' : 'Изменения сохранены.',
     );
   }
 
   function perform(operation: 'transition' | 'delete') {
-    if (!recordPath) return;
+    if (!recordId) return;
     const remove = operation === 'delete';
     if (
       !window.confirm(
@@ -89,12 +92,7 @@ export function ContentWorkspace({
       return;
     void action.run(
       async () => {
-        await request(
-          remove ? recordPath : `${recordPath}/${config.transition.path}`,
-          {
-            method: remove ? 'DELETE' : 'POST',
-          },
-        );
+        await request(remove ? api.remove(recordId) : api.transition(recordId));
         if (remove) setSelected(undefined);
         else detail.reload();
         list.reload();
@@ -139,21 +137,27 @@ export function ContentWorkspace({
         >
           <StaffLoad {...list}>
             <StaffList
-              rows={(list.data ?? []).map((row) => ({
-                id: row.id,
-                title: row[config.titleKey] ?? row.id,
-                subtitle: dateLabel(
-                  row.starts_at ?? row.published_at ?? row.created_at,
-                ),
-                status:
-                  statusLabels[row[config.statusKey] ?? ''] ??
-                  row[config.statusKey] ??
-                  '',
-                tone:
-                  row[config.statusKey] === 'published'
-                    ? 'positive'
-                    : 'neutral',
-              }))}
+              rows={(list.data ?? []).flatMap((row) =>
+                row.id
+                  ? [
+                      {
+                        id: row.id,
+                        title: row[config.titleKey] ?? row.id,
+                        subtitle: dateLabel(
+                          row.starts_at ?? row.published_at ?? row.created_at,
+                        ),
+                        status:
+                          statusLabels[row[config.statusKey] ?? ''] ??
+                          row[config.statusKey] ??
+                          '',
+                        tone:
+                          row[config.statusKey] === 'published'
+                            ? 'positive'
+                            : 'neutral',
+                      },
+                    ]
+                  : [],
+              )}
               search={search}
               onSearch={setSearch}
               activeId={selected}
@@ -195,19 +199,21 @@ export function ContentWorkspace({
                       )}
                     </div>
                   )}
-                  {creating && collection !== 'news' && (
-                    <p className="staff-hint">
-                      Укажите даты в часовом поясе устройства. Даты и статус
-                      публикации задаются при создании.
-                    </p>
-                  )}
+                  {creating &&
+                    (collection === 'events' || collection === 'projects') && (
+                      <p className="staff-hint">
+                        Укажите даты в часовом поясе устройства. Даты и статус
+                        публикации задаются при создании.
+                      </p>
+                    )}
                   <fieldset disabled={action.pending}>
                     {fields.map((field) => {
-                      const defaults =
+                      const defaults = String(
                         item?.[field.key] ??
-                        field.defaultValue ??
-                        field.options?.[0] ??
-                        '';
+                          field.defaultValue ??
+                          field.options?.[0] ??
+                          '',
+                      );
                       const required =
                         field.required && (creating || field.key !== 'type');
                       return (
@@ -241,7 +247,11 @@ export function ContentWorkspace({
                                   : 'text'
                               }
                               inputMode={
-                                field.kind === 'amount' ? 'decimal' : undefined
+                                field.kind === 'amount'
+                                  ? 'decimal'
+                                  : field.kind === 'year'
+                                    ? 'numeric'
+                                    : undefined
                               }
                               pattern={
                                 field.kind === 'currency'
@@ -258,6 +268,17 @@ export function ContentWorkspace({
                         </label>
                       );
                     })}
+                    {creating && collection === 'documents' && (
+                      <label className="staff-field">
+                        Файл документа
+                        <input
+                          name="file"
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          required
+                        />
+                      </label>
+                    )}
                   </fieldset>
                   <div className="staff-actions">
                     <Button
@@ -292,11 +313,20 @@ export function ContentWorkspace({
               )}
             </StaffLoad>
           )}
-          {recordPath && item && (
+          {recordId && item && api.photos && (
             <StaffMedia
-              key={recordPath}
+              key={recordId}
               request={request}
-              recordPath={recordPath}
+              recordId={recordId}
+              api={api.photos}
+            />
+          )}
+          {recordId && item && collection === 'documents' && (
+            <StaffDocumentFile
+              key={recordId}
+              request={request}
+              recordId={recordId}
+              filename={item.original_filename}
             />
           )}
         </div>

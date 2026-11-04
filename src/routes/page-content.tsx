@@ -8,6 +8,7 @@ import { PendingContent } from '@/routes/content/pending-content';
 import { ProjectContent } from '@/routes/content/project-content';
 import { FaqContent } from '@/routes/content/faq-content';
 import { NewsGrid } from '@/components/elements/news-grid';
+import { PublishedContent } from '@/components/elements/published-content';
 import { PageTitle } from '@/components/elements/page-title';
 import { SiteLink } from '@/components/elements/site-link';
 import { artworkForPage } from '@/constants/visual-content';
@@ -67,6 +68,7 @@ function InteriorContent({ page }: { page: PageDefinition }) {
             </p>
           )}
           <DirectionExplorer />
+          <PublishedContent collection="projects" />
           {page.showCapitalFormation && <CapitalFormation />}
         </div>
       );
@@ -74,6 +76,7 @@ function InteriorContent({ page }: { page: PageDefinition }) {
       return (
         <div className="wrap article-content">
           <NewsGrid />
+          <PublishedContent collection="news" />
           <UniversityStories />
           <SiteLink className="text-link" href="/events/">
             События сообщества ↗

@@ -10,6 +10,7 @@ import { IncomeCycle } from '@/components/elements/income-cycle';
 import { readableText } from '@/utils/typography';
 import { siteConfig } from '@/configs/site';
 import { assets } from '@/constants/assets';
+import { PublishedContent } from '@/components/elements/published-content';
 
 const documentRequestHref = (topic: string) =>
   `mailto:${siteConfig.email}?subject=${encodeURIComponent(`Эндаумент-фонд ЗГУ: ${topic}`)}&body=${encodeURIComponent(`Здравствуйте!\n\nПрошу уточнить порядок получения сведений по теме «${topic}».\n\nМой вопрос: `)}`;
@@ -114,6 +115,7 @@ export function DocumentsContent() {
           ))}
         </div>
       </section>
+      <PublishedContent collection="documents" />
       <div className="transparency-contact">
         <ShieldCheck size={34} aria-hidden="true" />
         <div>

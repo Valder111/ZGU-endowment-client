@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useRef,
   useState,
   type FormEvent,
   type MouseEvent,
@@ -16,7 +17,7 @@ import {
   Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { StaffFeedback, StaffLoad } from '@/components/staff/staff-controls';
+import { StaffFeedback } from '@/components/staff/staff-controls';
 import { ContentWorkspace } from '@/components/staff/content-workspace';
 import {
   collections,
@@ -26,18 +27,19 @@ import { UsersWorkspace } from '@/components/staff/users-workspace';
 import { roleLabels } from '@/constants/staff';
 import {
   StaffApiError,
+  staffApi,
   staffBase,
   staffBaseInvalid,
-  staffFetch,
+  staffResult,
+  validProfile,
   type StaffProfile,
   type StaffRequest,
-  type StaffSession,
 } from '@/api/staff';
+import type { AxiosResponse } from 'axios';
 import {
   invalidStaffForm,
   useStaffAction,
 } from '@/hooks/requests/mutations/use-staff-action';
-import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
 import { localPath, sitePath } from '@/utils/paths';
 
 type Panel = 'admin' | 'moderator';
@@ -46,8 +48,19 @@ const sectionIcons = {
   news: FileText,
   events: CalendarDays,
   projects: FolderKanban,
+  documents: FileText,
 };
-const sections = ['news', 'events', 'projects'] as const;
+const sections = ['news', 'events', 'projects', 'documents'] as const;
+const sessionMarker = `zgu:staff-session:${staffBase}`;
+
+function rememberSession(active: boolean) {
+  try {
+    if (active) sessionStorage.setItem(sessionMarker, 'active');
+    else sessionStorage.removeItem(sessionMarker);
+  } catch {
+    // The panel can still work in memory when session storage is unavailable.
+  }
+}
 
 function StaffProfileForm({
   request,
@@ -69,10 +82,9 @@ function StaffProfileForm({
         invalidStaffForm('Новые пароли не совпадают.');
       if (new TextEncoder().encode(password).length > 72)
         invalidStaffForm('Пароль слишком длинный. Используйте до 72 байт.');
-      await request('/me', {
-        method: 'PATCH',
-        body: { current_password: current, password },
-      });
+      await request(
+        staffApi.auth.patchAuth({ current_password: current, password }),
+      );
       onPasswordChange();
     }, '');
   }
@@ -138,38 +150,68 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
   const [panel, setPanel] = useState(initialPanel);
   const [collection, setCollection] = useState<Collection>('news');
   const [showProfile, setShowProfile] = useState(false);
-  const [{ session, status }, setAuth] = useState<{
-    session: StaffSession | null;
+  const [{ profile, status }, setAuth] = useState<{
+    profile: StaffProfile | null;
     status: string;
-  }>({ session: null, status: '' });
+  }>({ profile: null, status: '' });
   const login = useStaffAction();
-  const token = session?.token;
+  const sessionVersion = useRef(0);
+
+  const signOut = useCallback((message: string) => {
+    sessionVersion.current += 1;
+    rememberSession(false);
+    setAuth({ profile: null, status: message });
+    setShowProfile(false);
+  }, []);
 
   const request: StaffRequest = useCallback(
-    async <T,>(path: string, options?: Parameters<StaffRequest>[1]) => {
+    async <T,>(operation: Promise<AxiosResponse<T>>) => {
+      const version = sessionVersion.current;
       try {
-        return await staffFetch<T>(path, options, token);
+        return await staffResult(operation);
       } catch (error) {
         if (
           error instanceof StaffApiError &&
           error.status === 401 &&
-          !options?.signal?.aborted
+          version === sessionVersion.current
         ) {
-          setAuth((current) =>
-            current.session?.token === token
-              ? { session: null, status: 'Сессия завершилась. Войдите заново.' }
-              : current,
-          );
+          signOut('Сессия завершилась. Войдите заново.');
         }
         throw error;
       }
     },
-    [token],
+    [signOut],
   );
 
-  const profile = useStaffResource<StaffProfile>(request, token ? '/me' : null);
-  const current = profile.data;
+  const current = profile;
   const effectivePanel = current?.role === 'moderator' ? 'moderator' : panel;
+
+  useEffect(() => {
+    if (!staffBase) return;
+    try {
+      if (!sessionStorage.getItem(sessionMarker)) return;
+    } catch {
+      return;
+    }
+    const controller = new AbortController();
+    const version = sessionVersion.current;
+    staffResult(staffApi.auth.getAuth({ signal: controller.signal })).then(
+      (user) => {
+        if (controller.signal.aborted || version !== sessionVersion.current)
+          return;
+        if (validProfile(user) && user.is_active)
+          setAuth({ profile: user, status: '' });
+        else signOut('Учётная запись недоступна. Войдите заново.');
+      },
+      (error: unknown) => {
+        if (controller.signal.aborted || version !== sessionVersion.current)
+          return;
+        if (error instanceof StaffApiError && [401, 403].includes(error.status))
+          signOut('Сессия завершилась. Войдите заново.');
+      },
+    );
+    return () => controller.abort();
+  }, [signOut]);
 
   useEffect(() => {
     function onPopState() {
@@ -212,27 +254,32 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
-    setAuth({ session: null, status: '' });
+    setAuth({ profile: null, status: '' });
     void login.run(async () => {
-      const staff = await staffFetch<StaffSession>('/login', {
-        method: 'POST',
-        body: {
+      const version = ++sessionVersion.current;
+      await staffResult(
+        staffApi.auth.loginCreate({
           email: String(data.get('email') ?? '').trim(),
           password: String(data.get('password') ?? ''),
-        },
-      });
-      if (!staff?.token || !['admin', 'moderator'].includes(staff.role))
+        }),
+      );
+      const staff = await staffResult(staffApi.auth.getAuth());
+      if (version !== sessionVersion.current) return;
+      if (!validProfile(staff) || !staff.is_active)
         throw new StaffApiError(403);
       form.reset();
       if (staff.role === 'moderator') navigate('moderator', true);
       setCollection('news');
-      setAuth({ session: staff, status: '' });
+      rememberSession(true);
+      setAuth({ profile: staff, status: '' });
     }, '');
   }
 
-  function signOut(message: string) {
-    setAuth({ session: null, status: message });
-    setShowProfile(false);
+  async function refreshProfile() {
+    const version = sessionVersion.current;
+    const user = await request(staffApi.auth.getAuth());
+    if (version === sessionVersion.current && validProfile(user))
+      setAuth({ profile: user, status: '' });
   }
 
   return (
@@ -246,19 +293,19 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
             Эндаумент-фонд ЗГУ<small>Рабочее пространство</small>
           </strong>
         </a>
-        {session && (
+        {current && (
           <div className="staff-account">
-            <span>{current?.email ?? session.email}</span>
+            <span>{current.email}</span>
             <Button
               variant="outline"
-              onClick={() => signOut('Вы вышли из панели.')}
+              onClick={() => signOut('Панель закрыта в этой вкладке.')}
             >
               <LogOut /> Выйти
             </Button>
           </div>
         )}
       </div>
-      {!session ? (
+      {!current ? (
         <div className="staff-login-layout">
           <div className="staff-login-intro">
             <span className="staff-kicker">ДЛЯ СОТРУДНИКОВ ФОНДА</span>
@@ -379,33 +426,27 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
           </nav>
           <div className="staff-main">
             <h1>{titles[effectivePanel]}</h1>
-            <StaffLoad {...profile}>
-              {current?.is_active ? (
-                showProfile ? (
-                  <StaffProfileForm
-                    request={request}
-                    profile={current}
-                    onPasswordChange={() =>
-                      signOut('Пароль изменён. Войдите с новым паролем.')
-                    }
-                  />
-                ) : effectivePanel === 'admin' ? (
-                  <UsersWorkspace
-                    request={request}
-                    profile={current}
-                    refreshProfile={profile.reload}
-                  />
-                ) : (
-                  <ContentWorkspace
-                    key={collection}
-                    request={request}
-                    collection={collection}
-                  />
-                )
-              ) : (
-                <StaffFeedback error="Эта учётная запись неактивна." />
-              )}
-            </StaffLoad>
+            {showProfile ? (
+              <StaffProfileForm
+                request={request}
+                profile={current}
+                onPasswordChange={() =>
+                  signOut('Пароль изменён. Войдите с новым паролем.')
+                }
+              />
+            ) : effectivePanel === 'admin' ? (
+              <UsersWorkspace
+                request={request}
+                profile={current}
+                refreshProfile={refreshProfile}
+              />
+            ) : (
+              <ContentWorkspace
+                key={collection}
+                request={request}
+                collection={collection}
+              />
+            )}
           </div>
         </div>
       )}

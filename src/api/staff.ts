@@ -1,41 +1,44 @@
-export type StaffRole = 'admin' | 'moderator';
+import { isAxiosError, type AxiosResponse } from 'axios';
+import { Auth } from './generated/Auth';
+import { Users } from './generated/Users';
+import { News } from './generated/News';
+import { Events } from './generated/Events';
+import { Projects } from './generated/Projects';
+import { Documents } from './generated/Documents';
+import type {
+  HandlerDocumentResponse,
+  HandlerErrorResponse,
+  HandlerEventResponse,
+  HandlerNewsResponse,
+  HandlerProjectResponse,
+  HandlerUserResponse,
+} from './generated/data-contracts';
 
-export interface StaffProfile {
+export type StaffRole = 'admin' | 'moderator';
+export type StaffProfile = HandlerUserResponse & {
   id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
   role: StaffRole;
   is_active: boolean;
-}
-
-export interface StaffSession {
-  token: string;
-  user_id: string;
-  email: string;
-  role: StaffRole;
-}
-
-export interface StaffPhoto {
-  id: string;
-  original_filename: string;
-  mime_type: string;
-  size_bytes: number;
-}
-
-export type ContentRecord = { id: string } & Partial<Record<string, string>>;
-
-type Options = {
-  method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
-  body?: Record<string, string | boolean> | FormData;
-  signal?: AbortSignal;
 };
 
-export type StaffRequest = <T = void>(
-  path: string,
-  options?: Options,
+export type ContentRecord = HandlerNewsResponse &
+  HandlerEventResponse &
+  HandlerProjectResponse &
+  HandlerDocumentResponse;
+
+export type StaffRequest = <T>(
+  operation: Promise<AxiosResponse<T>>,
 ) => Promise<T>;
 
+export function validProfile(
+  profile: HandlerUserResponse,
+): profile is StaffProfile {
+  return (
+    Boolean(profile.id) &&
+    (profile.role === 'admin' || profile.role === 'moderator') &&
+    typeof profile.is_active === 'boolean'
+  );
+}
 function staffApiBase(value?: string): string | null {
   const base = value?.trim().replace(/\/$/, '');
   if (!base) return null;
@@ -92,42 +95,40 @@ export function staffError(error: unknown) {
   }
 }
 
-export async function staffFetch<T>(
-  path: string,
-  options: Options = {},
-  token?: string,
+const config = { baseURL: staffBase ?? undefined, withCredentials: true };
+
+export const staffApi = {
+  auth: new Auth(config),
+  users: new Users(config),
+  news: new News(config),
+  events: new Events(config),
+  projects: new Projects(config),
+  documents: new Documents(config),
+};
+
+export async function staffResult<T>(
+  operation: Promise<AxiosResponse<T>>,
 ): Promise<T> {
-  if (!staffBase) throw new Error('Staff API is unavailable');
-  const { method = 'GET', body, signal } = options;
-  const headers = new Headers({ Accept: 'application/json' });
-  if (token) headers.set('Authorization', `Bearer ${token}`);
-  let payload: FormData | string | undefined;
-  if (body instanceof FormData) payload = body;
-  else if (body) {
-    headers.set('Content-Type', 'application/json');
-    payload = JSON.stringify(body);
-  }
-  const response = await fetch(`${staffBase}${path}`, {
-    method,
-    headers,
-    body: payload,
-    signal,
-    credentials: 'omit',
-    redirect: 'error',
-    cache: 'no-store',
-  });
-  if (!response.ok) {
-    const body = await response.json().catch(() => null);
+  try {
+    return (await operation).data;
+  } catch (error) {
+    if (!isAxiosError<HandlerErrorResponse | Blob>(error) || !error.response)
+      throw error;
+    let data = error.response.data;
+    if (data instanceof Blob && data.type.includes('json')) {
+      try {
+        data = await data
+          .text()
+          .then((text) => JSON.parse(text) as HandlerErrorResponse);
+      } catch {
+        data = {};
+      }
+    }
     throw new StaffApiError(
-      response.status,
-      typeof body?.error === 'string' ? body.error : undefined,
+      error.response.status,
+      data && !(data instanceof Blob) && typeof data.error === 'string'
+        ? data.error
+        : undefined,
     );
   }
-  return response.status === 204
-    ? (undefined as T)
-    : ((await response.json()) as T);
-}
-
-export function staffRecordPath(collection: string, id: string) {
-  return `/${collection}/${encodeURIComponent(id)}`;
 }

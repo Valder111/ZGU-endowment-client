@@ -1,40 +1,41 @@
 import { useEffect, useState } from 'react';
+import type { AxiosResponse } from 'axios';
 import { staffError, type StaffRequest } from '@/api/staff';
+import type { RequestParams } from '@/api/generated/http-client';
 
 export function useStaffResource<T>(
   request: StaffRequest,
-  path: string | null,
+  load: (params: RequestParams) => Promise<AxiosResponse<T>>,
+  enabled = true,
 ) {
   const [revision, setRevision] = useState(0);
-  const [result, setResult] = useState<
-    | {
-        path: string;
-        revision: number;
-        request: StaffRequest;
-        data?: T;
-        error?: string;
-      }
-    | undefined
-  >();
+  const [result, setResult] = useState<{
+    load: typeof load;
+    revision: number;
+    request: StaffRequest;
+    data?: T;
+    error?: string;
+  }>();
 
   useEffect(() => {
-    if (!path) return;
+    if (!enabled) return;
     const controller = new AbortController();
-    request<T>(path, { signal: controller.signal }).then(
+    const key = { load, revision, request };
+    request(load({ signal: controller.signal })).then(
       (data) => {
-        if (!controller.signal.aborted)
-          setResult({ path, revision, request, data });
+        if (!controller.signal.aborted) setResult({ ...key, data });
       },
       (error: unknown) => {
         if (!controller.signal.aborted)
-          setResult({ path, revision, request, error: staffError(error) });
+          setResult({ ...key, error: staffError(error) });
       },
     );
     return () => controller.abort();
-  }, [request, path, revision]);
+  }, [request, load, revision, enabled]);
 
   const current =
-    result?.path === path &&
+    enabled &&
+    result?.load === load &&
     result.revision === revision &&
     result.request === request
       ? result
@@ -42,7 +43,7 @@ export function useStaffResource<T>(
   return {
     data: current?.data,
     error: current?.error,
-    loading: Boolean(path && !current),
+    loading: enabled && !current,
     revision,
     reload: () => setRevision((value) => value + 1),
   };

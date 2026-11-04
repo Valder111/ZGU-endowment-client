@@ -108,6 +108,23 @@ try {
       process.env.PLAYWRIGHT_CHANNEL === 'chromium' ? undefined : 'chrome',
   });
   const page = await browser.newPage({ reducedMotion: 'reduce' });
+  if (staffApiBase) {
+    await page.route(`${staffApiBase.replace(/\/$/, '')}/**`, (route) =>
+      route.fulfill({
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        json: new URL(route.request().url()).pathname.endsWith('/news')
+          ? [
+              {
+                id: 'published',
+                title: 'Опубликованная новость из API',
+                status: 'published',
+              },
+              { id: 'draft', title: 'Черновик из API', status: 'draft' },
+            ]
+          : [],
+      }),
+    );
+  }
   const errors = [];
   const missing = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -121,6 +138,12 @@ try {
     const result = await page.goto(siteUrl(route.path));
     assert.equal(result.status(), 200, route.path);
     await expect(page.locator('main h1')).toHaveText(route.title);
+    if (staffApiBase && route.path === '/news/') {
+      await expect(
+        page.getByRole('heading', { name: 'Опубликованная новость из API' }),
+      ).toBeVisible();
+      await expect(page.getByText('Черновик из API')).toHaveCount(0);
+    }
     if (staffApiBase && ['/admin/', '/moderator/'].includes(route.path)) {
       await expect(page.getByLabel('Рабочая почта')).toBeVisible();
       await expect(page.getByLabel('Пароль', { exact: true })).toBeVisible();

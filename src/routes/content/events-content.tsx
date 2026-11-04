@@ -1,5 +1,6 @@
 import { EditorialArtwork } from '@/assets/svg/editorial-artwork';
 import { SiteLink } from '@/components/elements/site-link';
+import { PublishedContent } from '@/components/elements/published-content';
 
 export function EventsContent() {
   return (
@@ -26,6 +27,7 @@ export function EventsContent() {
         </div>
         <EditorialArtwork scene="events" />
       </div>
+      <PublishedContent collection="events" />
       <section className="editorial-section event-topics">
         <span className="eyebrow">ТЕМЫ ДЛЯ ВСТРЕЧ</span>
         <h2>Разговор о&nbsp;долгой поддержке</h2>

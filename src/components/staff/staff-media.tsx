@@ -1,6 +1,8 @@
-import type { FormEvent } from 'react';
+import { useCallback, useEffect, useRef, type FormEvent } from 'react';
 import { ImagePlus, Trash2 } from 'lucide-react';
-import { staffBase, type StaffPhoto, type StaffRequest } from '@/api/staff';
+import type { StaffRequest } from '@/api/staff';
+import type { PhotoApi } from '@/api/staff-content';
+import type { RequestParams } from '@/api/generated/http-client';
 import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
 import {
   invalidStaffForm,
@@ -11,18 +13,65 @@ import { StaffFeedback, StaffLoad } from './staff-controls';
 
 const mimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-export function StaffMedia({
+function PhotoPreview({
   request,
-  recordPath,
+  api,
+  recordId,
+  photoId,
+  name,
 }: {
   request: StaffRequest;
-  recordPath: string;
+  api: PhotoApi;
+  recordId: string;
+  photoId: string;
+  name: string;
 }) {
-  const path = `${recordPath}/media`;
-  const photos = useStaffResource<StaffPhoto[]>(request, path);
+  const load = useCallback(
+    (params: RequestParams) =>
+      api.mediaContentList(recordId, photoId, { ...params, format: 'blob' }),
+    [api, recordId, photoId],
+  );
+  const photo = useStaffResource(request, load);
+  const linkRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const link = linkRef.current;
+    const image = link?.querySelector('img');
+    if (!photo.data || !link || !image) return;
+    const url = URL.createObjectURL(photo.data);
+    link.href = url;
+    image.src = url;
+    return () => URL.revokeObjectURL(url);
+  }, [photo.data]);
+
+  return (
+    <StaffLoad {...photo}>
+      {photo.data && (
+        <a ref={linkRef} target="_blank" rel="noopener">
+          <img alt={name} />
+        </a>
+      )}
+    </StaffLoad>
+  );
+}
+
+export function StaffMedia({
+  request,
+  recordId,
+  api,
+}: {
+  request: StaffRequest;
+  recordId: string;
+  api: PhotoApi;
+}) {
+  const load = useCallback(
+    (params: RequestParams) => api.mediaList(recordId, params),
+    [api, recordId],
+  );
+  const photos = useStaffResource(request, load);
   const action = useStaffAction();
 
-  function upload(event: FormEvent<HTMLFormElement>, photoPath?: string) {
+  function upload(event: FormEvent<HTMLFormElement>, photoId?: string) {
     event.preventDefault();
     const form = event.currentTarget;
     const body = new FormData(form);
@@ -39,21 +88,22 @@ export function StaffMedia({
             'Выберите файл JPEG, PNG, WebP или GIF размером до 10 МиБ.',
           );
         }
-        await request(photoPath ?? path, {
-          method: photoPath ? 'PUT' : 'POST',
-          body,
-        });
+        await request(
+          photoId
+            ? api.mediaUpdate(recordId, photoId, { file })
+            : api.mediaCreate(recordId, { file }),
+        );
         form.reset();
         photos.reload();
       },
-      photoPath ? 'Фотография заменена.' : 'Фотография добавлена.',
+      photoId ? 'Фотография заменена.' : 'Фотография добавлена.',
     );
   }
 
-  function remove(photoPath: string) {
+  function remove(photoId: string) {
     if (!window.confirm('Удалить эту фотографию из записи?')) return;
     void action.run(async () => {
-      await request(photoPath, { method: 'DELETE' });
+      await request(api.mediaDelete(recordId, photoId));
       photos.reload();
     }, 'Фотография удалена.');
   }
@@ -81,19 +131,21 @@ export function StaffMedia({
         {photos.data?.length ? (
           <ul className="staff-photo-grid">
             {photos.data.map((photo) => {
-              const photoPath = `${path}/${encodeURIComponent(photo.id)}`;
-              const image = `${staffBase}${photoPath}/content`;
+              if (!photo.id) return null;
+              const photoId = encodeURIComponent(photo.id);
+              const name = photo.original_filename ?? 'Фотография';
               return (
                 <li key={photo.id}>
-                  <a href={image} target="_blank" rel="noopener">
-                    <img
-                      src={image}
-                      loading="lazy"
-                      alt={photo.original_filename}
-                    />
-                  </a>
-                  <p>{photo.original_filename}</p>
-                  <form onSubmit={(event) => upload(event, photoPath)}>
+                  <PhotoPreview
+                    key={photos.revision}
+                    request={request}
+                    api={api}
+                    recordId={recordId}
+                    photoId={photoId}
+                    name={name}
+                  />
+                  <p>{name}</p>
+                  <form onSubmit={(event) => upload(event, photoId)}>
                     <label className="staff-field">
                       Новый файл
                       <input
@@ -115,7 +167,7 @@ export function StaffMedia({
                       <Button
                         variant="outline"
                         disabled={action.pending}
-                        onClick={() => remove(photoPath)}
+                        onClick={() => remove(photoId)}
                       >
                         <Trash2 /> Удалить
                       </Button>
