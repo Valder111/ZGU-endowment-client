@@ -1,4 +1,11 @@
-import { useCallback, useState, type FormEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FormEvent,
+} from 'react';
 import { Plus, RefreshCw } from 'lucide-react';
 import type { StaffRequest } from '@/api/staff';
 import { collectionApi } from '@/api/staff-content';
@@ -9,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import {
   collections,
   contentPayload,
+  currencies,
   documentFile,
   statusLabels,
   type Collection,
@@ -16,6 +24,11 @@ import {
 import { StaffFeedback, StaffList, StaffLoad } from './staff-controls';
 import { StaffMedia } from './staff-media';
 import { StaffDocumentFile } from './staff-document-file';
+import { StaffConfirm } from './staff-confirm';
+import { StaffFilePicker } from './staff-file-picker';
+
+const draftDelay = 7000;
+const reportYears = Array.from({ length: 201 }, (_, index) => 2100 - index);
 
 function dateLabel(value?: string) {
   return value
@@ -34,9 +47,15 @@ export function ContentWorkspace({
   request: StaffRequest;
 }) {
   const config = collections[collection];
+  const formId = useId();
   const api = collectionApi[collection];
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<string | 'new'>();
+  const [fileName, setFileName] = useState('');
+  const [draftQueued, setDraftQueued] = useState(false);
+  const draftTimer = useRef<number>(undefined);
+  const pausedDraft = useRef(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const recordId =
     selected && selected !== 'new' ? encodeURIComponent(selected) : '';
   const list = useStaffResource(request, api.list);
@@ -54,46 +73,107 @@ export function ContentWorkspace({
   const recordStatus = item?.[config.statusKey];
   const transitionStatus =
     collection === 'events' ? item?.event_status : recordStatus;
+  const publishOnCreation =
+    collection === 'events' || collection === 'projects';
+  const autosave = creating || recordStatus === 'draft';
+
+  const cancelAutosave = useCallback(() => {
+    window.clearTimeout(draftTimer.current);
+    setDraftQueued(false);
+  }, []);
+  useEffect(() => () => window.clearTimeout(draftTimer.current), []);
+
+  function select(next?: string) {
+    if (next !== undefined && next === selected) return;
+    cancelAutosave();
+    setFileName('');
+    setSelected(next);
+  }
+
+  function saveDraftAfterChange(form: HTMLFormElement) {
+    cancelAutosave();
+    if (!autosave) return;
+    const data = new FormData(form);
+    const status = data.get(config.statusKey);
+    if (creating && status !== 'draft') return;
+    setDraftQueued(true);
+    draftTimer.current = window.setTimeout(() => {
+      setDraftQueued(false);
+      if (form.isConnected) persist(form, true);
+    }, draftDelay);
+  }
 
   function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    cancelAutosave();
+    persist(event.currentTarget, false);
+  }
+
+  function onConfirmation(open: boolean) {
+    if (open) {
+      pausedDraft.current = draftQueued;
+      cancelAutosave();
+    } else if (pausedDraft.current && formRef.current) {
+      pausedDraft.current = false;
+      saveDraftAfterChange(formRef.current);
+    }
+  }
+
+  function persist(form: HTMLFormElement, automatic: boolean) {
+    const data = new FormData(form);
+    let body: Record<string, string>;
+    let file: File | undefined;
+    try {
+      body = contentPayload(fields, data, item, automatic);
+      if (!Object.keys(body).length) return;
+      if (creating && collection === 'documents') file = documentFile(data);
+    } catch (error) {
+      if (!automatic || form.checkValidity()) {
+        void action.run(async () => {
+          throw error;
+        }, '');
+      }
+      return;
+    }
     void action.run(
       async () => {
-        const body = contentPayload(fields, data, item);
         if (recordId) {
           await request(api.update(recordId, body));
           detail.reload();
         } else {
-          const created = await request(
-            api.create(
-              body,
-              collection === 'documents' ? documentFile(data) : undefined,
-            ),
-          );
-          setSelected(created.id);
+          if (automatic) body[config.statusKey] = 'draft';
+          const created = await request(api.create(body, file));
+          select(created.id);
         }
         list.reload();
       },
-      creating ? 'Запись создана.' : 'Изменения сохранены.',
+      automatic
+        ? 'Черновик сохранён в базе.'
+        : creating
+          ? 'Запись создана.'
+          : 'Изменения сохранены.',
     );
   }
 
   function perform(operation: 'transition' | 'delete') {
     if (!recordId) return;
     const remove = operation === 'delete';
-    if (
-      !window.confirm(
-        remove
-          ? 'Удалить запись? Она исчезнет из списка.'
-          : `${config.transition.label} эту запись?`,
-      )
-    )
-      return;
+    pausedDraft.current = false;
+    cancelAutosave();
     void action.run(
       async () => {
+        if (!remove && formRef.current) {
+          const changes = contentPayload(
+            fields,
+            new FormData(formRef.current),
+            item,
+            true,
+          );
+          if (Object.keys(changes).length)
+            await request(api.update(recordId, changes));
+        }
         await request(remove ? api.remove(recordId) : api.transition(recordId));
-        if (remove) setSelected(undefined);
+        if (remove) select();
         else detail.reload();
         list.reload();
       },
@@ -123,7 +203,7 @@ export function ContentWorkspace({
           <Button
             variant="brand"
             disabled={action.pending}
-            onClick={() => setSelected('new')}
+            onClick={() => select('new')}
           >
             <Plus /> {config.create}
           </Button>
@@ -161,7 +241,7 @@ export function ContentWorkspace({
               search={search}
               onSearch={setSearch}
               activeId={selected}
-              onSelect={setSelected}
+              onSelect={select}
               disabled={action.pending}
             />
           </StaffLoad>
@@ -175,9 +255,13 @@ export function ContentWorkspace({
             <StaffLoad {...detail}>
               {(item || creating) && (
                 <form
+                  ref={formRef}
                   className="staff-card staff-form"
                   key={`${selected}-${detail.revision}`}
                   onSubmit={save}
+                  onChange={(event) =>
+                    saveDraftAfterChange(event.currentTarget)
+                  }
                 >
                   <h3>{creating ? config.create : item?.[config.titleKey]}</h3>
                   {item && (
@@ -199,15 +283,43 @@ export function ContentWorkspace({
                       )}
                     </div>
                   )}
-                  {creating &&
-                    (collection === 'events' || collection === 'projects') && (
-                      <p className="staff-hint">
-                        Укажите даты в часовом поясе устройства. Даты и статус
-                        публикации задаются при создании.
+                  {creating && publishOnCreation && (
+                    <p className="staff-hint">
+                      {collection === 'projects'
+                        ? 'Даты, валюта и статус публикации задаются при создании.'
+                        : 'Даты и статус публикации задаются при создании.'}{' '}
+                      Автосохранение доступно со статусом «Черновик». Для
+                      публикации выберите «Опубликовано» перед созданием
+                      карточки.
+                    </p>
+                  )}
+                  {creating && collection === 'events' && (
+                    <p className="staff-callout">
+                      Место проведения можно указать после создания карточки
+                      события.
+                    </p>
+                  )}
+                  {!creating &&
+                    recordStatus === 'draft' &&
+                    publishOnCreation && (
+                      <p className="staff-callout">
+                        Этот черновик можно редактировать. Сервер принимает
+                        статус «Опубликовано» только при создании новой
+                        карточки.
                       </p>
                     )}
+                  {autosave && (
+                    <p className="staff-hint" role="status">
+                      {action.pending
+                        ? 'Сохраняем…'
+                        : draftQueued
+                          ? 'Проверим и сохраним черновик через 7 секунд.'
+                          : 'Со статусом «Черновик» заполненная форма сохраняется после паузы в 7 секунд.'}
+                    </p>
+                  )}
                   <fieldset disabled={action.pending}>
                     {fields.map((field) => {
+                      const labelId = `${formId}-${field.key}`;
                       const defaults = String(
                         item?.[field.key] ??
                           field.defaultValue ??
@@ -218,10 +330,44 @@ export function ContentWorkspace({
                         field.required && (creating || field.key !== 'type');
                       return (
                         <label className="staff-field" key={field.key}>
-                          {field.label}
-                          {field.options ? (
+                          <span id={labelId}>{field.label}</span>
+                          {field.kind === 'currency' ? (
                             <select
                               name={field.key}
+                              aria-labelledby={labelId}
+                              defaultValue={defaults}
+                              required
+                            >
+                              {Object.entries(currencies).map(
+                                ([code, label]) => (
+                                  <option value={code} key={code}>
+                                    {label} ({code})
+                                  </option>
+                                ),
+                              )}
+                            </select>
+                          ) : field.kind === 'year' ? (
+                            <select
+                              name={field.key}
+                              defaultValue={defaults}
+                              aria-labelledby={labelId}
+                            >
+                              <option
+                                value=""
+                                disabled={Boolean(item?.reporting_year)}
+                              >
+                                Выберите год отчётности
+                              </option>
+                              {reportYears.map((year) => (
+                                <option value={year} key={year}>
+                                  {year}
+                                </option>
+                              ))}
+                            </select>
+                          ) : field.options ? (
+                            <select
+                              name={field.key}
+                              aria-labelledby={labelId}
                               defaultValue={defaults}
                               required={required}
                             >
@@ -247,20 +393,14 @@ export function ContentWorkspace({
                                   : 'text'
                               }
                               inputMode={
-                                field.kind === 'amount'
-                                  ? 'decimal'
-                                  : field.kind === 'year'
-                                    ? 'numeric'
-                                    : undefined
+                                field.kind === 'amount' ? 'decimal' : undefined
                               }
-                              pattern={
-                                field.kind === 'currency'
-                                  ? '[A-Za-z]{3}'
+                              placeholder={
+                                field.kind === 'amount'
+                                  ? '150 000,50'
                                   : undefined
                               }
-                              maxLength={
-                                field.kind === 'currency' ? 3 : field.maxLength
-                              }
+                              maxLength={field.maxLength}
                               defaultValue={defaults}
                               required={required}
                             />
@@ -269,15 +409,17 @@ export function ContentWorkspace({
                       );
                     })}
                     {creating && collection === 'documents' && (
-                      <label className="staff-field">
-                        Файл документа
-                        <input
-                          name="file"
-                          type="file"
-                          accept=".pdf,.doc,.docx"
-                          required
-                        />
-                      </label>
+                      <StaffFilePicker
+                        label="Прикрепить документ"
+                        accept=".pdf,.doc,.docx"
+                        filename={fileName}
+                        required
+                        onChange={(event) =>
+                          setFileName(
+                            event.currentTarget.files?.[0]?.name ?? '',
+                          )
+                        }
+                      />
                     )}
                   </fieldset>
                   <div className="staff-actions">
@@ -290,23 +432,41 @@ export function ContentWorkspace({
                     </Button>
                     {item &&
                       transitionStatus !== config.transition.completed && (
-                        <Button
-                          variant="outline"
-                          disabled={action.pending}
-                          onClick={() => perform('transition')}
-                        >
-                          {config.transition.label}
-                        </Button>
+                        <StaffConfirm
+                          trigger={
+                            <Button variant="outline" disabled={action.pending}>
+                              {config.transition.label}
+                            </Button>
+                          }
+                          title={config.transition.label + '?'}
+                          description={
+                            publishOnCreation
+                              ? 'Статус записи изменится.'
+                              : 'Запись станет видна на сайте.'
+                          }
+                          label={config.transition.label}
+                          onOpenChange={onConfirmation}
+                          onConfirm={() => perform('transition')}
+                        />
                       )}
                     {item && (
-                      <Button
-                        variant="outline"
-                        className="staff-danger"
-                        disabled={action.pending}
-                        onClick={() => perform('delete')}
-                      >
-                        Удалить запись
-                      </Button>
+                      <StaffConfirm
+                        trigger={
+                          <Button
+                            variant="outline"
+                            className="staff-danger"
+                            disabled={action.pending}
+                          >
+                            Удалить запись
+                          </Button>
+                        }
+                        title="Удалить запись?"
+                        description="Запись исчезнет из редакции и публичной ленты."
+                        label="Удалить"
+                        danger
+                        onOpenChange={onConfirmation}
+                        onConfirm={() => perform('delete')}
+                      />
                     )}
                   </div>
                 </form>

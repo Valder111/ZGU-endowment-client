@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { downloadBlob } from '@/utils/download-blob';
 import { documentFile } from './content-fields';
 import { StaffFeedback } from './staff-controls';
+import { StaffFilePicker } from './staff-file-picker';
 
 export function StaffDocumentFile({
   request,
@@ -17,6 +18,7 @@ export function StaffDocumentFile({
 }) {
   const action = useStaffAction();
   const [replacementName, setReplacementName] = useState<string>();
+  const [chosenName, setChosenName] = useState('');
   const currentName = replacementName ?? filename;
 
   function download() {
@@ -38,6 +40,7 @@ export function StaffDocumentFile({
       );
       setReplacementName(updated.original_filename ?? file.name);
       form.reset();
+      setChosenName('');
     }, 'Файл заменён.');
   }
 
@@ -51,16 +54,16 @@ export function StaffDocumentFile({
         </Button>
       </div>
       <form className="staff-upload" onSubmit={replace}>
-        <label className="staff-field">
-          Новый файл
-          <input
-            name="file"
-            type="file"
-            accept=".pdf,.doc,.docx"
-            required
-            disabled={action.pending}
-          />
-        </label>
+        <StaffFilePicker
+          label="Выбрать новый файл"
+          accept=".pdf,.doc,.docx"
+          filename={chosenName}
+          required
+          disabled={action.pending}
+          onChange={(event) =>
+            setChosenName(event.currentTarget.files?.[0]?.name ?? '')
+          }
+        />
         <Button type="submit" variant="outline" disabled={action.pending}>
           Заменить файл
         </Button>

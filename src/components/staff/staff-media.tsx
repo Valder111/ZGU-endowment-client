@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, type FormEvent } from 'react';
-import { ImagePlus, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useRef, type ChangeEvent } from 'react';
+import { Trash2 } from 'lucide-react';
 import type { StaffRequest } from '@/api/staff';
 import type { PhotoApi } from '@/api/staff-content';
 import type { RequestParams } from '@/api/generated/http-client';
@@ -10,6 +10,8 @@ import {
 } from '@/hooks/requests/mutations/use-staff-action';
 import { Button } from '@/components/ui/button';
 import { StaffFeedback, StaffLoad } from './staff-controls';
+import { StaffConfirm } from './staff-confirm';
+import { StaffFilePicker } from './staff-file-picker';
 
 const mimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
@@ -47,7 +49,13 @@ function PhotoPreview({
   return (
     <StaffLoad {...photo}>
       {photo.data && (
-        <a ref={linkRef} target="_blank" rel="noopener">
+        <a
+          className="staff-photo-preview"
+          ref={linkRef}
+          target="_blank"
+          rel="noopener"
+          aria-label={`Открыть фото «${name}»`}
+        >
           <img alt={name} />
         </a>
       )}
@@ -71,15 +79,14 @@ export function StaffMedia({
   const photos = useStaffResource(request, load);
   const action = useStaffAction();
 
-  function upload(event: FormEvent<HTMLFormElement>, photoId?: string) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const body = new FormData(form);
-    const file = body.get('file');
+  function upload(event: ChangeEvent<HTMLInputElement>, photoId?: string) {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
     void action.run(
       async () => {
         if (
-          !(file instanceof File) ||
           !file.size ||
           file.size > 10 * 1024 * 1024 ||
           !mimeTypes.includes(file.type)
@@ -93,7 +100,6 @@ export function StaffMedia({
             ? api.mediaUpdate(recordId, photoId, { file })
             : api.mediaCreate(recordId, { file }),
         );
-        form.reset();
         photos.reload();
       },
       photoId ? 'Фотография заменена.' : 'Фотография добавлена.',
@@ -101,7 +107,6 @@ export function StaffMedia({
   }
 
   function remove(photoId: string) {
-    if (!window.confirm('Удалить эту фотографию из записи?')) return;
     void action.run(async () => {
       await request(api.mediaDelete(recordId, photoId));
       photos.reload();
@@ -111,21 +116,15 @@ export function StaffMedia({
   return (
     <section className="staff-card staff-media">
       <h3>Фотографии</h3>
-      <form className="staff-upload" onSubmit={upload}>
-        <label className="staff-field">
-          Новая фотография
-          <input
-            type="file"
-            name="file"
-            accept={mimeTypes.join(',')}
-            required
-            disabled={action.pending}
-          />
-        </label>
-        <Button type="submit" variant="outline" disabled={action.pending}>
-          <ImagePlus /> Добавить фото
-        </Button>
-      </form>
+      <div className="staff-upload">
+        <StaffFilePicker
+          label="Прикрепить фото"
+          accept={mimeTypes.join(',')}
+          disabled={action.pending}
+          onChange={upload}
+        />
+        <span className="staff-hint">JPEG, PNG, WebP или GIF, до 10 МиБ</span>
+      </div>
       <StaffFeedback error={action.error} notice={action.notice} />
       <StaffLoad {...photos}>
         {photos.data?.length ? (
@@ -145,34 +144,30 @@ export function StaffMedia({
                     name={name}
                   />
                   <p>{name}</p>
-                  <form onSubmit={(event) => upload(event, photoId)}>
-                    <label className="staff-field">
-                      Новый файл
-                      <input
-                        type="file"
-                        name="file"
-                        accept={mimeTypes.join(',')}
-                        required
-                        disabled={action.pending}
-                      />
-                    </label>
-                    <div className="staff-actions">
-                      <Button
-                        type="submit"
-                        variant="outline"
-                        disabled={action.pending}
-                      >
-                        Заменить
-                      </Button>
-                      <Button
-                        variant="outline"
-                        disabled={action.pending}
-                        onClick={() => remove(photoId)}
-                      >
-                        <Trash2 /> Удалить
-                      </Button>
-                    </div>
-                  </form>
+                  <div className="staff-actions">
+                    <StaffFilePicker
+                      label="Заменить"
+                      accept={mimeTypes.join(',')}
+                      disabled={action.pending}
+                      onChange={(event) => upload(event, photoId)}
+                    />
+                    <StaffConfirm
+                      trigger={
+                        <Button
+                          variant="outline"
+                          className="staff-danger"
+                          disabled={action.pending}
+                        >
+                          <Trash2 /> Удалить
+                        </Button>
+                      }
+                      title="Удалить фотографию?"
+                      description={`Файл «${name}» будет удалён из записи.`}
+                      label="Удалить"
+                      danger
+                      onConfirm={() => remove(photoId)}
+                    />
+                  </div>
                 </li>
               );
             })}

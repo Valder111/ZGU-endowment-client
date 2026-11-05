@@ -26,6 +26,30 @@ type Field = {
   maxLength?: number;
 };
 
+export const currencies = {
+  RUB: 'Российский рубль',
+  CNY: 'Китайский юань',
+  KZT: 'Казахстанский тенге',
+  BYN: 'Белорусский рубль',
+  USD: 'Доллар США',
+  EUR: 'Евро',
+};
+
+export function normalizeTargetAmount(value: string) {
+  const raw = value.trim();
+  if (!/^(?:\d+|\d{1,3}(?:[ \u00a0\u202f]\d{3})+)(?:[.,]\d{1,2})?$/.test(raw))
+    invalidStaffForm(
+      'Введите сумму с точностью до двух знаков, например 150 000,50.',
+    );
+  const [whole = '', fraction = ''] = raw
+    .replace(/[ \u00a0\u202f]/g, '')
+    .split(/[.,]/);
+  const integer = whole.replace(/^0+(?=\d)/, '');
+  if (integer.length > 12 || !/[1-9]/.test(integer + fraction))
+    invalidStaffForm('Укажите сумму от 0,01 до 999 999 999 999,99.');
+  return `${integer}.${fraction.padEnd(2, '0')}`;
+}
+
 const publicationOptions = ['draft', 'published', 'archived'];
 const eventStatuses = ['scheduled', 'ongoing', 'finished', 'cancelled'];
 const dates: Field[] = [
@@ -122,7 +146,7 @@ export const collections: Record<
       { key: 'target_amount', label: 'Целевая сумма', kind: 'amount' },
       {
         key: 'currency',
-        label: 'Код валюты',
+        label: 'Валюта',
         kind: 'currency',
         required: true,
         defaultValue: 'RUB',
@@ -179,6 +203,7 @@ export function contentPayload(
   fields: Field[],
   data: FormData,
   current?: ContentRecord,
+  allowUnchanged = false,
 ) {
   const payload: Record<string, string> = {};
   for (const field of fields) {
@@ -208,10 +233,8 @@ export function contentPayload(
     )
       invalidStaffForm('Укажите год отчётности от 1900 до 2100.');
     if (field.kind === 'amount') {
-      value = raw.replace(',', '.');
-      if (!/^\d+(\.\d+)?$/.test(value) || !/[1-9]/.test(value)) {
-        invalidStaffForm('Укажите положительную целевую сумму.');
-      }
+      value = normalizeTargetAmount(raw);
+      if (previous && value === normalizeTargetAmount(previous)) continue;
     }
     payload[field.key] = value;
   }
@@ -222,7 +245,7 @@ export function contentPayload(
   ) {
     invalidStaffForm('Окончание должно быть позже начала.');
   }
-  if (!Object.keys(payload).length)
+  if (!allowUnchanged && !Object.keys(payload).length)
     invalidStaffForm('Внесите изменения перед сохранением.');
   return payload;
 }

@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { SiteProvider } from '@/context/site-provider';
 import { useSite } from '@/hooks/use-site';
 import { useMotion } from '@/hooks/use-motion';
+import { useTeapotShortcut } from '@/hooks/use-teapot-shortcut';
 import { SiteHeader } from '@/components/elements/site-header';
 import { SiteFooter } from '@/components/elements/site-footer';
 import { DonationDialog } from '@/components/dialogs/donation-dialog';
@@ -32,6 +33,7 @@ function Site({ page }: { page?: PageDefinition }) {
 }
 export function App({ pathname }: { pathname: string }) {
   const page = resolvePage(pathname);
+  useTeapotShortcut(page?.kind !== 'teapot');
   if (page?.kind === 'admin') {
     return (
       <AdminContent

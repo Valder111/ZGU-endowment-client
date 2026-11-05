@@ -16,6 +16,7 @@ import {
 } from '@/hooks/requests/mutations/use-staff-action';
 import { Button } from '@/components/ui/button';
 import { StaffFeedback, StaffList, StaffLoad } from './staff-controls';
+import { StaffConfirm } from './staff-confirm';
 
 export function UsersWorkspace({
   request,
@@ -91,13 +92,6 @@ export function UsersWorkspace({
 
   function toggleActive() {
     if (!user || !recordId || self) return;
-    if (
-      user.is_active &&
-      !window.confirm(
-        `Деактивировать учётную запись ${user.email}? Её сессии будут сброшены.`,
-      )
-    )
-      return;
     void action.run(
       async () => {
         await request(
@@ -253,16 +247,34 @@ export function UsersWorkspace({
                         ? 'Создать учётную запись'
                         : 'Сохранить изменения'}
                     </Button>
-                    {user && !self && (
-                      <Button
-                        variant="outline"
-                        className={user.is_active ? 'staff-danger' : undefined}
-                        disabled={action.pending}
-                        onClick={toggleActive}
-                      >
-                        {user.is_active ? 'Деактивировать' : 'Активировать'}
-                      </Button>
-                    )}
+                    {user &&
+                      !self &&
+                      (user.is_active ? (
+                        <StaffConfirm
+                          trigger={
+                            <Button
+                              variant="outline"
+                              className="staff-danger"
+                              disabled={action.pending}
+                            >
+                              Деактивировать
+                            </Button>
+                          }
+                          title="Деактивировать учётную запись?"
+                          description={`Доступ для ${user.email} будет приостановлен, а активные сессии завершатся.`}
+                          label="Деактивировать"
+                          danger
+                          onConfirm={toggleActive}
+                        />
+                      ) : (
+                        <Button
+                          variant="outline"
+                          disabled={action.pending}
+                          onClick={toggleActive}
+                        >
+                          Активировать
+                        </Button>
+                      ))}
                   </div>
                 </form>
               )}

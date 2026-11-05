@@ -1,6 +1,7 @@
 import { UniversityStories } from '@/components/elements/university-stories';
 import { SiteLink } from '@/components/elements/site-link';
 import { IncomeCycle } from '@/components/elements/income-cycle';
+import { PublishedContent } from '@/components/elements/published-content';
 export function ResultsContent() {
   return (
     <div className="wrap article-content">
@@ -20,6 +21,7 @@ export function ResultsContent() {
           </SiteLink>
         </div>
       </div>
+      <PublishedContent collection="projects" />
       <UniversityStories />
       <section className="application-guide editorial-section">
         <span className="eyebrow">СТУДЕНТАМ И&nbsp;ИССЛЕДОВАТЕЛЯМ</span>

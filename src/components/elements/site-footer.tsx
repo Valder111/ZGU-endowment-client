@@ -27,6 +27,7 @@ export function SiteFooter() {
             <SiteLink href="/anniversary/">65 лет университету</SiteLink>
             <SiteLink href="/how-to-support/">Как поддержать</SiteLink>
             <SiteLink href="/results/">Проекты и&nbsp;результаты</SiteLink>
+            <SiteLink href="/events/">События</SiteLink>
             <SiteLink href="/about/constituent-the-documents/">
               Документы и&nbsp;отчётность
             </SiteLink>
@@ -68,6 +69,7 @@ export function SiteFooter() {
         </div>
         <div className="footer-bottom">
           <span>© 2026 · ЗГУ имени Н. М. Федоровского</span>
+          <span>Платформа разработана кафедрой ИСиТ ЗГУ</span>
           <SiteLink href="/about/constituent-the-documents/#privacy">
             Персональные данные
           </SiteLink>

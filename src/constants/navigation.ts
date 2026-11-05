@@ -13,6 +13,7 @@ export const navigation = [
     group: 'results',
   },
   { href: '/news/', label: 'Новости и истории', group: 'news' },
+  { href: '/events/', label: 'События', group: 'events' },
   {
     href: '/about/constituent-the-documents/',
     label: 'Документы и отчётность',

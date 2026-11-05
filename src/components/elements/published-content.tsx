@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { FileText } from 'lucide-react';
+import {
+  CalendarDays,
+  Download,
+  FileText,
+  Layers3,
+  MapPin,
+  Newspaper,
+} from 'lucide-react';
 import {
   staffApi,
   staffBase,
@@ -27,15 +34,44 @@ const headings = {
   projects: 'Опубликованные проекты',
   documents: 'Опубликованные документы',
 };
+const articleKinds = {
+  news: { label: 'Новости', icon: Newspaper },
+  events: { label: 'События', icon: CalendarDays },
+  projects: { label: 'Проекты', icon: Layers3 },
+};
+
+function dateLabel(value: string, withTime: boolean) {
+  return new Date(value).toLocaleString('ru-RU', {
+    dateStyle: 'long',
+    timeStyle: withTime ? 'short' : undefined,
+  });
+}
+
+function goalLabel(amount?: string, currency?: string) {
+  if (
+    !amount ||
+    !currency ||
+    !/^[A-Z]{3}$/.test(currency) ||
+    !Number.isFinite(Number(amount))
+  )
+    return;
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 2,
+  }).format(Number(amount));
+}
 
 function PublishedPhoto({
   api,
   id,
   photoId,
+  cover = false,
 }: {
   api: PhotoApi;
   id: string;
   photoId: string;
+  cover?: boolean;
 }) {
   const image = useRef<HTMLImageElement>(null);
   const load = useCallback(
@@ -60,7 +96,7 @@ function PublishedPhoto({
     data && (
       <img
         ref={image}
-        className="mt-4 max-h-80 max-w-full rounded-lg object-contain"
+        className={cover ? 'published-cover-image' : 'published-gallery-image'}
         alt=""
       />
     )
@@ -72,48 +108,93 @@ function PublishedArticle({
   title,
   item,
   api,
+  collection,
 }: {
   id: string;
   title: string;
   item: ContentRecord;
   api: PhotoApi;
+  collection: keyof typeof articleKinds;
 }) {
+  const card = useRef<HTMLElement>(null);
+  const [near, setNear] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  useEffect(() => {
+    if (!card.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        setNear(true);
+        observer.disconnect();
+      },
+      { rootMargin: '300px' },
+    );
+    observer.observe(card.current);
+    return () => observer.disconnect();
+  }, []);
+
   const load = useCallback(
     (params: RequestParams) => api.mediaList(id, { ...anonymous, ...params }),
     [api, id],
   );
-  const { data: photos } = useStaffResource(staffResult, load, expanded);
+  const { data: photos } = useStaffResource(staffResult, load, near);
+  const [cover, ...gallery] = (Array.isArray(photos) ? photos : []).flatMap(
+    (photo) => (photo.id ? [encodeURIComponent(photo.id)] : []),
+  );
+  const { icon: Icon, label } = articleKinds[collection];
   const date = item.starts_at ?? item.published_at;
-  const summary = item.summary ?? item.short_description;
+  const summary = item.summary || item.short_description;
   const body = item.body ?? item.description;
+  const goal = goalLabel(item.target_amount, item.currency);
   return (
-    <article className="document-item">
-      <FileText aria-hidden="true" size={26} />
-      <div>
+    <article ref={card} className="published-card" data-kind={collection}>
+      <div className="published-cover">
+        <Icon className="published-cover-mark" aria-hidden="true" />
+        {cover && <PublishedPhoto api={api} id={id} photoId={cover} cover />}
+        <span className="published-chip">{label}</span>
+      </div>
+      <div className="published-card-body">
         {date && (
-          <time className="eyebrow" dateTime={date}>
-            {new Date(date).toLocaleDateString('ru-RU')}
+          <time className="published-meta" dateTime={date}>
+            {dateLabel(date, collection === 'events')}
           </time>
         )}
         <h3>{title}</h3>
-        {item.location && <p>{item.location}</p>}
+        {item.location && (
+          <p className="published-meta">
+            <MapPin size={16} aria-hidden="true" />
+            {item.location}
+          </p>
+        )}
+        {goal && (
+          <p className="published-meta">
+            Целевая сумма <strong>{goal}</strong>
+          </p>
+        )}
         {summary && <p>{summary}</p>}
-        <details onToggle={(event) => setExpanded(event.currentTarget.open)}>
-          <summary>Подробнее</summary>
-          {body && <p className="whitespace-pre-line">{body}</p>}
-          {photos?.map(
-            (photo) =>
-              photo.id && (
-                <PublishedPhoto
-                  key={photo.id}
-                  api={api}
-                  id={id}
-                  photoId={encodeURIComponent(photo.id)}
-                />
-              ),
-          )}
-        </details>
+        {((body && body !== summary) || gallery.length > 0) && (
+          <details
+            className="published-details"
+            onToggle={(event) => setExpanded(event.currentTarget.open)}
+          >
+            <summary>Подробнее</summary>
+            {body && body !== summary && (
+              <p className="whitespace-pre-line">{body}</p>
+            )}
+            {expanded && gallery.length > 0 && (
+              <div className="published-gallery">
+                {gallery.map((photoId) => (
+                  <PublishedPhoto
+                    key={photoId}
+                    api={api}
+                    id={id}
+                    photoId={photoId}
+                  />
+                ))}
+              </div>
+            )}
+          </details>
+        )}
       </div>
     </article>
   );
@@ -122,38 +203,42 @@ function PublishedArticle({
 function PublishedDocument({ id, item }: { id: string; item: ContentRecord }) {
   const action = useStaffAction();
 
+  function download() {
+    void action.run(async () => {
+      const file = await staffResult(
+        staffApi.documents.contentList(encodeURIComponent(id), {
+          ...anonymous,
+          format: 'blob',
+        }),
+      );
+      downloadBlob(file, item.original_filename ?? item.title ?? 'document');
+    }, '');
+  }
+
   return (
-    <article className="document-item">
-      <FileText aria-hidden="true" size={26} />
-      <div>
-        <span className="eyebrow">
-          {[item.category, item.reporting_year].filter(Boolean).join(' · ')}
-        </span>
+    <article className="published-card published-document">
+      <div className="published-document-mark">
+        <FileText aria-hidden="true" size={26} />
+      </div>
+      <div className="published-card-body">
+        <p className="published-meta">
+          {[item.category || 'Документ', item.reporting_year]
+            .filter(Boolean)
+            .join(' · ')}
+        </p>
         <h3>{item.title}</h3>
         {item.description && <p>{item.description}</p>}
         {action.error && <p role="alert">{action.error}</p>}
+        <button
+          type="button"
+          className="published-download"
+          disabled={action.pending}
+          onClick={download}
+        >
+          <Download size={17} aria-hidden="true" />
+          {action.pending ? 'Загрузка…' : 'Скачать файл'}
+        </button>
       </div>
-      <button
-        type="button"
-        className="text-link"
-        disabled={action.pending}
-        onClick={() => {
-          void action.run(async () => {
-            const file = await staffResult(
-              staffApi.documents.contentList(encodeURIComponent(id), {
-                ...anonymous,
-                format: 'blob',
-              }),
-            );
-            downloadBlob(
-              file,
-              item.original_filename ?? item.title ?? 'document',
-            );
-          }, '');
-        }}
-      >
-        {action.pending ? 'Загрузка…' : 'Скачать'}
-      </button>
     </article>
   );
 }
@@ -172,8 +257,8 @@ export function PublishedContent({
     [collection],
   );
   const resource = useStaffResource(staffResult, load, Boolean(staffBase));
-  const records = resource.data
-    ?.filter(
+  const records = (Array.isArray(resource.data) ? resource.data : [])
+    .filter(
       (item) =>
         item.id &&
         (item.title || item.name) &&
@@ -183,13 +268,16 @@ export function PublishedContent({
             Boolean(item.published_at))),
     )
     .slice(0, limit);
-  if (!records?.length) return null;
+  if (!records.length) return null;
   const photos = collectionApi[collection].photos;
 
   return (
-    <section className="editorial-section" aria-labelledby={titleId}>
+    <section
+      className="editorial-section published-section"
+      aria-labelledby={titleId}
+    >
       <h2 id={titleId}>{headings[collection]}</h2>
-      <div className="document-list">
+      <div className="published-grid">
         {records.map((item) => {
           const title = item.title || item.name;
           if (!item.id || !title) return null;
@@ -203,6 +291,7 @@ export function PublishedContent({
                 title={title}
                 item={item}
                 api={photos}
+                collection={collection}
               />
             )
           );

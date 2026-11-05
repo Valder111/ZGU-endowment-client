@@ -22,6 +22,7 @@ export interface FaqItem {
   link?: string;
 }
 export type PageKind =
+  | 'teapot'
   | 'home'
   | 'admin'
   | 'anniversary'

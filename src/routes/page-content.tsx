@@ -25,6 +25,7 @@ import { ResultsContent } from '@/routes/content/results-content';
 import { UniversityStories } from '@/components/elements/university-stories';
 import { AnniversaryContent } from '@/routes/content/anniversary-content';
 import { NewsArticleContent } from '@/routes/content/news-article-content';
+import { TeapotContent } from '@/routes/content/teapot-content';
 function InteriorContent({ page }: { page: PageDefinition }) {
   switch (page.kind) {
     case 'anniversary':
@@ -75,8 +76,8 @@ function InteriorContent({ page }: { page: PageDefinition }) {
     case 'news':
       return (
         <div className="wrap article-content">
-          <NewsGrid />
           <PublishedContent collection="news" />
+          <NewsGrid />
           <UniversityStories />
           <SiteLink className="text-link" href="/events/">
             События сообщества ↗
@@ -87,6 +88,7 @@ function InteriorContent({ page }: { page: PageDefinition }) {
         </div>
       );
     case 'admin':
+    case 'teapot':
     case 'home':
       return null;
   }
@@ -109,6 +111,7 @@ export function PageContent({ page }: { page?: PageDefinition }) {
       </>
     );
   if (page.kind === 'home') return <HomeContent />;
+  if (page.kind === 'teapot') return <TeapotContent />;
   return (
     <>
       <PageTitle

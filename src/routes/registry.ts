@@ -3,6 +3,12 @@ import { editorialNews } from '@/constants/editorial-news';
 /** Historical addresses intentionally share the same content as in the original site. */
 const pageGroups = [
   {
+    paths: ['/418/'],
+    kind: 'teapot',
+    title: '418 · I’m a teapot',
+    eyebrow: 'ЗГУ',
+  },
+  {
     paths: ['/admin/'],
     kind: 'admin',
     title: 'Панель администратора',
