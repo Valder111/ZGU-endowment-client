@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { StaffFeedback } from '@/components/staff/staff-controls';
 import { ContentWorkspace } from '@/components/staff/content-workspace';
+import type { LeaveEditor } from '@/components/staff/content-editor';
 import {
   collections,
   type Collection,
@@ -60,6 +61,16 @@ function rememberSession(active: boolean) {
   } catch {
     // The panel can still work in memory when session storage is unavailable.
   }
+}
+
+function regularClick(event: MouseEvent<HTMLAnchorElement>) {
+  return (
+    !event.button &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.shiftKey &&
+    !event.altKey
+  );
 }
 
 function StaffProfileForm({
@@ -156,6 +167,18 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
   }>({ profile: null, status: '' });
   const login = useStaffAction();
   const sessionVersion = useRef(0);
+  const leaveRef: LeaveEditor = useRef(undefined);
+  const leaving = useRef(false);
+
+  const afterSave = useCallback(async (next: () => void) => {
+    if (leaving.current) return;
+    leaving.current = true;
+    try {
+      if (!leaveRef.current || (await leaveRef.current())) next();
+    } finally {
+      leaving.current = false;
+    }
+  }, []);
 
   const signOut = useCallback((message: string) => {
     sessionVersion.current += 1;
@@ -215,16 +238,19 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
 
   useEffect(() => {
     function onPopState() {
-      setPanel(
-        localPath(window.location.pathname) === '/moderator/'
-          ? 'moderator'
-          : 'admin',
-      );
-      setShowProfile(false);
+      void afterSave(() => {
+        const next =
+          localPath(window.location.pathname) === '/moderator/'
+            ? 'moderator'
+            : 'admin';
+        setPanel(next);
+        setShowProfile(false);
+        document.title = `${titles[next]} – Эндаумент-фонд ЗГУ`;
+      });
     }
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, []);
+  }, [afterSave]);
 
   function navigate(next: Panel, replace = false) {
     if (next !== panel) {
@@ -238,16 +264,16 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
   }
 
   function panelLink(event: MouseEvent<HTMLAnchorElement>, next: Panel) {
-    if (
-      event.button ||
-      event.ctrlKey ||
-      event.metaKey ||
-      event.shiftKey ||
-      event.altKey
-    )
-      return;
+    if (!regularClick(event)) return;
     event.preventDefault();
-    navigate(next);
+    void afterSave(() => navigate(next));
+  }
+
+  function siteLink(event: MouseEvent<HTMLAnchorElement>) {
+    if (!leaveRef.current || !regularClick(event)) return;
+    event.preventDefault();
+    const href = event.currentTarget.href;
+    void afterSave(() => window.location.assign(href));
   }
 
   function signIn(event: FormEvent<HTMLFormElement>) {
@@ -285,7 +311,7 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
   return (
     <main className="staff-shell">
       <div className="staff-top">
-        <a className="staff-brand" href={sitePath('/')}>
+        <a className="staff-brand" href={sitePath('/')} onClick={siteLink}>
           <span aria-hidden="true">
             <ShieldCheck />
           </span>
@@ -298,7 +324,9 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
             <span>{current.email}</span>
             <Button
               variant="outline"
-              onClick={() => signOut('Панель закрыта в этой вкладке.')}
+              onClick={() =>
+                void afterSave(() => signOut('Панель закрыта в этой вкладке.'))
+              }
             >
               <LogOut /> Выйти
             </Button>
@@ -405,7 +433,10 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
                       key={item}
                       type="button"
                       aria-pressed={collection === item}
-                      onClick={() => setCollection(item)}
+                      onClick={() => {
+                        if (item !== collection)
+                          void afterSave(() => setCollection(item));
+                      }}
                     >
                       <Icon /> {collections[item].label}
                     </button>
@@ -416,11 +447,15 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
             <button
               type="button"
               aria-pressed={showProfile}
-              onClick={() => setShowProfile(true)}
+              onClick={() => void afterSave(() => setShowProfile(true))}
             >
               <UserRound /> Мой профиль
             </button>
-            <a className="staff-site-link" href={sitePath('/')}>
+            <a
+              className="staff-site-link"
+              href={sitePath('/')}
+              onClick={siteLink}
+            >
               <ArrowLeft /> На сайт
             </a>
           </nav>
@@ -445,6 +480,8 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
                 key={collection}
                 request={request}
                 collection={collection}
+                userId={current.id}
+                leaveRef={leaveRef}
               />
             )}
           </div>

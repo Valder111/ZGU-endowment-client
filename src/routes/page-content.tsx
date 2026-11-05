@@ -8,12 +8,14 @@ import { PendingContent } from '@/routes/content/pending-content';
 import { ProjectContent } from '@/routes/content/project-content';
 import { FaqContent } from '@/routes/content/faq-content';
 import { NewsGrid } from '@/components/elements/news-grid';
-import { PublishedContent } from '@/components/elements/published-content';
+import {
+  PublicationPage,
+  PublishedContent,
+} from '@/components/elements/published-content';
 import { PageTitle } from '@/components/elements/page-title';
 import { SiteLink } from '@/components/elements/site-link';
 import { artworkForPage } from '@/constants/visual-content';
 import { DirectionExplorer } from '@/components/elements/direction-explorer';
-import { CapitalFormation } from '@/components/elements/capital-formation';
 import { SupportContent } from '@/routes/content/support-content';
 import {
   DocumentsContent,
@@ -61,16 +63,18 @@ function InteriorContent({ page }: { page: PageDefinition }) {
     case 'projects':
       return (
         <div className="wrap article-content">
-          {page.showCapitalFormation && (
-            <p className="capital-formation-jump">
-              <SiteLink className="text-link" href="#capital-formation">
-                К схеме формирования капитала ↓
+          <DirectionExplorer />
+          {page.showCapitalFormationLink && (
+            <p id="capital-formation" className="capital-formation-jump">
+              <SiteLink
+                className="text-link"
+                href="/about/general-information/#capital-formation"
+              >
+                Схема формирования целевого капитала ↗
               </SiteLink>
             </p>
           )}
-          <DirectionExplorer />
           <PublishedContent collection="projects" />
-          {page.showCapitalFormation && <CapitalFormation />}
         </div>
       );
     case 'news':
@@ -88,6 +92,7 @@ function InteriorContent({ page }: { page: PageDefinition }) {
         </div>
       );
     case 'admin':
+    case 'publication':
     case 'teapot':
     case 'home':
       return null;
@@ -112,6 +117,7 @@ export function PageContent({ page }: { page?: PageDefinition }) {
     );
   if (page.kind === 'home') return <HomeContent />;
   if (page.kind === 'teapot') return <TeapotContent />;
+  if (page.kind === 'publication') return <PublicationPage />;
   return (
     <>
       <PageTitle

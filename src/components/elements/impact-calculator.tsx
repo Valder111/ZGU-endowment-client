@@ -4,7 +4,7 @@ import { formatRubles, formatYears } from '@/utils/typography';
 export function ImpactCalculator() {
   const id = useId();
   const [capital, setCapital] = useState(100_000);
-  const [rate, setRate] = useState(5);
+  const [rate, setRate] = useState(10);
   const [years, setYears] = useState(10);
   const annual = Math.round((capital * rate) / 100);
   return (

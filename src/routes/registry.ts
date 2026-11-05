@@ -21,6 +21,12 @@ const pageGroups = [
     eyebrow: 'РАБОЧИЙ РАЗДЕЛ',
   },
   {
+    paths: ['/publications/'],
+    kind: 'publication',
+    title: 'Публикация фонда',
+    eyebrow: 'МАТЕРИАЛЫ ФОНДА',
+  },
+  {
     paths: ['/news/presidential-scholarship/'],
     kind: 'news-article',
     newsId: 'scholarship',
@@ -113,7 +119,7 @@ const pageGroups = [
     kind: 'projects',
     title: 'Целевой капитал',
     eyebrow: 'ВЫБЕРИТЕ БЛИЗКУЮ ЦЕЛЬ',
-    showCapitalFormation: true,
+    showCapitalFormationLink: true,
   },
   {
     paths: ['/projects/alumni/'],

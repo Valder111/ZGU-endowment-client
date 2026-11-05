@@ -18,6 +18,7 @@ export interface ApiDocumentUpdateRequest {
 }
 
 export interface ApiEventCreateRequest {
+  category: string;
   description: string;
   ends_at: string;
   event_status: string;
@@ -28,6 +29,7 @@ export interface ApiEventCreateRequest {
 }
 
 export interface ApiEventUpdateRequest {
+  category?: string;
   description?: string;
   location?: string;
   name?: string;
@@ -36,6 +38,7 @@ export interface ApiEventUpdateRequest {
 
 export interface ApiNewsCreateRequest {
   body: string;
+  category: string;
   status: 'draft' | 'published' | 'archived';
   summary?: string;
   title: string;
@@ -43,11 +46,13 @@ export interface ApiNewsCreateRequest {
 
 export interface ApiNewsUpdateRequest {
   body?: string;
+  category?: string;
   summary?: string;
   title?: string;
 }
 
 export interface ApiProjectCreateRequest {
+  category: string;
   /** @example "RUB" */
   currency: string;
   description: string;
@@ -61,6 +66,7 @@ export interface ApiProjectCreateRequest {
 }
 
 export interface ApiProjectUpdateRequest {
+  category?: string;
   description?: string;
   name?: string;
   short_description?: string;
@@ -136,6 +142,7 @@ export interface HandlerEventMediaResponse {
 }
 
 export interface HandlerEventResponse {
+  category?: string;
   created_by?: string;
   description?: string;
   ends_at?: string;
@@ -166,6 +173,7 @@ export interface HandlerNewsMediaResponse {
 export interface HandlerNewsResponse {
   author_id?: string;
   body?: string;
+  category?: string;
   created_at?: string;
   id?: string;
   published_at?: string;
@@ -183,6 +191,7 @@ export interface HandlerProjectMediaResponse {
 }
 
 export interface HandlerProjectResponse {
+  category?: string;
   created_by?: string;
   currency?: string;
   description?: string;

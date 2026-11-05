@@ -12,6 +12,11 @@ import { SiteLink } from '@/components/elements/site-link';
 import { siteConfig } from '@/configs/site';
 import { CapitalSelect } from '@/components/elements/capital-select';
 import { formatNumber } from '@/utils/typography';
+
+function focusCustomAmount(input: HTMLInputElement | null) {
+  input?.focus();
+}
+
 export function DonationDialog() {
   const {
     donationOpen,
@@ -21,10 +26,13 @@ export function DonationDialog() {
   } = useSite();
   const opener = useRef<HTMLElement | null>(null);
   const id = useId();
-  const [amount, setAmount] = useState('1000');
+  const [preset, setPreset] = useState<number | null>(1000);
+  const [customAmount, setCustomAmount] = useState('1000');
   const [frequency, setFrequency] = useState('Разово');
-  const validAmount = Number(amount) > 0 && Number.isFinite(Number(amount));
-  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${amount} рублей.\nФормат: ${frequency}.\nНаправление: ${direction}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
+  const amount = preset === null ? customAmount : String(preset);
+  const validAmount =
+    Number(amount) > 0 && Number.isSafeInteger(Number(amount));
+  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${Number(amount)} рублей.\nФормат: ${frequency}.\nНаправление: ${direction}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
   return (
     <Dialog open={donationOpen} onOpenChange={setDonationOpen}>
       <DialogContent
@@ -78,24 +86,42 @@ export function DonationDialog() {
             <button
               type="button"
               key={value}
-              aria-pressed={Number(amount) === value}
-              onClick={() => setAmount(String(value))}
+              aria-pressed={preset === value}
+              onClick={() => setPreset(value)}
             >
               {formatNumber(value)} ₽
             </button>
           ))}
+          <button
+            type="button"
+            aria-pressed={preset === null}
+            aria-expanded={preset === null}
+            aria-controls={`${id}-custom-amount`}
+            onClick={() => setPreset(null)}
+          >
+            Другая сумма
+          </button>
         </div>
         <div className="donation-fields">
-          <label htmlFor={`${id}-amount`}>Ваша сумма, рублей</label>
-          <input
-            id={`${id}-amount`}
-            type="number"
-            min="1"
-            step="1"
-            inputMode="numeric"
-            value={amount}
-            onChange={(event) => setAmount(event.target.value)}
-          />
+          <div
+            id={`${id}-custom-amount`}
+            className="donation-custom"
+            hidden={preset !== null}
+          >
+            <label htmlFor={`${id}-amount`}>Другая сумма, рублей</label>
+            {preset === null && (
+              <input
+                id={`${id}-amount`}
+                ref={focusCustomAmount}
+                type="number"
+                min="1"
+                step="1"
+                inputMode="numeric"
+                value={customAmount}
+                onChange={(event) => setCustomAmount(event.target.value)}
+              />
+            )}
+          </div>
           <label htmlFor={`${id}-direction`}>Направление поддержки</label>
           <CapitalSelect
             id={`${id}-direction`}

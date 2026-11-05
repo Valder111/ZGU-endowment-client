@@ -425,38 +425,57 @@
 }
 .flow-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
   list-style: none;
-  margin: 36px 0 0;
+  margin: 24px 0 0;
   padding: 0;
 }
 .flow-grid li {
   position: relative;
-  padding: 28px 24px;
-  border: 1px solid #d1e0e0;
+  padding: clamp(16px, 2vw, 24px);
+  border: 1px solid var(--flow-border, #bdd9d2);
   border-radius: 16px;
-  background: #f1f7f6;
+  background: var(--flow-surface, #e0f1eb);
+  color: var(--flow-ink, #1c3f43);
   min-width: 0;
 }
-.flow-order {
-  color: #537681;
-  font-size: 13px;
+.flow-grid li:nth-child(2) {
+  --flow-surface: #e4eff7;
+  --flow-border: #c5d8e8;
+  --flow-ink: #284762;
 }
-.flow-icon {
-  display: block;
-  margin-block: 23px;
-  color: #258684;
+.flow-grid li:nth-child(3) {
+  --flow-surface: #203c55;
+  --flow-border: #203c55;
+  --flow-ink: #f0f8fb;
+}
+.flow-grid li:nth-child(4) {
+  --flow-surface: #f8ece1;
+  --flow-border: #e6cdb9;
+  --flow-ink: #61452e;
+}
+.flow-step-mark {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 .flow-grid h3 {
-  font-size: 23px;
+  color: inherit;
+  font-size: clamp(17px, 1.6vw, 22px);
   line-height: 1.25;
-  margin-bottom: 18px;
+  margin: 0 0 10px;
 }
 .flow-grid p {
+  margin: 0;
   font-size: 15px;
-  line-height: 1.85;
-  color: #4c6877;
+  line-height: 1.55;
+  color: inherit;
 }
 .endowment-manifesto {
   background: #173d50;
@@ -507,42 +526,53 @@
   position: absolute;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
-  right: -27px;
-  top: 70px;
-  color: #268a88;
+  width: 24px;
+  height: 24px;
+  inset: calc(50% - 12px) -25px auto auto;
+  color: #386d71;
   z-index: 1;
 }
 .flow-arrow svg {
   width: 18px;
 }
-.flow-arrow svg:last-child {
-  display: none;
+.flow-outcomes {
+  margin-top: 18px;
 }
-.flow-return {
+.flow-outcomes > p {
   display: flex;
   align-items: center;
-  gap: 22px;
-  padding: 28px;
-  border: 1px dashed #8bb7b9;
-  border-radius: 14px;
-  margin-top: 24px;
+  gap: 8px;
+  color: #315d65;
+  font-weight: 650;
+  margin: 0 0 10px;
 }
-.flow-return > svg {
-  flex-shrink: 0;
-  color: #277e7c;
+.flow-outcome-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
-.flow-return p {
-  flex: 1;
-  font-size: 15px;
-  line-height: 1.8;
+.flow-outcome-grid > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  padding: 14px 16px;
+  border: 1px solid #c9dfdf;
+  border-radius: 12px;
+  background: #f2f8f7;
 }
-.flow-return strong {
-  display: block;
+.flow-outcome-grid svg {
+  grid-row: span 2;
+  color: #226a69;
 }
-.flow-return .text-link {
-  flex-shrink: 0;
+.flow-outcome-grid h3,
+.flow-outcome-grid p {
+  margin: 0;
+}
+.flow-outcome-grid h3 {
+  font-size: 16px;
+}
+.flow-outcome-grid p {
+  font-size: 14px;
 }
 .capital-horizon {
   display: grid;
@@ -562,14 +592,21 @@
   font-size: clamp(30px, 3.3vw, 47px);
   margin-block: 20px 35px;
 }
-.endowment-difference > h2 em {
-  font-style: normal;
-  color: #3c7e7b;
-}
 .difference-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: clamp(12px, 2vw, 24px);
+}
+.difference-versus {
+  align-self: center;
+  justify-self: center;
+  padding: 7px 12px;
+  border: 1px solid #a9c9ca;
+  border-radius: 100px;
+  color: #3d686f;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
 }
 .difference-grid article {
   padding: 35px;
@@ -577,7 +614,7 @@
   background: #f0f5f4;
 }
 .difference-grid article:last-child {
-  background: #dceddf;
+  background: #dcefe8;
 }
 .difference-grid article > span {
   font-size: 12px;
@@ -744,7 +781,7 @@
   letter-spacing: 0.08em;
 }
 .donation-dialog {
-  width: min(620px, calc(100% - 32px));
+  width: min(700px, calc(100% - 32px));
   padding: 38px;
 }
 .donation-dialog .donation-fields {
@@ -755,6 +792,14 @@
 .donation-fields label {
   font-size: 14px;
   color: #466476;
+}
+.donation-custom:not([hidden]) {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid #cbdfe0;
+  border-radius: 12px;
+  background: #edf6f3;
 }
 .donation-fields input {
   width: 100%;
@@ -783,6 +828,10 @@
   color: #193d50;
   background: #fff;
   font-size: 15px;
+}
+.donation-amounts button {
+  padding-inline: 12px;
+  white-space: nowrap;
 }
 .donation-frequency button[aria-pressed='true'],
 .donation-amounts button[aria-pressed='true'] {
@@ -828,14 +877,6 @@
   .activity-focus {
     grid-template-columns: 0.8fr 1.2fr;
     padding: 30px 25px;
-  }
-}
-@media (max-width: 1280px) {
-  .flow-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .flow-arrow {
-    display: none;
   }
 }
 @media (max-width: 1100px) {
@@ -976,24 +1017,15 @@
     font-size: 33px;
   }
   .flow-grid {
-    gap: 16px;
+    grid-template-columns: minmax(0, 1fr);
   }
-  .flow-grid li {
-    padding: 25px 22px;
+  .flow-arrow {
+    display: grid;
+    inset: auto calc(50% - 12px) -25px auto;
+    rotate: 90deg;
   }
-  .flow-grid h3 {
-    font-size: 23px;
-  }
-  .flow-return {
-    flex-wrap: wrap;
-    gap: 16px;
-    padding: 23px;
-  }
-  .flow-return p {
-    flex-basis: calc(100% - 45px);
-  }
-  .flow-return .text-link {
-    margin-left: 40px;
+  .flow-outcome-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
   .capital-horizon {
     grid-template-columns: 1fr;
@@ -1058,22 +1090,6 @@
   }
   .header-actions .access {
     margin-right: auto;
-  }
-  .flow-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  .flow-arrow {
-    display: grid;
-    top: auto;
-    right: calc(50% - 15px);
-    bottom: -28px;
-  }
-  .flow-arrow svg:first-child {
-    display: none;
-  }
-  .flow-arrow svg:last-child {
-    display: block;
   }
   .director-profile {
     grid-template-columns: 1fr;

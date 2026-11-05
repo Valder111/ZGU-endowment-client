@@ -3,7 +3,7 @@ import { DonateButton } from '@/components/elements/donate-button';
 import { EditorialArtwork } from '@/assets/svg/editorial-artwork';
 import { SiteLink } from '@/components/elements/site-link';
 import { IncomeCycle } from '@/components/elements/income-cycle';
-import { EndowmentFlow } from '@/components/elements/endowment-flow';
+import { CapitalFormation } from '@/components/elements/capital-formation';
 export function AboutContent() {
   return (
     <div className="wrap article-content">
@@ -60,47 +60,40 @@ export function AboutContent() {
         </SiteLink>
       </nav>
       <section className="endowment-difference editorial-section">
-        <span className="eyebrow">БОЛЬШЕ, ЧЕМ РАЗОВАЯ ПОМОЩЬ</span>
-        <h2>
-          Пожертвование помогает сегодня.
-          <br />
-          <em>Эндаумент создаёт продолжение</em>
-        </h2>
+        <h2>Почему именно вклад в&nbsp;эндаумент?</h2>
         <div className="difference-grid">
           <article>
-            <span>01 / ПРЯМАЯ ПОМОЩЬ</span>
-            <h3>Решить задачу сейчас</h3>
+            <span>БЛАГОТВОРИТЕЛЬНЫЙ ФОНД</span>
+            <h3>Решить одну задачу</h3>
             <p>
-              Разовое пожертвование можно направить непосредственно на
-              согласованную нужду: событие, оборудование или помощь конкретной
-              программе.
+              Разовое пожертвование помогает решить конкретную задачу.
+              На&nbsp;него можно закупить оборудование, провести мероприятие или
+              оказать материальную помощь.
             </p>
           </article>
+          <span className="difference-versus" aria-hidden="true">
+            VS
+          </span>
           <article>
-            <span>02 / ЦЕЛЕВОЙ КАПИТАЛ</span>
-            <h3>Создать источник поддержки</h3>
+            <span>ЭНДАУМЕНТ-ФОНД</span>
+            <h3>Пожертвование работает бесконечно</h3>
             <p>
-              Вклад становится частью капитала. На развитие университета
-              направляется доход от управления, а сам капитал служит основой
-              долгосрочной поддержки.
+              Вклад становится частью целевого капитала. На&nbsp;поддержку
+              талантов и&nbsp;развитие университета направляется ежегодный доход
+              от&nbsp;управления капиталом, а&nbsp;само пожертвование
+              сохраняется.
             </p>
           </article>
         </div>
         <p className="difference-manifesto">
           Помочь однажды – важно.
           <br />
-          <strong>Создать возможность помогать годами – бесценно.</strong>
+          <strong>Создать живой источник поддержки – бесценно.</strong>
         </p>
       </section>
-      <EndowmentFlow />
-      <p id="capital-formation">
-        <SiteLink
-          className="text-link"
-          href="/project/all-project/#capital-formation"
-        >
-          Схема формирования целевого капитала ↗
-        </SiteLink>
-      </p>
+      <div id="endowment-flow">
+        <CapitalFormation />
+      </div>
       <Mechanism />
       <IncomeCycle />
     </div>

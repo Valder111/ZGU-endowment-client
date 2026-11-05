@@ -13,7 +13,7 @@ import {
 } from '@/components/elements/university-life';
 import { AlumniAppeal } from '@/components/elements/alumni-appeal';
 import { RectorAppeal } from '@/components/elements/rector-appeal';
-import { EndowmentFlow } from '@/components/elements/endowment-flow';
+import { CapitalHorizon } from '@/components/elements/capital-formation';
 export function HomeContent() {
   return (
     <>
@@ -67,7 +67,9 @@ export function HomeContent() {
       </section>
       <Mechanism />
       <div className="wrap">
-        <EndowmentFlow />
+        <div id="endowment-flow">
+          <CapitalHorizon />
+        </div>
         <RectorAppeal />
       </div>
       <Community />

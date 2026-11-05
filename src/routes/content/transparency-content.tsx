@@ -1,8 +1,8 @@
 import { useId, useState } from 'react';
-import { FileText, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { FileText, ArrowUpRight, ShieldCheck, UsersRound } from 'lucide-react';
 import {
   foundationTeam,
-  foundationMembers,
+  foundationCouncil,
   foundationDocuments,
 } from '@/constants/transparency';
 import { SiteLink } from '@/components/elements/site-link';
@@ -149,61 +149,85 @@ export function GovernanceContent() {
           </p>
         </div>
       </div>
-      <section className="director-profile">
-        <img
-          className="director-photo"
-          src={assets.directorPortrait}
-          alt="Елена Кистнер"
-          width="800"
-          height="1200"
-          loading="lazy"
-        />
-        <div>
-          <span className="eyebrow">ДИРЕКТОР ФОНДА</span>
-          <h2>Елена Кистнер</h2>
-          <p>
-            Важно не&nbsp;только сохранить связь с&nbsp;университетом,
-            но&nbsp;и&nbsp;дать этой связи продолжение – в&nbsp;возможностях для
-            новых поколений.
-          </p>
-        </div>
-        <SiteLink
-          className="text-link"
-          href="/philanthropists/history/#alumni-appeal"
-        >
-          Обращение к&nbsp;выпускникам ↗
-        </SiteLink>
-      </section>
       {[
+        {
+          id: 'foundation-members',
+          title: 'Совет фонда',
+          people: foundationCouncil,
+        },
         {
           id: 'foundation-team',
           title: 'Команда фонда',
           people: foundationTeam,
         },
-        {
-          id: 'foundation-members',
-          title: 'Состав фонда',
-          people: foundationMembers,
-        },
       ].map(({ id, title, people }) => (
         <section className="editorial-section" key={id} aria-labelledby={id}>
           <h2 id={id}>{title}</h2>
+          {id === 'foundation-members' && (
+            <article className="director-profile">
+              <img
+                className="director-photo"
+                src={assets.directorPortrait}
+                alt=""
+                width="800"
+                height="1200"
+                loading="lazy"
+              />
+              <div>
+                <span className="eyebrow">ДИРЕКТОР ФОНДА</span>
+                <h3>Елена Кистнер</h3>
+                <p>
+                  Важно не&nbsp;только сохранить связь с&nbsp;университетом,
+                  но&nbsp;и&nbsp;дать этой связи продолжение –
+                  в&nbsp;возможностях для новых поколений.
+                </p>
+              </div>
+              <SiteLink
+                className="text-link"
+                href="/philanthropists/history/#alumni-appeal"
+              >
+                Обращение к&nbsp;выпускникам ↗
+              </SiteLink>
+            </article>
+          )}
           <div className="council-grid team-grid">
             {people.map((person) => (
               <article key={person.name}>
-                <img
-                  className="team-portrait"
-                  src={person.image}
-                  alt=""
-                  loading="lazy"
-                  style={
-                    'position' in person
-                      ? { objectPosition: person.position }
-                      : undefined
-                  }
-                />
+                {person.image ? (
+                  <img
+                    className={
+                      person.mirrored
+                        ? 'team-portrait team-portrait--mirrored'
+                        : 'team-portrait'
+                    }
+                    src={person.image}
+                    alt=""
+                    loading="lazy"
+                    style={
+                      person.position
+                        ? { objectPosition: person.position }
+                        : undefined
+                    }
+                  />
+                ) : (
+                  <div
+                    className="team-portrait team-group-mark"
+                    aria-hidden="true"
+                  >
+                    {person.monogram ? (
+                      <span>{person.monogram}</span>
+                    ) : (
+                      <UsersRound size={54} strokeWidth={1.35} />
+                    )}
+                  </div>
+                )}
                 <h3>{person.name}</h3>
                 <p>{readableText(person.role)}</p>
+                {person.affiliation && (
+                  <p className="team-affiliation">
+                    {readableText(person.affiliation)}
+                  </p>
+                )}
               </article>
             ))}
           </div>

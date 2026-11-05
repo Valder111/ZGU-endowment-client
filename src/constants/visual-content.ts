@@ -7,6 +7,7 @@ const pageScenes: Record<PageKind, ArtworkScene> = {
   admin: 'documents',
   anniversary: 'alumni',
   'news-article': 'news',
+  publication: 'news',
   about: 'endowment',
   projects: 'science',
   project: 'students',

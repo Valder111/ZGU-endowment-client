@@ -5,7 +5,7 @@ import { invalidStaffForm } from '@/hooks/requests/mutations/use-staff-action';
 export type { Collection } from '@/api/staff-content';
 
 export const statusLabels: Record<string, string> = {
-  draft: 'Черновик',
+  draft: 'Не опубликовано',
   published: 'Опубликовано',
   archived: 'В архиве',
   completed: 'Завершён',
@@ -15,15 +15,16 @@ export const statusLabels: Record<string, string> = {
   cancelled: 'Отменено',
 };
 
-type Field = {
+export type Field = {
   key: keyof ContentRecord;
   label: string;
-  kind?: 'textarea' | 'datetime-local' | 'amount' | 'currency' | 'year';
+  kind?:
+    'textarea' | 'datetime-local' | 'amount' | 'currency' | 'year' | 'category';
   options?: string[];
   defaultValue?: string;
   required?: boolean;
-  mode?: 'create' | 'edit';
   maxLength?: number;
+  mode?: 'create' | 'edit';
 };
 
 export const currencies = {
@@ -37,21 +38,66 @@ export const currencies = {
 
 export function normalizeTargetAmount(value: string) {
   const raw = value.trim();
-  if (!/^(?:\d+|\d{1,3}(?:[ \u00a0\u202f]\d{3})+)(?:[.,]\d{1,2})?$/.test(raw))
-    invalidStaffForm(
-      'Введите сумму с точностью до двух знаков, например 150 000,50.',
-    );
-  const [whole = '', fraction = ''] = raw
-    .replace(/[ \u00a0\u202f]/g, '')
-    .split(/[.,]/);
+  const match =
+    /^(\d{1,3}(?:\.\d{3})+)(?:,(\d{1,2}))?$/.exec(raw) ??
+    /^(\d+|\d{1,3}(?:[ \u00a0\u202f]\d{3})+)(?:[.,](\d{1,2}))?$/.exec(raw);
+  if (!match) invalidStaffForm('Введите сумму. Копейки отделите запятой.');
+  const [, grouped = '', fraction = ''] = match;
+  const whole = grouped.replace(/[. \u00a0\u202f]/g, '');
   const integer = whole.replace(/^0+(?=\d)/, '');
   if (integer.length > 12 || !/[1-9]/.test(integer + fraction))
-    invalidStaffForm('Укажите сумму от 0,01 до 999 999 999 999,99.');
+    invalidStaffForm('Укажите сумму от 0,01 до 999.999.999.999,99.');
   return `${integer}.${fraction.padEnd(2, '0')}`;
 }
 
-const publicationOptions = ['draft', 'published', 'archived'];
+function groupAmount(whole: string) {
+  return whole.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+export function formatTargetAmountInput(value: string) {
+  const plain = value.replace(/[. \u00a0\u202f]/g, '');
+  if (!/^\d*(?:,\d*)?$/.test(plain)) return value;
+  const [whole = '', fraction] = plain.split(',');
+  return groupAmount(whole) + (fraction === undefined ? '' : `,${fraction}`);
+}
+
+export function formatTargetAmount(value: string) {
+  try {
+    const [whole = '', fraction = '00'] =
+      normalizeTargetAmount(value).split('.');
+    return groupAmount(whole) + (fraction === '00' ? '' : `,${fraction}`);
+  } catch {
+    return value;
+  }
+}
+
+export function fieldValue(field: Field, item?: ContentRecord) {
+  return String(
+    item?.[field.key] ?? field.defaultValue ?? field.options?.[0] ?? '',
+  );
+}
+
+export function fieldRequired(field: Field, item?: ContentRecord) {
+  return field.required && (!item || field.key !== 'type');
+}
+
+export function dateLabel(value?: string) {
+  return value
+    ? new Date(value).toLocaleString('ru-RU', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      })
+    : '';
+}
+
 const eventStatuses = ['scheduled', 'ongoing', 'finished', 'cancelled'];
+const categoryField: Field = {
+  key: 'category',
+  label: 'Категория',
+  kind: 'category',
+  maxLength: 100,
+};
+const requiredCategory = { ...categoryField, required: true };
 const dates: Field[] = [
   { key: 'starts_at', label: 'Начало', kind: 'datetime-local', mode: 'create' },
   {
@@ -70,7 +116,6 @@ export const collections: Record<
     titleKey: 'title' | 'name';
     statusKey: 'status' | 'publication_status';
     fields: Field[];
-    transition: { label: string; completed: string };
   }
 > = {
   news: {
@@ -80,19 +125,15 @@ export const collections: Record<
     statusKey: 'status',
     fields: [
       { key: 'title', label: 'Заголовок', required: true, maxLength: 255 },
-      { key: 'summary', label: 'Краткое описание', kind: 'textarea' },
-      { key: 'body', label: 'Текст новости', kind: 'textarea', required: true },
+      requiredCategory,
       {
-        key: 'status',
-        label: 'Статус публикации',
-        options: publicationOptions,
-        mode: 'create',
+        key: 'summary',
+        label: 'Краткое описание',
+        kind: 'textarea',
+        required: true,
       },
+      { key: 'body', label: 'Текст новости', kind: 'textarea', required: true },
     ],
-    transition: {
-      label: 'Опубликовать',
-      completed: 'published',
-    },
   },
   events: {
     label: 'События',
@@ -102,21 +143,20 @@ export const collections: Record<
     fields: [
       { key: 'name', label: 'Название', required: true, maxLength: 255 },
       { key: 'type', label: 'Тип события', required: true, maxLength: 80 },
+      requiredCategory,
       {
         key: 'description',
         label: 'Описание',
         kind: 'textarea',
         required: true,
       },
-      { key: 'location', label: 'Место проведения', mode: 'edit' },
-      ...dates.map((field) => ({ ...field, required: true })),
       {
-        key: 'publication_status',
-        label: 'Статус публикации',
-        options: publicationOptions,
-        defaultValue: 'published',
-        mode: 'create',
+        key: 'location',
+        label: 'Место проведения',
+        maxLength: 255,
+        mode: 'edit',
       },
+      ...dates.map((field) => ({ ...field, required: true })),
       {
         key: 'event_status',
         label: 'Статус события',
@@ -124,10 +164,6 @@ export const collections: Record<
         mode: 'create',
       },
     ],
-    transition: {
-      label: 'Завершить событие',
-      completed: 'finished',
-    },
   },
   projects: {
     label: 'Проекты',
@@ -136,6 +172,7 @@ export const collections: Record<
     statusKey: 'status',
     fields: [
       { key: 'name', label: 'Название', required: true, maxLength: 255 },
+      requiredCategory,
       { key: 'short_description', label: 'Краткое описание', kind: 'textarea' },
       {
         key: 'description',
@@ -153,18 +190,7 @@ export const collections: Record<
         mode: 'create',
       },
       ...dates,
-      {
-        key: 'status',
-        label: 'Статус проекта',
-        options: ['draft', 'published', 'completed', 'archived'],
-        defaultValue: 'published',
-        mode: 'create',
-      },
     ],
-    transition: {
-      label: 'Завершить проект',
-      completed: 'completed',
-    },
   },
   documents: {
     label: 'Документы',
@@ -174,21 +200,17 @@ export const collections: Record<
     fields: [
       { key: 'title', label: 'Заголовок', required: true, maxLength: 255 },
       { key: 'description', label: 'Описание', kind: 'textarea' },
-      { key: 'category', label: 'Категория', maxLength: 100 },
+      categoryField,
       { key: 'reporting_year', label: 'Год отчётности', kind: 'year' },
-      {
-        key: 'status',
-        label: 'Статус публикации',
-        options: publicationOptions,
-        mode: 'create',
-      },
     ],
-    transition: { label: 'Опубликовать', completed: 'published' },
   },
 };
 
 export function documentFile(data: FormData) {
-  const file = data.get('file');
+  return validateDocumentFile(data.get('file'));
+}
+
+export function validateDocumentFile(file: unknown) {
   if (
     !(file instanceof File) ||
     !file.size ||
@@ -201,21 +223,20 @@ export function documentFile(data: FormData) {
 
 export function contentPayload(
   fields: Field[],
-  data: FormData,
+  data: Record<string, string>,
   current?: ContentRecord,
-  allowUnchanged = false,
+  categories: string[] = [],
 ) {
   const payload: Record<string, string> = {};
   for (const field of fields) {
-    const raw = String(data.get(field.key) ?? '').trim();
+    if (current && !(field.key in data)) continue;
+    const raw = (data[field.key] ?? fieldValue(field)).trim();
     const previous = String(current?.[field.key] ?? '');
     if (!raw) {
-      if (field.required && (!current || field.key !== 'type'))
+      if (fieldRequired(field, current))
         invalidStaffForm(`Заполните поле «${field.label}».`);
       if (previous)
-        invalidStaffForm(
-          `Поле «${field.label}» можно заменить новым значением.`,
-        );
+        invalidStaffForm(`Введите новое значение для поля «${field.label}».`);
       continue;
     }
     if (raw === previous) continue;
@@ -236,7 +257,16 @@ export function contentPayload(
       value = normalizeTargetAmount(raw);
       if (previous && value === normalizeTargetAmount(previous)) continue;
     }
-    payload[field.key] = value;
+    if (field.kind === 'category') {
+      if ([...raw].length > 100)
+        invalidStaffForm('Категория длиннее 100 символов.');
+      value =
+        categories.find(
+          (category) =>
+            category.toLocaleLowerCase('ru') === raw.toLocaleLowerCase('ru'),
+        ) ?? raw;
+    }
+    if (value !== previous) payload[field.key] = value;
   }
   if (
     payload.starts_at &&
@@ -245,7 +275,5 @@ export function contentPayload(
   ) {
     invalidStaffForm('Окончание должно быть позже начала.');
   }
-  if (!allowUnchanged && !Object.keys(payload).length)
-    invalidStaffForm('Внесите изменения перед сохранением.');
   return payload;
 }

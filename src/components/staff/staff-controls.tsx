@@ -51,6 +51,7 @@ export type StaffListRow = {
   id: string;
   title: string;
   subtitle?: string;
+  category?: string;
   status: string;
   tone?: 'positive' | 'neutral';
 };
@@ -72,7 +73,7 @@ export function StaffList({
 }) {
   const term = search.trim().toLocaleLowerCase('ru');
   const visible = rows.filter((row) =>
-    [row.title, row.subtitle, row.status]
+    [row.title, row.subtitle, row.category, row.status]
       .join(' ')
       .toLocaleLowerCase('ru')
       .includes(term),
@@ -99,6 +100,7 @@ export function StaffList({
               >
                 <span>
                   <strong>{row.title}</strong>
+                  {row.category && <small>{row.category}</small>}
                   {row.subtitle && <small>{row.subtitle}</small>}
                 </span>
                 <span className="staff-badge" data-tone={row.tone}>

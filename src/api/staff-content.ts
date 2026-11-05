@@ -42,9 +42,19 @@ type CollectionApi = {
     fields: Record<string, string>,
   ) => Promise<AxiosResponse<unknown>>;
   remove: (id: string) => Promise<AxiosResponse<unknown>>;
-  transition: (id: string) => Promise<AxiosResponse<unknown>>;
+  publish?: (id: string) => Promise<AxiosResponse<unknown>>;
+  complete?: (id: string) => Promise<AxiosResponse<unknown>>;
   photos?: PhotoApi;
 };
+
+export function isPublished(collection: Collection, item: ContentRecord) {
+  return (
+    (item.publication_status ?? item.status) === 'published' ||
+    (collection === 'projects' &&
+      item.status === 'completed' &&
+      Boolean(item.published_at))
+  );
+}
 
 const { news, events, projects, documents } = staffApi;
 
@@ -63,16 +73,17 @@ export const collectionApi: Record<Collection, CollectionApi> = {
   news: {
     list: news.newsList,
     detail: news.newsDetail,
-    create: ({ title, body, summary, status }) =>
+    create: ({ title, body, summary, status, category }) =>
       news.newsCreate({
         title: required(title),
         body: required(body),
-        summary,
+        category: required(category),
+        summary: required(summary),
         status: publicationStatus(status),
       }),
     update: news.newsPartialUpdate,
     remove: news.newsDelete,
-    transition: news.publishCreate,
+    publish: news.publishCreate,
     photos: news,
   },
   events: {
@@ -82,6 +93,7 @@ export const collectionApi: Record<Collection, CollectionApi> = {
       name,
       type,
       description,
+      category,
       starts_at,
       ends_at,
       event_status,
@@ -91,6 +103,7 @@ export const collectionApi: Record<Collection, CollectionApi> = {
         name: required(name),
         type: required(type),
         description: required(description),
+        category: required(category),
         starts_at: required(starts_at),
         ends_at: required(ends_at),
         event_status: required(event_status),
@@ -98,7 +111,7 @@ export const collectionApi: Record<Collection, CollectionApi> = {
       }),
     update: events.eventsPartialUpdate,
     remove: events.eventsDelete,
-    transition: events.finishCreate,
+    complete: events.finishCreate,
     photos: events,
   },
   projects: {
@@ -108,6 +121,7 @@ export const collectionApi: Record<Collection, CollectionApi> = {
       name,
       description,
       short_description,
+      category,
       starts_at,
       ends_at,
       target_amount,
@@ -117,6 +131,7 @@ export const collectionApi: Record<Collection, CollectionApi> = {
       projects.projectsCreate({
         name: required(name),
         description: required(description),
+        category: required(category),
         short_description,
         starts_at,
         ends_at,
@@ -126,7 +141,7 @@ export const collectionApi: Record<Collection, CollectionApi> = {
       }),
     update: projects.projectsPartialUpdate,
     remove: projects.projectsDelete,
-    transition: projects.completeCreate,
+    complete: projects.completeCreate,
     photos: projects,
   },
   documents: {
@@ -154,6 +169,6 @@ export const collectionApi: Record<Collection, CollectionApi> = {
         reporting_year: reporting_year ? Number(reporting_year) : undefined,
       }),
     remove: documents.documentsDelete,
-    transition: documents.publishCreate,
+    publish: documents.publishCreate,
   },
 };

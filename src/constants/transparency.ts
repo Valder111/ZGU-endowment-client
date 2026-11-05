@@ -1,21 +1,51 @@
 import tarasevich from '@/assets/images/editorial/team-tarasevich.webp';
-import zemzyulina from '@/assets/images/editorial/team-zemzyulina.webp';
+import zemzyulina from '@/assets/images/editorial/team-zemzyulina-portrait.jpg';
 import belyaev from '@/assets/images/editorial/team-belyaev.webp';
 import makukha from '@/assets/images/editorial/team-makukha.webp';
 import mironov from '@/assets/images/editorial/team-mironov.webp';
 import blinova from '@/assets/images/editorial/team-blinova.webp';
 
-export const foundationTeam = [
+type FoundationPerson = {
+  name: string;
+  role: string;
+  affiliation?: string;
+  image?: string;
+  position?: string;
+  mirrored?: boolean;
+  monogram?: string;
+};
+
+export const foundationTeam: readonly FoundationPerson[] = [
+  {
+    name: 'Наталья Земзюлина',
+    role: 'Коммуникации фонда',
+    affiliation: 'Начальник управления по связям с общественностью ЗГУ',
+    image: zemzyulina,
+    mirrored: true,
+  },
+  {
+    name: 'Игорь Беляев',
+    role: 'ИТ-сопровождение фонда',
+    affiliation: 'Заведующий кафедрой информационных систем и технологий ЗГУ',
+    image: belyaev,
+  },
+  {
+    name: 'Дарья Маслякова',
+    role: 'Ведущий юрисконсульт ЗГУ',
+    monogram: 'ДМ',
+  },
+  {
+    name: 'Студенты-разработчики ЗГУ',
+    role: 'Разработка сайта фонда',
+  },
+];
+
+export const foundationCouncil: readonly FoundationPerson[] = [
   {
     name: 'Аркадий Тарасевич',
     role: 'Проректор по научной работе и международной деятельности ЗГУ',
     image: tarasevich,
   },
-  { name: 'Наталья Земзюлина', role: 'Команда фонда', image: zemzyulina },
-  { name: 'Игорь Беляев', role: 'Команда фонда', image: belyaev },
-] as const;
-
-export const foundationMembers = [
   {
     name: 'Анна Макуха',
     role: 'Директор фонда целевого капитала «Наш Норильск»',
@@ -33,7 +63,7 @@ export const foundationMembers = [
     role: 'Директор Политехнического колледжа ЗГУ',
     image: blinova,
   },
-] as const;
+];
 
 export const foundationDocuments = [
   {

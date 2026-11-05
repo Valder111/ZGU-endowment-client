@@ -267,6 +267,20 @@ test('donation window leads to a useful support route', async ({ page }) => {
   await page.getByRole('button', { name: 'Стать благотворителем' }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('Заявка по почте не списывает средства');
+  const custom = dialog.getByRole('button', {
+    name: 'Другая сумма',
+    exact: true,
+  });
+  const customField = dialog.getByLabel('Другая сумма, рублей');
+  await expect(customField).toBeHidden();
+  await custom.click();
+  await expect(customField).toBeVisible();
+  await customField.fill('740');
+  await expect(
+    dialog.getByRole('link', { name: 'Обсудить вклад' }),
+  ).toHaveAttribute('href', /740/);
+  await dialog.getByRole('button', { name: '500 ₽', exact: true }).click();
+  await expect(customField).toBeHidden();
   await dialog.getByRole('link', { name: 'Как поддержать' }).click();
   await expect(page).toHaveURL(/\/how-to-support\/$/);
   await expect(
@@ -282,10 +296,10 @@ test('calculator handles positive and zero scenarios without promising returns',
     name: 'Долгий горизонт поддержки',
   });
   await expect(calculator.getByTestId('annual-income')).toHaveText(
-    '5 000 рублей',
+    '10 000 рублей',
   );
   await expect(calculator.getByTestId('total-income')).toHaveText(
-    '50 000 рублей',
+    '100 000 рублей',
   );
   const rate = calculator.getByRole('slider', { name: /Ставка для расчёта/ });
   await rate.fill('0');

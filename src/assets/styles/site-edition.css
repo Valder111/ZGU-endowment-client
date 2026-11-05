@@ -1,4 +1,5 @@
 .team-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
   gap: clamp(16px, 2.5vw, 32px);
 }
 
@@ -21,6 +22,28 @@
 
 .team-grid h3 {
   margin-top: 16px;
+}
+
+.team-grid .team-affiliation {
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.team-portrait--mirrored {
+  transform: scaleX(-1);
+}
+
+.team-group-mark {
+  display: grid;
+  place-items: center;
+  color: #2d686b;
+  background:
+    radial-gradient(ellipse at 72% 24%, #c8e7e5, transparent 66%), #dce9ee;
+}
+
+.team-group-mark > span {
+  font-size: clamp(30px, 6vw, 56px);
+  font-weight: 650;
 }
 
 .rector-appeal {
@@ -97,18 +120,9 @@
 }
 
 .capital-formation-jump {
-  margin-bottom: 22px;
+  margin-block: 24px;
 }
 
-.capital-formation img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: clamp(10px, 2vw, 24px);
-}
-
-.capital-formation figcaption {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
+.capital-formation-original {
+  margin-top: 16px;
 }

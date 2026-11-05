@@ -27,6 +27,7 @@ export type PageKind =
   | 'admin'
   | 'anniversary'
   | 'news-article'
+  | 'publication'
   | 'about'
   | 'projects'
   | 'project'
@@ -49,7 +50,7 @@ export interface PageDefinition {
   eyebrow: string;
   projectId?: ProjectId;
   newsId?: 'council' | 'horizon' | 'scholarship';
-  showCapitalFormation?: boolean;
+  showCapitalFormationLink?: boolean;
 }
 
 export type PageGroup = Omit<PageDefinition, 'path'> & {
