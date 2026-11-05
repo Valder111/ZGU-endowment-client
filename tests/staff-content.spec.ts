@@ -55,7 +55,9 @@ async function mockApi(page: Page) {
   const writes: { collection: Collection; body: RecordData }[] = [];
   await page.route('**/api/v1/**', async (route) => {
     const request = route.request();
-    const [endpoint, id, action] = new URL(request.url()).pathname
+    const [endpoint, id, action, mediaId, mediaAction] = new URL(
+      request.url(),
+    ).pathname
       .replace(/^\/api\/v1\//, '')
       .split('/');
     if (endpoint === 'login')
@@ -75,7 +77,18 @@ async function mockApi(page: Page) {
     const rows = records[collection];
     const row = rows.find((item) => item.id === id);
     if (request.method() === 'GET') {
-      if (action === 'media') return route.fulfill({ json: [] });
+      if (action === 'media') {
+        const newsPhotos = collection === 'news' && id === 'news-1';
+        if (newsPhotos && mediaId && mediaAction === 'content') {
+          return route.fulfill({
+            contentType: 'image/svg+xml',
+            body: '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600"><rect width="400" height="600" fill="#23676b"/></svg>',
+          });
+        }
+        return route.fulfill({
+          json: newsPhotos ? [{ id: 'cover' }, { id: 'gallery' }] : [],
+        });
+      }
       if (action === 'content')
         return route.fulfill({
           contentType: 'application/pdf',
@@ -303,9 +316,19 @@ test('recovers an unfinished document with its file and suggests newly saved cat
   await page.getByRole('button', { name: 'Документы', exact: true }).click();
   await page.getByRole('button', { name: 'Новый документ' }).click();
   await page.getByRole('button', { name: 'Показать категории' }).click();
+  for (const category of [
+    'Учредительные',
+    'Пожертвования',
+    'Отчётность',
+    'Управление',
+  ]) {
+    await expect(
+      page.getByRole('option', { name: category, exact: true }),
+    ).toBeVisible();
+  }
   await expect(
-    page.getByRole('option', { name: 'Учредительные', exact: true }),
-  ).toBeVisible();
+    page.getByRole('option', { name: 'Все материалы', exact: true }),
+  ).toHaveCount(0);
   await page.getByLabel('Категория', { exact: true }).fill('Решения совета');
   await page.getByRole('option', { name: 'Добавить «Решения совета»' }).click();
   await page.getByLabel('Прикрепить документ').setInputFiles({
@@ -388,6 +411,26 @@ test('public cards for every collection open reloadable detail pages', async ({
       .click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
     await expect(page.locator('.publication-text')).toHaveText(body);
+    if (path === '/news/') {
+      const hero = page.getByRole('img', {
+        name: `Фотография к публикации «${title}»`,
+      });
+      await expect
+        .poll(() => hero.evaluate((img: HTMLImageElement) => img.naturalHeight))
+        .toBe(600);
+      await expect(hero).toHaveCSS('object-fit', 'contain');
+      await expect(
+        page.getByRole('heading', { name: 'Фотографии' }),
+      ).toBeVisible();
+      const galleryImage = page.getByRole('img', {
+        name: `Фотография 2 к публикации «${title}»`,
+      });
+      await expect
+        .poll(() =>
+          galleryImage.evaluate((img: HTMLImageElement) => img.naturalHeight),
+        )
+        .toBe(600);
+    }
     expect((await page.reload())?.status()).toBe(200);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
   }
@@ -403,6 +446,20 @@ test('public cards for every collection open reloadable detail pages', async ({
       .locator('.published-grid')
       .getByRole('link', { name: 'Открытие фонда' }),
   ).toBeVisible();
+  const grid = page.locator('.published-grid');
+  const cover = grid.locator('.published-cover');
+  const photo = cover.locator('img');
+  await expect
+    .poll(() => photo.evaluate((img: HTMLImageElement) => img.naturalHeight))
+    .toBe(600);
+  await expect(photo).toHaveCSS('object-fit', 'contain');
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 850 });
+    expect(
+      (await grid.locator('.published-card').boundingBox())?.width,
+    ).toBeCloseTo((await grid.boundingBox())?.width ?? 0);
+    expect((await cover.boundingBox())?.height).toBeGreaterThan(180);
+  }
   await expect(
     page.getByRole('link', { name: 'Внутренняя новость' }),
   ).toHaveCount(0);

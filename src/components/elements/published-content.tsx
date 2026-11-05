@@ -102,12 +102,14 @@ function PublishedPhoto({
   api,
   id,
   photoId,
-  cover = false,
+  variant,
+  alt = '',
 }: {
   api: PhotoApi;
   id: string;
   photoId: string;
-  cover?: boolean;
+  variant: 'cover' | 'hero' | 'gallery';
+  alt?: string;
 }) {
   const image = useRef<HTMLImageElement>(null);
   const load = useCallback(
@@ -122,19 +124,29 @@ function PublishedPhoto({
   const { data } = useStaffResource(staffResult, load);
 
   useEffect(() => {
-    if (!data || !image.current) return;
+    const element = image.current;
+    const frame = element?.parentElement;
+    if (!data || !element || !frame) return;
     const url = URL.createObjectURL(data);
-    image.current.src = url;
+    frame.hidden = false;
+    frame.style.setProperty('--publication-photo', `url("${url}")`);
+    element.src = url;
     return () => URL.revokeObjectURL(url);
   }, [data]);
 
   return (
     data && (
-      <img
-        ref={image}
-        className={cover ? 'published-cover-image' : 'published-gallery-image'}
-        alt=""
-      />
+      <div className="publication-photo" data-variant={variant}>
+        <img
+          ref={image}
+          alt={alt}
+          decoding="async"
+          onError={({ currentTarget }) => {
+            if (currentTarget.parentElement)
+              currentTarget.parentElement.hidden = true;
+          }}
+        />
+      </div>
     )
   );
 }
@@ -292,7 +304,7 @@ function PublicationCard({
               api={api}
               id={encodeURIComponent(id)}
               photoId={cover}
-              cover
+              variant="cover"
             />
           )}
           <span className="published-chip">{label}</span>
@@ -446,7 +458,10 @@ export function PublishedContent({
       aria-labelledby={titleId}
     >
       <h2 id={titleId}>{publicationKinds[collection].heading}</h2>
-      <div className="published-grid">
+      <div
+        className="published-grid"
+        data-layout={collection === 'documents' ? 'documents' : 'editorial'}
+      >
         {records.map(({ id, title, item }) =>
           collection === 'documents' ? (
             <PublishedDocument key={id} id={id} title={title} item={item} />
@@ -533,7 +548,7 @@ export function PublicationPage() {
             : undefined
         }
       />
-      <section className="section">
+      <section className={featured ? 'section publication-section' : 'section'}>
         <div
           className={
             featured
@@ -555,51 +570,59 @@ export function PublicationPage() {
               <PublishedDownload id={id} item={item} />
             </article>
           ) : item && id && collection ? (
-            <div className="publication-reading">
-              <article
-                className="publication-body publication-feature-body"
-                aria-labelledby={contentId}
-              >
-                <h2 id={contentId}>
-                  {collection === 'news' ? 'Материал' : 'Описание'}
-                </h2>
-                {summary && summary !== body && (
-                  <p className="publication-lead">{summary}</p>
-                )}
-                {api && photos[0] && (
-                  <PublishedPhoto
-                    api={api}
-                    id={encodeURIComponent(id)}
-                    photoId={photos[0]}
-                  />
-                )}
-                {body && <p className="publication-text">{body}</p>}
-                {api && photos.length > 1 && (
-                  <section className="publication-gallery">
-                    <h3>Фотографии</h3>
-                    <div className="published-gallery">
-                      {photos.slice(1).map((photoId) => (
-                        <PublishedPhoto
-                          key={photoId}
-                          api={api}
-                          id={encodeURIComponent(id)}
-                          photoId={photoId}
-                        />
-                      ))}
-                    </div>
-                  </section>
-                )}
-              </article>
-              {facts.length > 0 && (
-                <aside
-                  className="publication-overview"
-                  aria-label="Сведения о публикации"
-                >
-                  <h2>Сведения</h2>
-                  <PublicationFacts facts={facts} />
-                </aside>
+            <>
+              {api && photos[0] && (
+                <PublishedPhoto
+                  api={api}
+                  id={encodeURIComponent(id)}
+                  photoId={photos[0]}
+                  variant="hero"
+                  alt={`Фотография к публикации «${title}»`}
+                />
               )}
-            </div>
+              <div className="publication-reading">
+                {(summary || body) && (
+                  <article
+                    className="publication-body publication-feature-body"
+                    aria-labelledby={contentId}
+                  >
+                    <h2 id={contentId}>
+                      {collection === 'news' ? 'Материал' : 'Описание'}
+                    </h2>
+                    {summary && summary !== body && (
+                      <p className="publication-lead">{summary}</p>
+                    )}
+                    {body && <p className="publication-text">{body}</p>}
+                  </article>
+                )}
+                {facts.length > 0 && (
+                  <aside
+                    className="publication-overview"
+                    aria-label="Сведения о публикации"
+                  >
+                    <h2>Сведения</h2>
+                    <PublicationFacts facts={facts} />
+                  </aside>
+                )}
+              </div>
+              {api && photos.length > 1 && (
+                <section className="publication-gallery">
+                  <h2>Фотографии</h2>
+                  <div className="published-gallery">
+                    {photos.slice(1).map((photoId, index) => (
+                      <PublishedPhoto
+                        key={photoId}
+                        api={api}
+                        id={encodeURIComponent(id)}
+                        photoId={photoId}
+                        variant="gallery"
+                        alt={`Фотография ${index + 2} к публикации «${title}»`}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
           ) : (
             <p>Публикация недоступна. Вернитесь к списку материалов.</p>
           )}

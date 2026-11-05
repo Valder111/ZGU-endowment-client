@@ -125,6 +125,10 @@ export const foundationDocuments = [
   },
 ] as const;
 
+export const documentCategories = [
+  ...new Set(foundationDocuments.map(({ category }) => category)),
+];
+
 export const incomeCycle = [
   {
     title: 'Отчёт управляющей компании',

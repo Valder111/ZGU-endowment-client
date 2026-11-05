@@ -1,4 +1,4 @@
-import { useRef, useState, useId } from 'react';
+import { useRef, useState, useId, type ChangeEvent } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -12,9 +12,22 @@ import { SiteLink } from '@/components/elements/site-link';
 import { siteConfig } from '@/configs/site';
 import { CapitalSelect } from '@/components/elements/capital-select';
 import { formatNumber } from '@/utils/typography';
+import {
+  formatGroupedAmountChange,
+  groupAmountDigits,
+} from '@/utils/grouped-amount';
 
 function focusCustomAmount(input: HTMLInputElement | null) {
   input?.focus();
+}
+
+const wholeRubles = /^(?:\d+|\d{1,3}(?:\.\d{3})+)$/;
+
+function formatDonationInput(raw: string, requireCompleteGroups: boolean) {
+  const spaced = raw.trim().replace(/[ \u00a0\u202f]/g, '.');
+  if (requireCompleteGroups && !wholeRubles.test(spaced)) return raw;
+  const digits = spaced.replace(/\./g, '');
+  return /^\d*$/.test(digits) ? groupAmountDigits(digits) : raw;
 }
 
 export function DonationDialog() {
@@ -27,12 +40,27 @@ export function DonationDialog() {
   const opener = useRef<HTMLElement | null>(null);
   const id = useId();
   const [preset, setPreset] = useState<number | null>(1000);
-  const [customAmount, setCustomAmount] = useState('1000');
+  const [customAmount, setCustomAmount] = useState('1.000');
   const [frequency, setFrequency] = useState('Разово');
-  const amount = preset === null ? customAmount : String(preset);
+  const amount = preset ?? Number(customAmount.replace(/\./g, ''));
   const validAmount =
-    Number(amount) > 0 && Number.isSafeInteger(Number(amount));
-  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${Number(amount)} рублей.\nФормат: ${frequency}.\nНаправление: ${direction}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
+    (preset !== null || wholeRubles.test(customAmount)) &&
+    amount > 0 &&
+    Number.isSafeInteger(amount);
+  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${amount} рублей.\nФормат: ${frequency}.\nНаправление: ${direction}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
+
+  function changeCustomAmount(event: ChangeEvent<HTMLInputElement>) {
+    const typedSeparator =
+      event.nativeEvent instanceof InputEvent && event.nativeEvent.data === '.';
+    const unfinishedGroup =
+      customAmount.includes('.') && !wholeRubles.test(customAmount);
+    setCustomAmount(
+      formatGroupedAmountChange(event, (raw, pasted) =>
+        formatDonationInput(raw, pasted || typedSeparator || unfinishedGroup),
+      ),
+    );
+  }
+
   return (
     <Dialog open={donationOpen} onOpenChange={setDonationOpen}>
       <DialogContent
@@ -113,13 +141,25 @@ export function DonationDialog() {
               <input
                 id={`${id}-amount`}
                 ref={focusCustomAmount}
-                type="number"
-                min="1"
-                step="1"
+                type="text"
                 inputMode="numeric"
                 value={customAmount}
-                onChange={(event) => setCustomAmount(event.target.value)}
+                aria-invalid={Boolean(customAmount) && !validAmount}
+                aria-describedby={
+                  !validAmount && customAmount
+                    ? `${id}-amount-error`
+                    : undefined
+                }
+                onChange={changeCustomAmount}
               />
+            )}
+            {preset === null && customAmount && !validAmount && (
+              <small
+                id={`${id}-amount-error`}
+                className="donation-amount-error"
+              >
+                Укажите целую сумму в рублях.
+              </small>
             )}
           </div>
           <label htmlFor={`${id}-direction`}>Направление поддержки</label>

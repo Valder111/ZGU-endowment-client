@@ -812,6 +812,10 @@
   color: #193d50;
   background: #fff;
 }
+.donation-amount-error {
+  color: #84233a;
+  font-size: 13px;
+}
 .donation-frequency,
 .donation-amounts {
   display: flex;

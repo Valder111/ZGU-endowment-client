@@ -276,9 +276,29 @@ test('donation window leads to a useful support route', async ({ page }) => {
   await custom.click();
   await expect(customField).toBeVisible();
   await customField.fill('740');
+  await customField.press('0');
+  await customField.press('0');
+  await expect(customField).toHaveValue('74.000');
   await expect(
     dialog.getByRole('link', { name: 'Обсудить вклад' }),
-  ).toHaveAttribute('href', /740/);
+  ).toHaveAttribute('href', /74000%20/);
+  await customField.fill('');
+  await customField.pressSequentially('1.5');
+  await expect(customField).toHaveValue('1.5');
+  await expect(dialog.getByText('Обсудить вклад')).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  );
+  await customField.pressSequentially('00');
+  await expect(customField).toHaveValue('1.500');
+  await expect(
+    dialog.getByRole('link', { name: 'Обсудить вклад' }),
+  ).toHaveAttribute('href', /1500%20/);
+  await customField.fill('0');
+  await expect(dialog.getByText('Обсудить вклад')).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  );
   await dialog.getByRole('button', { name: '500 ₽', exact: true }).click();
   await expect(customField).toBeHidden();
   await dialog.getByRole('link', { name: 'Как поддержать' }).click();

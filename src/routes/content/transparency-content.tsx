@@ -1,6 +1,7 @@
 import { useId, useState } from 'react';
 import { FileText, ArrowUpRight, ShieldCheck, UsersRound } from 'lucide-react';
 import {
+  documentCategories,
   foundationTeam,
   foundationCouncil,
   foundationDocuments,
@@ -69,13 +70,7 @@ export function DocumentsContent() {
           role="group"
           aria-label="Категория документов"
         >
-          {[
-            'Все материалы',
-            'Учредительные',
-            'Пожертвования',
-            'Отчётность',
-            'Управление',
-          ].map((category) => (
+          {['Все материалы', ...documentCategories].map((category) => (
             <button
               type="button"
               key={category}

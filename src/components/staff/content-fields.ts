@@ -1,6 +1,7 @@
 import type { ContentRecord } from '@/api/staff';
 import type { Collection } from '@/api/staff-content';
 import { invalidStaffForm } from '@/hooks/requests/mutations/use-staff-action';
+import { groupAmountDigits } from '@/utils/grouped-amount';
 
 export type { Collection } from '@/api/staff-content';
 
@@ -50,22 +51,20 @@ export function normalizeTargetAmount(value: string) {
   return `${integer}.${fraction.padEnd(2, '0')}`;
 }
 
-function groupAmount(whole: string) {
-  return whole.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
 export function formatTargetAmountInput(value: string) {
   const plain = value.replace(/[. \u00a0\u202f]/g, '');
   if (!/^\d*(?:,\d*)?$/.test(plain)) return value;
   const [whole = '', fraction] = plain.split(',');
-  return groupAmount(whole) + (fraction === undefined ? '' : `,${fraction}`);
+  return (
+    groupAmountDigits(whole) + (fraction === undefined ? '' : `,${fraction}`)
+  );
 }
 
 export function formatTargetAmount(value: string) {
   try {
     const [whole = '', fraction = '00'] =
       normalizeTargetAmount(value).split('.');
-    return groupAmount(whole) + (fraction === '00' ? '' : `,${fraction}`);
+    return groupAmountDigits(whole) + (fraction === '00' ? '' : `,${fraction}`);
   } catch {
     return value;
   }

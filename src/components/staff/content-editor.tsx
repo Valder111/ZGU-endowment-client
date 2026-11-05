@@ -4,7 +4,6 @@ import {
   useId,
   useRef,
   useState,
-  type ChangeEvent,
   type FormEvent,
   type RefObject,
 } from 'react';
@@ -12,6 +11,7 @@ import { staffError, type ContentRecord, type StaffRequest } from '@/api/staff';
 import { collectionApi, isPublished } from '@/api/staff-content';
 import { Button } from '@/components/ui/button';
 import { invalidStaffForm } from '@/hooks/requests/mutations/use-staff-action';
+import { formatGroupedAmountChange } from '@/utils/grouped-amount';
 import {
   collections,
   contentPayload,
@@ -41,35 +41,6 @@ const reportYears = Array.from({ length: 201 }, (_, index) => 2100 - index);
 const emptySnapshot: FormSnapshot = { values: {} };
 type SaveMode = 'auto' | 'manual' | 'publish' | 'complete' | 'delete';
 export type LeaveEditor = RefObject<(() => Promise<boolean>) | undefined>;
-
-function formatAmountChange(event: ChangeEvent<HTMLInputElement>) {
-  const input = event.currentTarget;
-  const raw = input.value;
-  const pasted =
-    event.nativeEvent instanceof InputEvent &&
-    event.nativeEvent.inputType === 'insertFromPaste';
-  const formatted = pasted
-    ? formatTargetAmount(raw)
-    : formatTargetAmountInput(raw);
-  if (formatted === raw) return;
-  const digitsBeforeCaret = raw
-    .slice(0, input.selectionStart ?? raw.length)
-    .replace(/[. \u00a0\u202f]/g, '').length;
-  let offset = 0;
-  let digits = 0;
-  while (offset < formatted.length && digits < digitsBeforeCaret) {
-    if (formatted[offset] !== '.') digits += 1;
-    offset += 1;
-  }
-  if (
-    event.nativeEvent instanceof InputEvent &&
-    event.nativeEvent.inputType === 'deleteContentForward' &&
-    formatted[offset] === '.'
-  )
-    offset += 1;
-  input.value = formatted;
-  input.setSelectionRange(offset, offset);
-}
 
 function EditorField({
   field,
@@ -134,7 +105,16 @@ function EditorField({
           type={field.kind === 'datetime-local' ? field.kind : 'text'}
           inputMode={field.kind === 'amount' ? 'decimal' : undefined}
           maxLength={field.maxLength}
-          onChange={field.kind === 'amount' ? formatAmountChange : undefined}
+          onChange={
+            field.kind === 'amount'
+              ? (event) =>
+                  formatGroupedAmountChange(event, (raw, pasted) =>
+                    pasted
+                      ? formatTargetAmount(raw)
+                      : formatTargetAmountInput(raw),
+                  )
+              : undefined
+          }
           onBlur={
             field.kind === 'amount'
               ? (event) => {

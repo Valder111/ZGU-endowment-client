@@ -4,6 +4,7 @@ import { staffBase, type StaffRequest } from '@/api/staff';
 import { collectionApi, isPublished } from '@/api/staff-content';
 import type { RequestParams } from '@/api/generated/http-client';
 import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
+import { documentCategories } from '@/constants/transparency';
 import { Button } from '@/components/ui/button';
 import {
   collections,
@@ -59,6 +60,7 @@ export function ContentWorkspace({
   const records = list.data ?? [];
   const names = new Map<string, string>();
   for (const entry of [
+    ...(collection === 'documents' ? documentCategories : []),
     detail.data?.category,
     ...records.map(({ category }) => category),
     ...savedCategories,
