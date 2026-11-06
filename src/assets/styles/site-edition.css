@@ -20,11 +20,12 @@
   background: #d6e5e6;
 }
 
-.team-grid :is(h3, h4) {
+.team-grid h3 {
   margin-top: 16px;
   overflow-wrap: anywhere;
 }
-.team-grid h4 {
+.team-developers .team-grid h3 {
+  margin-bottom: 0;
   font-size: clamp(18px, 1.6vw, 23px);
   line-height: 1.3;
   font-weight: 600;
@@ -34,8 +35,9 @@
   padding-top: clamp(24px, 4vw, 42px);
   border-top: 1px solid #c9dcdf;
 }
-.team-developers-heading h3 {
+.team-developers-heading h2 {
   font-size: clamp(24px, 3vw, 36px);
+  font-weight: 400;
 }
 .team-developers-heading p {
   margin-top: 8px;

@@ -202,13 +202,7 @@ export function DocumentsContent() {
   );
 }
 
-function FoundationPeople({
-  people,
-  heading: Heading = 'h3',
-}: {
-  people: readonly FoundationPerson[];
-  heading?: 'h3' | 'h4';
-}) {
+function FoundationPeople({ people }: { people: readonly FoundationPerson[] }) {
   return (
     <div className="council-grid team-grid">
       {people.map((person) => (
@@ -234,7 +228,7 @@ function FoundationPeople({
               <span>{person.monogram}</span>
             </div>
           )}
-          <Heading>{person.name}</Heading>
+          <h3>{person.name}</h3>
           {person.role && <p>{readableText(person.role)}</p>}
         </article>
       ))}
@@ -286,16 +280,6 @@ export function GovernanceContent() {
           </div>
         </article>
         <FoundationPeople people={foundationTeam} />
-        <section
-          className="team-developers"
-          aria-labelledby="foundation-developers"
-        >
-          <div className="team-developers-heading">
-            <h3 id="foundation-developers">Студенты-разработчики</h3>
-            <p>Студенты ЗГУ разрабатывают и&nbsp;поддерживают сайт фонда.</p>
-          </div>
-          <FoundationPeople people={foundationDevelopers} heading="h4" />
-        </section>
       </section>
       <section
         className="editorial-section"
@@ -303,6 +287,16 @@ export function GovernanceContent() {
       >
         <h2 id="foundation-members">Совет фонда</h2>
         <FoundationPeople people={foundationCouncil} />
+      </section>
+      <section
+        className="team-developers"
+        aria-labelledby="foundation-developers"
+      >
+        <div className="team-developers-heading">
+          <h2 id="foundation-developers">Студенты-разработчики</h2>
+          <p>Студенты ЗГУ разрабатывают и&nbsp;поддерживают сайт фонда.</p>
+        </div>
+        <FoundationPeople people={foundationDevelopers} />
       </section>
       <section className="editorial-section" aria-label="Разделение функций">
         <span className="eyebrow">РАЗДЕЛЕНИЕ ФУНКЦИЙ</span>
