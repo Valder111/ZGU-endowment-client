@@ -13,7 +13,7 @@
 
 ## Запуск
 
-Требуется Node.js 22.12+; для CI выбран Node.js 24.
+Требуется Node.js 22.12+. Для сборки на GitHub Pages используется Node.js 24.
 
 ```sh
 npm ci
@@ -106,6 +106,14 @@ src/
 
 ## Проверки
 
+Чтобы включить локальные проверки перед коммитом после клонирования, выполните в каталоге проекта:
+
+```sh
+git config --local core.hooksPath .githooks
+```
+
+На Linux и macOS дайте файлу хука право на исполнение командой `chmod +x .githooks/pre-commit`. Хук запускает ESLint и проверку типов TypeScript. Если проверка завершается ошибкой, Git останавливает коммит.
+
 ```sh
 npm run typecheck
 npm run lint
@@ -122,7 +130,7 @@ npm run check
 npx playwright install chromium
 ```
 
-Затем установите переменную `PLAYWRIGHT_CHANNEL=chromium` перед `npm run test:e2e`. В PowerShell: `$env:PLAYWRIGHT_CHANNEL = 'chromium'`. CI устанавливает Chromium самостоятельно.
+Затем установите переменную `PLAYWRIGHT_CHANNEL=chromium` перед `npm run test:e2e`. В PowerShell: `$env:PLAYWRIGHT_CHANNEL = 'chromium'`.
 
 Проверки покрывают все 44 адреса и исходные тексты, HTML без JavaScript, вложенные адреса и перезагрузку, локальные ресурсы, внутренние ссылки, диалог и фокус, мобильное меню, FAQ, сохранение настройки текста, ширины 360–1440 px, аудит axe и запуск анимаций. Автоматические проверки не заменяют приёмку содержания и доступности заказчиком.
 
@@ -136,7 +144,7 @@ npx playwright install chromium
 2. Путь определяется автоматически по настройкам GitHub Pages. Для этого репозитория стандартный адрес — `https://valder111.github.io/ZGU-endowment-client/`. Для публикации на `fund.polaruniversity.ru` задайте этот адрес в **Settings → Pages → Custom domain** и настройте DNS у владельца зоны `polaruniversity.ru`. Сборка сайта на собственном домене использует путь `/`. При необходимости путь можно переопределить переменной репозитория `BASE_PATH`.
 3. Откройте Actions → Deploy website → Run workflow.
 
-Workflow проверяет форматирование, линтер, сборку и браузерные тесты, собирает сайт с фактическим путём Pages и проверяет его на обычном статическом сервере перед публикацией. Команда `npm run test:pages` проверяет уже собранный `dist/` без создания скриншотов или отчётов. CI дополнительно проверяет сборку с подпапкой `/pages-preview/` при push и pull request.
+Workflow собирает сайт с фактическим путём Pages и публикует `dist/`. Команда `npm run test:pages` локально проверяет уже собранный `dist/`.
 
 Сборка добавляет `.nojekyll` и `404.html`; rewrite всех URL на главную не требуется. Официальная инструкция по размещению: [Vite — GitHub Pages](https://vite.dev/guide/static-deploy#github-pages).
 

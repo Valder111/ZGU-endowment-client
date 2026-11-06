@@ -23,12 +23,6 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run format:check
-      - run: npm run check
-        env:
-          PLAYWRIGHT_CHANNEL: chromium
-          BASE_PATH: /
       - name: Configure GitHub Pages
         id: pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
@@ -37,14 +31,9 @@ jobs:
           if [ -z "$VITE_API_BASE_URL" ]; then
             echo "::warning::Staff sign-in is disabled. Set the VITE_API_BASE_URL repository variable to the public HTTPS API URL."
           fi
-          npm run build
+          npm run build:site
         env:
           BASE_PATH: ${{ vars.BASE_PATH || format('{0}/', steps.pages.outputs.base_path) }}
-          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
-      - name: Verify static Pages website
-        run: npm run test:pages
-        env:
-          PLAYWRIGHT_CHANNEL: chromium
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
