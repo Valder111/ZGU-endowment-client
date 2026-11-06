@@ -1,14 +1,18 @@
 import tarasevich from '@/assets/images/editorial/team-tarasevich.webp';
 import zemzyulina from '@/assets/images/editorial/team-zemzyulina-portrait.jpg';
 import belyaev from '@/assets/images/editorial/team-belyaev.webp';
+import dolzhenko from '@/assets/images/editorial/team-dolzhenko.jpg';
 import makukha from '@/assets/images/editorial/team-makukha.webp';
 import mironov from '@/assets/images/editorial/team-mironov.webp';
 import blinova from '@/assets/images/editorial/team-blinova.webp';
+import sidelnikov from '@/assets/images/editorial/team-sidelnikov.webp';
+import kiselev from '@/assets/images/editorial/team-kiselev.webp';
+import polyakov from '@/assets/images/editorial/team-polyakov.webp';
+import snytkin from '@/assets/images/editorial/team-snytkin.webp';
 
-type FoundationPerson = {
+export type FoundationPerson = {
   name: string;
-  role: string;
-  affiliation?: string;
+  role?: string;
   image?: string;
   position?: string;
   mirrored?: boolean;
@@ -19,33 +23,34 @@ export const foundationTeam: readonly FoundationPerson[] = [
   {
     name: 'Наталья Земзюлина',
     role: 'Коммуникации фонда',
-    affiliation: 'Начальник управления по связям с общественностью ЗГУ',
     image: zemzyulina,
     mirrored: true,
   },
   {
     name: 'Игорь Беляев',
     role: 'ИТ-сопровождение фонда',
-    affiliation: 'Заведующий кафедрой информационных систем и технологий ЗГУ',
     image: belyaev,
   },
   {
     name: 'Дарья Маслякова',
-    role: 'Ведущий юрисконсульт ЗГУ',
+    role: 'Юридическое сопровождение фонда',
     monogram: 'ДМ',
   },
   {
-    name: 'Студенты-разработчики ЗГУ',
-    role: 'Разработка сайта фонда',
+    name: 'Елена Долженко',
+    role: 'Участница команды фонда',
+    image: dolzhenko,
   },
 ];
 
+export const foundationDevelopers: readonly FoundationPerson[] = [
+  { name: 'Максим Сидельников', image: sidelnikov },
+  { name: 'Иван Киселёв', image: kiselev },
+  { name: 'Никита Поляков', image: polyakov },
+  { name: 'Илья Сныткин', image: snytkin },
+];
+
 export const foundationCouncil: readonly FoundationPerson[] = [
-  {
-    name: 'Аркадий Тарасевич',
-    role: 'Проректор по научной работе и международной деятельности ЗГУ',
-    image: tarasevich,
-  },
   {
     name: 'Анна Макуха',
     role: 'Директор фонда целевого капитала «Наш Норильск»',
@@ -62,6 +67,11 @@ export const foundationCouncil: readonly FoundationPerson[] = [
     name: 'Светлана Блинова',
     role: 'Директор Политехнического колледжа ЗГУ',
     image: blinova,
+  },
+  {
+    name: 'Аркадий Тарасевич',
+    role: 'Проректор по научной работе и международной деятельности ЗГУ',
+    image: tarasevich,
   },
 ];
 

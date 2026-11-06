@@ -90,13 +90,13 @@ export function dateLabel(value?: string) {
 }
 
 const eventStatuses = ['scheduled', 'ongoing', 'finished', 'cancelled'];
-const categoryField: Field = {
+const requiredCategory: Field = {
   key: 'category',
   label: 'Категория',
   kind: 'category',
+  required: true,
   maxLength: 100,
 };
-const requiredCategory = { ...categoryField, required: true };
 const dates: Field[] = [
   { key: 'starts_at', label: 'Начало', kind: 'datetime-local', mode: 'create' },
   {
@@ -199,7 +199,7 @@ export const collections: Record<
     fields: [
       { key: 'title', label: 'Заголовок', required: true, maxLength: 255 },
       { key: 'description', label: 'Описание', kind: 'textarea' },
-      categoryField,
+      requiredCategory,
       { key: 'reporting_year', label: 'Год отчётности', kind: 'year' },
     ],
   },

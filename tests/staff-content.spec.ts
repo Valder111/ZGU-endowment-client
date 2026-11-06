@@ -180,6 +180,10 @@ test('autosaves new and published records on idle and on leaving the editor', as
   const writes = await mockApi(page);
   await page.clock.install();
   await openEditor(page);
+  await page.getByRole('button', { name: /Открытие фонда/ }).click();
+  const preview = page.locator('.staff-photo-preview').first().locator('img');
+  await expect(preview).toHaveCSS('object-position', '50% 50%');
+  await expect(preview).toHaveCSS('object-fit', 'contain');
   await page.getByRole('button', { name: 'Новая новость' }).click();
   await page.getByLabel('Заголовок').fill('Новая запись');
   await page.getByLabel('Текст новости').fill('Текст новой записи');
@@ -315,6 +319,10 @@ test('recovers an unfinished document with its file and suggests newly saved cat
   await openEditor(page);
   await page.getByRole('button', { name: 'Документы', exact: true }).click();
   await page.getByRole('button', { name: 'Новый документ' }).click();
+  await expect(page.getByLabel('Категория', { exact: true })).toHaveAttribute(
+    'required',
+    '',
+  );
   await page.getByRole('button', { name: 'Показать категории' }).click();
   for (const category of [
     'Учредительные',
@@ -369,14 +377,39 @@ test('recovers an unfinished document with its file and suggests newly saved cat
   await expect(
     page.getByRole('option', { name: 'Решения совета', exact: true }),
   ).toBeVisible();
+  await page.goto('/about/constituent-the-documents/');
+  await page
+    .getByRole('button', { name: 'Решения совета', exact: true })
+    .click();
+  await expect(page.locator('.document-item')).toHaveCount(1);
+  await expect(
+    page
+      .getByRole('region', { name: 'Решения совета' })
+      .getByRole('heading', { name: 'Решение №1' }),
+  ).toBeVisible();
+  await page.goto('/moderator/');
+  await page.getByRole('button', { name: 'Документы', exact: true }).click();
   await page.getByRole('button', { name: /Решение №1/ }).click();
-  await page.getByLabel('Категория', { exact: true }).fill('Протоколы');
+  await page.getByLabel('Категория', { exact: true }).fill('отчётность');
   await page.getByRole('button', { name: 'Сохранить изменения' }).click();
   await expect(page.getByText('Изменения сохранены.')).toBeVisible();
   expect(writes.at(-1)).toEqual({
     collection: 'documents',
-    body: { category: 'Протоколы' },
+    body: { category: 'Отчётность' },
   });
+  await page.goto('/about/constituent-the-documents/');
+  await page.getByRole('button', { name: 'Отчётность', exact: true }).click();
+  const reports = page.getByRole('region', { name: 'Отчётность', exact: true });
+  await expect(reports.locator('.document-item')).toHaveCount(4);
+  await expect(
+    reports.getByRole('heading', { name: 'Годовой отчёт' }),
+  ).toBeVisible();
+  await expect(
+    reports.getByRole('heading', { name: 'Решение №1' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Решения совета', exact: true }),
+  ).toHaveCount(0);
 });
 
 test('public cards for every collection open reloadable detail pages', async ({
@@ -403,7 +436,7 @@ test('public cards for every collection open reloadable detail pages', async ({
       expect((await download).suggestedFilename()).toBe('charter.pdf');
     }
     await page
-      .locator('.published-grid')
+      .locator(document ? '.document-list' : '.published-grid')
       .getByRole('link', {
         name: document ? `Подробнее — ${title}` : title,
         exact: true,
@@ -419,6 +452,7 @@ test('public cards for every collection open reloadable detail pages', async ({
         .poll(() => hero.evaluate((img: HTMLImageElement) => img.naturalHeight))
         .toBe(600);
       await expect(hero).toHaveCSS('object-fit', 'contain');
+      await expect(hero).toHaveCSS('object-position', '50% 50%');
       await expect(
         page.getByRole('heading', { name: 'Фотографии' }),
       ).toBeVisible();
@@ -430,6 +464,7 @@ test('public cards for every collection open reloadable detail pages', async ({
           galleryImage.evaluate((img: HTMLImageElement) => img.naturalHeight),
         )
         .toBe(600);
+      await expect(galleryImage).toHaveCSS('object-position', '50% 50%');
     }
     expect((await page.reload())?.status()).toBe(200);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
@@ -453,12 +488,16 @@ test('public cards for every collection open reloadable detail pages', async ({
     .poll(() => photo.evaluate((img: HTMLImageElement) => img.naturalHeight))
     .toBe(600);
   await expect(photo).toHaveCSS('object-fit', 'contain');
+  await expect(photo).toHaveCSS('object-position', '50% 50%');
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 850 });
     expect(
       (await grid.locator('.published-card').boundingBox())?.width,
     ).toBeCloseTo((await grid.boundingBox())?.width ?? 0);
     expect((await cover.boundingBox())?.height).toBeGreaterThan(180);
+    expect((await photo.boundingBox())?.height).toBeCloseTo(
+      (await cover.boundingBox())?.height ?? 0,
+    );
   }
   await expect(
     page.getByRole('link', { name: 'Внутренняя новость' }),

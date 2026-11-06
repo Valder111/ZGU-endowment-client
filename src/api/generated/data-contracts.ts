@@ -232,7 +232,7 @@ export interface DocumentsCreatePayload {
   /** draft, published или archived */
   status: string;
   /** Категория */
-  category?: string;
+  category: string;
   /** Год отчётности */
   reporting_year?: number;
 }

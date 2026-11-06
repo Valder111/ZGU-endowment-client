@@ -29,6 +29,7 @@ import {
 import {
   collectionApi,
   isPublished,
+  publicContentParams,
   type Collection,
   type PhotoApi,
 } from '@/api/staff-content';
@@ -38,12 +39,6 @@ import { useStaffAction } from '@/hooks/requests/mutations/use-staff-action';
 import { downloadBlob } from '@/utils/download-blob';
 import { PageTitle } from './page-title';
 import { SiteLink } from './site-link';
-
-const anonymous: RequestParams = {
-  adapter: 'fetch',
-  withCredentials: false,
-  fetchOptions: { cache: 'no-store' },
-};
 
 const publicationKinds = {
   news: {
@@ -115,7 +110,7 @@ function PublishedPhoto({
   const load = useCallback(
     (params: RequestParams) =>
       api.mediaContentList(id, photoId, {
-        ...anonymous,
+        ...publicContentParams,
         ...params,
         format: 'blob',
       }),
@@ -159,7 +154,7 @@ function usePublicationPhotos(
   const load = useCallback(
     (params: RequestParams) =>
       api
-        ? api.mediaList(id, { ...anonymous, ...params })
+        ? api.mediaList(id, { ...publicContentParams, ...params })
         : Promise.reject(new Error('Photos unavailable')),
     [api, id],
   );
@@ -347,7 +342,7 @@ function PublishedDownload({
     void action.run(async () => {
       const file = await staffResult(
         staffApi.documents.contentList(encodeURIComponent(id), {
-          ...anonymous,
+          ...publicContentParams,
           format: 'blob',
         }),
       );
@@ -389,7 +384,7 @@ function PublishedDownload({
   );
 }
 
-function PublishedDocument({
+export function PublishedDocument({
   id,
   title,
   item,
@@ -400,29 +395,24 @@ function PublishedDocument({
 }) {
   const query = new URLSearchParams({ type: 'documents', id });
   return (
-    <article
-      className="published-card published-document"
-      data-kind="documents"
-    >
-      <div className="published-document-mark">
-        <FileText size={26} aria-hidden="true" />
-      </div>
-      <div className="published-card-body">
-        <DocumentMetadata item={item} />
-        <h3>{title}</h3>
-        {item.description && (
-          <p className="published-preview">{item.description}</p>
+    <article className="document-item published-document">
+      <FileText size={26} aria-hidden="true" />
+      <div>
+        {item.reporting_year && (
+          <span className="eyebrow">{item.reporting_year}</span>
         )}
-        <div className="published-document-actions">
-          <PublishedDownload id={id} item={item} compact />
-          <SiteLink
-            href={`/publications/?${query}`}
-            className="published-more"
-            aria-label={`Подробнее — ${title}`}
-          >
-            Подробнее <ArrowUpRight size={15} aria-hidden="true" />
-          </SiteLink>
-        </div>
+        <h4>{title}</h4>
+        {item.description && <p>{item.description}</p>}
+      </div>
+      <div className="published-document-actions">
+        <PublishedDownload id={id} item={item} compact />
+        <SiteLink
+          href={`/publications/?${query}`}
+          className="published-more"
+          aria-label={`Подробнее — ${title}`}
+        >
+          Подробнее <ArrowUpRight size={15} aria-hidden="true" />
+        </SiteLink>
       </div>
     </article>
   );
@@ -432,13 +422,13 @@ export function PublishedContent({
   collection,
   limit,
 }: {
-  collection: Collection;
+  collection: Exclude<Collection, 'documents'>;
   limit?: number;
 }) {
   const titleId = useId();
   const load = useCallback(
     (params: RequestParams) =>
-      collectionApi[collection].list({ ...anonymous, ...params }),
+      collectionApi[collection].list({ ...publicContentParams, ...params }),
     [collection],
   );
   const { data } = useStaffResource(staffResult, load, Boolean(staffBase));
@@ -458,23 +448,16 @@ export function PublishedContent({
       aria-labelledby={titleId}
     >
       <h2 id={titleId}>{publicationKinds[collection].heading}</h2>
-      <div
-        className="published-grid"
-        data-layout={collection === 'documents' ? 'documents' : 'editorial'}
-      >
-        {records.map(({ id, title, item }) =>
-          collection === 'documents' ? (
-            <PublishedDocument key={id} id={id} title={title} item={item} />
-          ) : (
-            <PublicationCard
-              key={id}
-              collection={collection}
-              id={id}
-              title={title}
-              item={item}
-            />
-          ),
-        )}
+      <div className="published-grid" data-layout="editorial">
+        {records.map(({ id, title, item }) => (
+          <PublicationCard
+            key={id}
+            collection={collection}
+            id={id}
+            title={title}
+            item={item}
+          />
+        ))}
       </div>
     </section>
   );
@@ -502,7 +485,7 @@ export function PublicationPage() {
     (params: RequestParams) =>
       collection && id
         ? collectionApi[collection].detail(encodeURIComponent(id), {
-            ...anonymous,
+            ...publicContentParams,
             ...params,
           })
         : Promise.reject(new Error('Publication unavailable')),

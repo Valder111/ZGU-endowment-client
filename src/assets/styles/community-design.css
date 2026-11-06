@@ -734,16 +734,6 @@
 .anniversary-source {
   font-size: 14px;
 }
-.director-profile {
-  grid-template-columns: 150px 1fr auto;
-}
-.director-photo {
-  width: 150px;
-  height: 190px;
-  object-fit: cover;
-  object-position: center 15%;
-  border-radius: 12px;
-}
 .council-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -907,16 +897,6 @@
   }
   .flow-arrow {
     display: none;
-  }
-  .director-profile {
-    grid-template-columns: 120px 1fr;
-  }
-  .director-photo {
-    width: 120px;
-    height: 165px;
-  }
-  .director-profile > .text-link {
-    grid-column: 2;
   }
 }
 @media (max-width: 760px) {
@@ -1094,16 +1074,6 @@
   }
   .header-actions .access {
     margin-right: auto;
-  }
-  .director-profile {
-    grid-template-columns: 1fr;
-  }
-  .director-profile > .text-link {
-    grid-column: 1;
-  }
-  .director-photo {
-    width: 130px;
-    height: 170px;
   }
   .fundraising-amounts dd {
     font-size: 26px;

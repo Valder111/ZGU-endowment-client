@@ -1,24 +1,75 @@
 import { useId, useState } from 'react';
-import { FileText, ArrowUpRight, ShieldCheck, UsersRound } from 'lucide-react';
+import { FileText, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { staffBase, staffResult } from '@/api/staff';
 import {
-  documentCategories,
+  collectionApi,
+  isPublished,
+  publicContentParams,
+} from '@/api/staff-content';
+import type { RequestParams } from '@/api/generated/http-client';
+import {
   foundationTeam,
   foundationCouncil,
+  foundationDevelopers,
   foundationDocuments,
+  type FoundationPerson,
 } from '@/constants/transparency';
 import { SiteLink } from '@/components/elements/site-link';
 import { IncomeCycle } from '@/components/elements/income-cycle';
 import { readableText } from '@/utils/typography';
 import { siteConfig } from '@/configs/site';
 import { assets } from '@/constants/assets';
-import { PublishedContent } from '@/components/elements/published-content';
+import { PublishedDocument } from '@/components/elements/published-content';
+import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
 
 const documentRequestHref = (topic: string) =>
   `mailto:${siteConfig.email}?subject=${encodeURIComponent(`Эндаумент-фонд ЗГУ: ${topic}`)}&body=${encodeURIComponent(`Здравствуйте!\n\nПрошу уточнить порядок получения сведений по теме «${topic}».\n\nМой вопрос: `)}`;
 
+const loadPublicDocuments = (params: RequestParams) =>
+  collectionApi.documents.list({ ...publicContentParams, ...params });
+
 export function DocumentsContent() {
-  const [filter, setFilter] = useState('Все материалы');
+  const [filter, setFilter] = useState<string | null>(null);
   const id = useId();
+  const { data } = useStaffResource(
+    staffResult,
+    loadPublicDocuments,
+    Boolean(staffBase),
+  );
+  const documents = [
+    ...foundationDocuments.map((item) => ({
+      kind: 'request' as const,
+      ...item,
+    })),
+    ...(Array.isArray(data) ? data : []).flatMap((item) =>
+      item.id && item.title && isPublished('documents', item)
+        ? [
+            {
+              kind: 'published' as const,
+              id: item.id,
+              title: item.title,
+              category: item.category?.trim() || 'Без категории',
+              item,
+            },
+          ]
+        : [],
+    ),
+  ];
+  const groups = new Map<
+    string,
+    { label: string; documents: typeof documents }
+  >();
+  for (const document of documents) {
+    const key = document.category.toLocaleLowerCase('ru');
+    const group = groups.get(key);
+    if (group) group.documents.push(document);
+    else groups.set(key, { label: document.category, documents: [document] });
+  }
+  const activeFilter = filter && groups.has(filter) ? filter : null;
+  const visibleGroups = [...groups].filter(
+    ([key]) => activeFilter === null || activeFilter === key,
+  );
+
   return (
     <div className="wrap article-content">
       <div className="intro-grid">
@@ -29,9 +80,9 @@ export function DocumentsContent() {
             основа осознанного решения о&nbsp;поддержке.
           </p>
           <p>
-            Выберите тему и&nbsp;направьте запрос через ЗГУ. В&nbsp;письме можно
-            уточнить нужные документы, период и&nbsp;вопросы к&nbsp;команде
-            фонда.
+            Скачайте опубликованный файл или запросите материалы через ЗГУ.
+            В&nbsp;письме можно уточнить нужные документы, период и&nbsp;вопросы
+            к&nbsp;команде фонда.
           </p>
         </div>
       </div>
@@ -60,7 +111,7 @@ export function DocumentsContent() {
       <section className="editorial-section" aria-labelledby={`${id}-library`}>
         <div className="section-heading">
           <div>
-            <span className="eyebrow">ИНФОРМАЦИЯ ПО&nbsp;ЗАПРОСУ</span>
+            <span className="eyebrow">БИБЛИОТЕКА ФОНДА</span>
             <h2 id={`${id}-library`}>Документы и&nbsp;отчёты</h2>
           </div>
           <p>Устав, условия пожертвования и&nbsp;финансовая информация</p>
@@ -70,47 +121,70 @@ export function DocumentsContent() {
           role="group"
           aria-label="Категория документов"
         >
-          {['Все материалы', ...documentCategories].map((category) => (
+          <button
+            type="button"
+            aria-pressed={activeFilter === null}
+            onClick={() => setFilter(null)}
+          >
+            Все материалы
+          </button>
+          {[...groups].map(([key, { label }]) => (
             <button
               type="button"
-              key={category}
-              aria-pressed={filter === category}
-              onClick={() => setFilter(category)}
+              key={key}
+              aria-pressed={activeFilter === key}
+              aria-label={
+                key === 'все материалы' ? `Категория «${label}»` : undefined
+              }
+              onClick={() => setFilter(key)}
             >
-              {category}
+              {label}
             </button>
           ))}
         </div>
         <p className="section-note" role="status">
-          Тем запроса:{' '}
-          {
-            foundationDocuments.filter(
-              (doc) => filter === 'Все материалы' || doc.category === filter,
-            ).length
-          }
+          Материалов:{' '}
+          {visibleGroups.reduce(
+            (total, [, group]) => total + group.documents.length,
+            0,
+          )}
         </p>
         <div className="document-list">
-          {foundationDocuments.map((doc) => (
-            <article
-              id={doc.id}
-              className="document-item"
-              key={doc.id}
-              data-match={filter === 'Все материалы' || doc.category === filter}
-            >
-              <FileText aria-hidden="true" size={26} />
-              <div>
-                <span className="eyebrow">{doc.category}</span>
-                <h3>{doc.title}</h3>
-                <p>{readableText(doc.description)}</p>
-              </div>
-              <a className="text-link" href={documentRequestHref(doc.title)}>
-                Запросить <ArrowUpRight size={17} aria-hidden="true" />
-              </a>
-            </article>
+          {visibleGroups.map(([key, { label, documents: items }]) => (
+            <section className="document-group" aria-label={label} key={key}>
+              <h3>{label}</h3>
+              {items.map((doc) =>
+                doc.kind === 'published' ? (
+                  <PublishedDocument
+                    key={`published-${doc.id}`}
+                    id={doc.id}
+                    title={doc.title}
+                    item={doc.item}
+                  />
+                ) : (
+                  <article
+                    id={doc.id}
+                    className="document-item"
+                    key={`request-${doc.id}`}
+                  >
+                    <FileText aria-hidden="true" size={26} />
+                    <div>
+                      <h4>{doc.title}</h4>
+                      <p>{readableText(doc.description)}</p>
+                    </div>
+                    <a
+                      className="text-link"
+                      href={documentRequestHref(doc.title)}
+                    >
+                      Запросить <ArrowUpRight size={17} aria-hidden="true" />
+                    </a>
+                  </article>
+                ),
+              )}
+            </section>
           ))}
         </div>
       </section>
-      <PublishedContent collection="documents" />
       <div className="transparency-contact">
         <ShieldCheck size={34} aria-hidden="true" />
         <div>
@@ -124,6 +198,46 @@ export function DocumentsContent() {
           Задать вопрос <ArrowUpRight size={18} aria-hidden="true" />
         </SiteLink>
       </div>
+    </div>
+  );
+}
+
+function FoundationPeople({
+  people,
+  heading: Heading = 'h3',
+}: {
+  people: readonly FoundationPerson[];
+  heading?: 'h3' | 'h4';
+}) {
+  return (
+    <div className="council-grid team-grid">
+      {people.map((person) => (
+        <article key={person.name}>
+          {person.image ? (
+            <img
+              className={
+                person.mirrored
+                  ? 'team-portrait team-portrait--mirrored'
+                  : 'team-portrait'
+              }
+              src={person.image}
+              alt=""
+              loading="lazy"
+              style={
+                person.position
+                  ? { objectPosition: person.position }
+                  : undefined
+              }
+            />
+          ) : (
+            <div className="team-portrait team-group-mark" aria-hidden="true">
+              <span>{person.monogram}</span>
+            </div>
+          )}
+          <Heading>{person.name}</Heading>
+          {person.role && <p>{readableText(person.role)}</p>}
+        </article>
+      ))}
     </div>
   );
 }
@@ -144,90 +258,52 @@ export function GovernanceContent() {
           </p>
         </div>
       </div>
-      {[
-        {
-          id: 'foundation-members',
-          title: 'Совет фонда',
-          people: foundationCouncil,
-        },
-        {
-          id: 'foundation-team',
-          title: 'Команда фонда',
-          people: foundationTeam,
-        },
-      ].map(({ id, title, people }) => (
-        <section className="editorial-section" key={id} aria-labelledby={id}>
-          <h2 id={id}>{title}</h2>
-          {id === 'foundation-members' && (
-            <article className="director-profile">
-              <img
-                className="director-photo"
-                src={assets.directorPortrait}
-                alt=""
-                width="800"
-                height="1200"
-                loading="lazy"
-              />
-              <div>
-                <span className="eyebrow">ДИРЕКТОР ФОНДА</span>
-                <h3>Елена Кистнер</h3>
-                <p>
-                  Важно не&nbsp;только сохранить связь с&nbsp;университетом,
-                  но&nbsp;и&nbsp;дать этой связи продолжение –
-                  в&nbsp;возможностях для новых поколений.
-                </p>
-              </div>
-              <SiteLink
-                className="text-link"
-                href="/philanthropists/history/#alumni-appeal"
-              >
-                Обращение к&nbsp;выпускникам ↗
-              </SiteLink>
-            </article>
-          )}
-          <div className="council-grid team-grid">
-            {people.map((person) => (
-              <article key={person.name}>
-                {person.image ? (
-                  <img
-                    className={
-                      person.mirrored
-                        ? 'team-portrait team-portrait--mirrored'
-                        : 'team-portrait'
-                    }
-                    src={person.image}
-                    alt=""
-                    loading="lazy"
-                    style={
-                      person.position
-                        ? { objectPosition: person.position }
-                        : undefined
-                    }
-                  />
-                ) : (
-                  <div
-                    className="team-portrait team-group-mark"
-                    aria-hidden="true"
-                  >
-                    {person.monogram ? (
-                      <span>{person.monogram}</span>
-                    ) : (
-                      <UsersRound size={54} strokeWidth={1.35} />
-                    )}
-                  </div>
-                )}
-                <h3>{person.name}</h3>
-                <p>{readableText(person.role)}</p>
-                {person.affiliation && (
-                  <p className="team-affiliation">
-                    {readableText(person.affiliation)}
-                  </p>
-                )}
-              </article>
-            ))}
+      <section className="editorial-section" aria-labelledby="foundation-team">
+        <h2 id="foundation-team">Команда фонда</h2>
+        <article className="director-profile">
+          <img
+            className="director-photo"
+            src={assets.directorPortrait}
+            alt=""
+            width="800"
+            height="1200"
+            loading="lazy"
+          />
+          <div>
+            <span className="eyebrow">ДИРЕКТОР ФОНДА</span>
+            <h3>Елена Кистнер</h3>
+            <p>
+              Важно не&nbsp;только сохранить связь с&nbsp;университетом,
+              но&nbsp;и&nbsp;дать этой связи продолжение – в&nbsp;возможностях
+              для новых поколений.
+            </p>
+            <SiteLink
+              className="text-link"
+              href="/philanthropists/history/#alumni-appeal"
+            >
+              Обращение к&nbsp;выпускникам ↗
+            </SiteLink>
           </div>
+        </article>
+        <FoundationPeople people={foundationTeam} />
+        <section
+          className="team-developers"
+          aria-labelledby="foundation-developers"
+        >
+          <div className="team-developers-heading">
+            <h3 id="foundation-developers">Студенты-разработчики</h3>
+            <p>Студенты ЗГУ разрабатывают и&nbsp;поддерживают сайт фонда.</p>
+          </div>
+          <FoundationPeople people={foundationDevelopers} heading="h4" />
         </section>
-      ))}
+      </section>
+      <section
+        className="editorial-section"
+        aria-labelledby="foundation-members"
+      >
+        <h2 id="foundation-members">Совет фонда</h2>
+        <FoundationPeople people={foundationCouncil} />
+      </section>
       <section className="editorial-section" aria-label="Разделение функций">
         <span className="eyebrow">РАЗДЕЛЕНИЕ ФУНКЦИЙ</span>
         <h2>Каждому участнику – своя роль</h2>

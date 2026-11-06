@@ -20,13 +20,26 @@
   background: #d6e5e6;
 }
 
-.team-grid h3 {
+.team-grid :is(h3, h4) {
   margin-top: 16px;
+  overflow-wrap: anywhere;
 }
-
-.team-grid .team-affiliation {
-  margin-top: 6px;
-  font-size: 14px;
+.team-grid h4 {
+  font-size: clamp(18px, 1.6vw, 23px);
+  line-height: 1.3;
+  font-weight: 600;
+}
+.team-developers {
+  margin-top: clamp(32px, 6vw, 70px);
+  padding-top: clamp(24px, 4vw, 42px);
+  border-top: 1px solid #c9dcdf;
+}
+.team-developers-heading h3 {
+  font-size: clamp(24px, 3vw, 36px);
+}
+.team-developers-heading p {
+  margin-top: 8px;
+  color: #4e697b;
 }
 
 .team-portrait--mirrored {

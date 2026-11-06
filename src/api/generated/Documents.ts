@@ -37,7 +37,7 @@ export class Documents<
   SecurityDataType = unknown,
 > extends HttpClient<SecurityDataType> {
   /**
-   * @description Без сессии черновики не отдаются. С сессией сотрудника видны его черновики
+   * @description Без сессии черновики не отдаются. С сессией сотрудника видны его черновики. Параметр category оставляет документы одной категории
    *
    * @tags documents
    * @name DocumentsList
@@ -45,14 +45,22 @@ export class Documents<
    * @request GET:/documents
    * @secure
    * @response `200` `DocumentsListData` OK
+   * @response `400` `HandlerErrorResponse` Bad Request
    * @response `401` `HandlerErrorResponse` Unauthorized
    * @response `403` `HandlerErrorResponse` Forbidden
    * @response `500` `HandlerErrorResponse` Internal Server Error
    */
-  documentsList = (params: RequestParams = {}) =>
+  documentsList = (
+    query?: {
+      /** Категория */
+      category?: string;
+    },
+    params: RequestParams = {},
+  ) =>
     this.request<DocumentsListData, DocumentsListError>({
       path: `/documents`,
       method: 'GET',
+      query: query,
       secure: true,
       format: 'json',
       ...params,

@@ -5,6 +5,12 @@ import { staffApi, type ContentRecord } from './staff';
 
 export type Collection = 'news' | 'events' | 'projects' | 'documents';
 
+export const publicContentParams: RequestParams = {
+  adapter: 'fetch',
+  withCredentials: false,
+  fetchOptions: { cache: 'no-store' },
+};
+
 export type PhotoApi = {
   mediaList: (
     id: string,
@@ -145,7 +151,7 @@ export const collectionApi: Record<Collection, CollectionApi> = {
     photos: projects,
   },
   documents: {
-    list: documents.documentsList,
+    list: (params) => documents.documentsList(undefined, params),
     detail: documents.documentsDetail,
     create: (
       { title, description, status, category, reporting_year },
@@ -155,9 +161,9 @@ export const collectionApi: Record<Collection, CollectionApi> = {
       return documents.documentsCreate({
         title: required(title),
         status: required(status),
+        category: required(category),
         file,
         ...(description ? { description } : {}),
-        ...(category ? { category } : {}),
         ...(reporting_year ? { reporting_year: Number(reporting_year) } : {}),
       });
     },
