@@ -1,0 +1,54 @@
+name: Deploy production
+
+on:
+  push:
+    branches: [deploy]
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Update the client on the server
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
+        env:
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/zgu' }}
+          DEPLOY_REPO: client
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          fingerprint: ${{ secrets.SSH_FINGERPRINT }}
+          command_timeout: 30m
+          envs: DEPLOY_PATH,DEPLOY_REPO
+          script: |
+            set -eu
+            case "$DEPLOY_PATH" in
+              /*) ;;
+              *) echo "DEPLOY_PATH must be an absolute path" >&2; exit 1 ;;
+            esac
+            case "$DEPLOY_REPO" in
+              client|server) ;;
+              *) echo "Unexpected repository" >&2; exit 1 ;;
+            esac
+            flock /tmp/zgu-deploy.lock sh -c '
+              set -eu
+              cd "$DEPLOY_PATH/$DEPLOY_REPO"
+              git fetch origin deploy
+              git checkout -B deploy
+              git reset --hard origin/deploy
+              cd "$DEPLOY_PATH"
+              docker compose -f docker-compose.prod.yml up -d --build
+            '
