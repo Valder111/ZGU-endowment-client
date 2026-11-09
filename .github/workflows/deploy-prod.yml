@@ -25,6 +25,7 @@ jobs:
         env:
           DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/endowment' }}
           DEPLOY_REPO: client
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -32,7 +33,7 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           fingerprint: ${{ secrets.SSH_FINGERPRINT }}
           command_timeout: 30m
-          envs: DEPLOY_PATH,DEPLOY_REPO
+          envs: DEPLOY_PATH,DEPLOY_REPO,GH_TOKEN
           script: |
             set -eu
             case "$DEPLOY_PATH" in
@@ -68,11 +69,19 @@ jobs:
             fi
             flock /tmp/zgu-deploy.lock sh -c '
               set -eu
+              if [ -z "${GH_TOKEN:-}" ]; then
+                echo "GH_TOKEN is empty" >&2
+                exit 1
+              fi
+              auth=$(printf "x-access-token:%s" "$GH_TOKEN" | base64 | tr -d "\n")
+              git_fetch() {
+                GIT_TERMINAL_PROMPT=0 git -c credential.helper= -c "http.extraheader=AUTHORIZATION: basic $auth" "$@"
+              }
               if [ ! -d "$DEPLOY_PATH/$DEPLOY_REPO/.git" ]; then
-                GIT_TERMINAL_PROMPT=0 git clone --branch deploy --single-branch "$REPO_URL" "$DEPLOY_PATH/$DEPLOY_REPO"
+                git_fetch clone --branch deploy --single-branch "$REPO_URL" "$DEPLOY_PATH/$DEPLOY_REPO"
               fi
               cd "$DEPLOY_PATH/$DEPLOY_REPO"
-              git fetch origin deploy
+              git_fetch fetch origin deploy
               git checkout -B deploy
               git reset --hard origin/deploy
               cd "$DEPLOY_PATH"
