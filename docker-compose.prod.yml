@@ -13,5 +13,5 @@ services:
       - path: .env
         required: false
     ports:
-      - '127.0.0.1:8088:80'
+      - '10.10.10.44:8088:80'
     restart: unless-stopped
