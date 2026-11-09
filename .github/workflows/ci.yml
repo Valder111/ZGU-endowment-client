@@ -23,12 +23,11 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run format:check
-      - name: Check the production build
+      - name: Check the site without a baked-in API address
         run: npm run check
         env:
           PLAYWRIGHT_CHANNEL: chromium
           BASE_PATH: /
-          VITE_API_BASE_URL: /api/v1
       - name: Check the GitHub Pages build
         run: npm run build && npm run test:pages
         env:

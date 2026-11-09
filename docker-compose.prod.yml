@@ -1,5 +1,5 @@
 name: zgu-endowment-client
-
+# prod compose file for client
 services:
   web:
     image: zgu-endowment-client:prod
