@@ -22,7 +22,7 @@ export function SiteHeader({ page }: { page?: PageDefinition }) {
       ? 'news'
       : page?.kind === 'pending' || page?.kind === 'management'
         ? 'about'
-        : page?.kind === 'reporting'
+        : page?.kind === 'reporting' || page?.kind === 'legal'
           ? 'documents'
           : page?.kind === 'project'
             ? 'projects'

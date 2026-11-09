@@ -297,9 +297,11 @@ test('mobile navigation stays available without JavaScript', async ({
   });
   const page = await context.newPage();
   await page.goto('http://127.0.0.1:4173/');
-  await expect(page.getByRole('navigation')).toBeVisible();
+  await expect(
+    page.getByRole('navigation', { name: 'Основная навигация' }),
+  ).toBeVisible();
   await page
-    .getByRole('navigation')
+    .getByRole('navigation', { name: 'Основная навигация' })
     .getByRole('link', { name: 'Новости и истории', exact: true })
     .click();
   await expect(page.locator('h1')).toHaveText('Новости и истории');
@@ -534,15 +536,15 @@ test('support cards switch topics by keyboard without fictitious financial resul
     name: 'Сбор целевого капитала',
   });
   await expect(fundraising.locator('dd')).toHaveText([
-    '50 000 рублей',
+    '2 050 000 рублей',
     '100 000 000 рублей',
   ]);
   const progress = fundraising.getByRole('progressbar', {
     name: 'Прогресс сбора',
   });
-  await expect(progress).toHaveAttribute('value', '50000');
+  await expect(progress).toHaveAttribute('value', '2050000');
   await expect(progress).toHaveAttribute('max', '100000000');
-  await expect(fundraising).toContainText('0,05% от цели');
+  await expect(fundraising).toContainText('2,05% от цели');
   await expect(activity.locator('.activity-target')).toHaveCount(0);
   await expect(activity).not.toContainText(/3\s*200\s*000|240\s*000|128/);
   await purpose.focus();

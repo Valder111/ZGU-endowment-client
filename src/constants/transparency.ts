@@ -75,7 +75,16 @@ export const foundationCouncil: readonly FoundationPerson[] = [
   },
 ];
 
-export const foundationDocuments = [
+export type FoundationDocument = {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  href?: string;
+  fileStem?: string;
+};
+
+export const foundationDocuments: readonly FoundationDocument[] = [
   {
     id: 'charter',
     title: 'Устав фонда',
@@ -84,12 +93,16 @@ export const foundationDocuments = [
   },
   {
     id: 'registration',
-    title: 'Регистрационные сведения',
+    title: 'Карточка фонда',
     category: 'Учредительные',
-    description: 'Полное наименование, ИНН, ОГРН и сведения о регистрации',
+    description: 'Полное наименование, ИНН, КПП, ОГРН и банковские реквизиты',
+    href: '/contacts-and-requisites/#registration',
+    fileStem: 'foundation-details',
   },
   {
     id: 'offer',
+    href: '/documents/offer/',
+    fileStem: 'donation-offer',
     title: 'Договор пожертвования и оферта',
     category: 'Пожертвования',
     description:
@@ -97,12 +110,32 @@ export const foundationDocuments = [
   },
   {
     id: 'privacy',
+    href: '/documents/privacy/',
+    fileStem: 'privacy-policy',
     title: 'Политика обработки персональных данных',
     category: 'Пожертвования',
     description: 'Условия обработки и защиты персональных данных',
   },
   {
+    id: 'consent',
+    title: 'Согласие на обработку персональных данных',
+    category: 'Пожертвования',
+    description: 'Форма согласия, перечень данных и порядок отзыва',
+    href: '/documents/consent/',
+    fileStem: 'personal-data-consent',
+  },
+  {
+    id: 'payment-security',
+    title: 'Политика безопасности платежей',
+    category: 'Пожертвования',
+    description: 'Защита платежей через Best2Pay и порядок возврата средств',
+    href: '/documents/payment-security/',
+    fileStem: 'payment-security',
+  },
+  {
     id: 'bank',
+    href: '/contacts-and-requisites/#requisites',
+    fileStem: 'foundation-details',
     title: 'Банковские реквизиты фонда',
     category: 'Пожертвования',
     description: 'Получатель, расчётный счёт, банк и назначение платежа',

@@ -1,6 +1,8 @@
 import { siteConfig } from '@/configs/site';
 import { SiteLink } from '@/components/elements/site-link';
 import { FundBrand } from '@/components/elements/fund-brand';
+import { foundationDetails } from '@/constants/legal';
+import { LegalLinks } from '@/components/elements/legal-links';
 export function SiteFooter() {
   return (
     <footer>
@@ -57,22 +59,28 @@ export function SiteFooter() {
             </a>
           </div>
           <div>
-            <h3>Контакты ЗГУ</h3>
+            <h3>Контакты фонда</h3>
             <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
             <a href={siteConfig.phoneHref}>{siteConfig.phone}</a>
             <p>
               Норильск,
               <br />
-              ул. 50 лет Октября, 7
+              Ленинский проспект, 1, помещение 670
             </p>
+            <p>
+              ИНН {foundationDetails.inn}
+              <br />
+              ОГРН {foundationDetails.ogrn}
+            </p>
+            <SiteLink href="/contacts-and-requisites/#requisites">
+              Все реквизиты ↗
+            </SiteLink>
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© 2026 · ЗГУ имени Н. М. Федоровского</span>
+          <span>© 2026 · Эндаумент-фонд ЗГУ</span>
           <span>Платформа разработана кафедрой ИСиТ ЗГУ</span>
-          <SiteLink href="/about/constituent-the-documents/#privacy">
-            Персональные данные
-          </SiteLink>
+          <LegalLinks />
         </div>
       </div>
     </footer>

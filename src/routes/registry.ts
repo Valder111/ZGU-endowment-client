@@ -1,7 +1,15 @@
 import type { PageDefinition, PageGroup } from '@/types/content';
 import { editorialNews } from '@/constants/editorial-news';
+import { legalDocuments } from '@/constants/legal';
 /** Historical addresses intentionally share the same content as in the original site. */
 const pageGroups = [
+  ...legalDocuments.map((document) => ({
+    paths: [document.path],
+    kind: 'legal' as const,
+    title: document.title,
+    eyebrow: 'ДОКУМЕНТЫ ФОНДА',
+    legalDocumentId: document.id,
+  })),
   {
     paths: ['/418/'],
     kind: 'teapot',

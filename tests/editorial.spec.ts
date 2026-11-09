@@ -17,7 +17,7 @@ test('anniversary invitation preserves the chosen contribution in an enquiry', a
   await page.goto('/anniversary/');
   await expect(
     page.getByRole('group', { name: 'Сбор целевого капитала' }),
-  ).toContainText('50 000 рублей');
+  ).toContainText('2 050 000 рублей');
   await page
     .getByRole('button', { name: 'Сделать подарок университету' })
     .click();
@@ -337,11 +337,11 @@ test('calculator handles positive and zero scenarios without promising returns',
   );
 });
 
-test('document filters offer requests for the selected topic without fake downloads', async ({
+test('document filters separate available files from requests for reports', async ({
   page,
 }) => {
   await page.goto('/about/constituent-the-documents/');
-  await expect(page.locator('.document-item:visible')).toHaveCount(9);
+  await expect(page.locator('.document-item:visible')).toHaveCount(11);
   await page.getByRole('button', { name: 'Отчётность', exact: true }).click();
   await expect(page.locator('.document-item:visible')).toHaveCount(3);
   await expect(page.locator('.document-item:visible')).toContainText([
@@ -362,9 +362,11 @@ test('document filters offer requests for the selected topic without fake downlo
     expect(href.searchParams.get('body')).toContain(topic);
   }
   await expect(page.locator('.publication-status')).toHaveCount(0);
-  await expect(page.locator('a[download], a[href="#"]')).toHaveCount(0);
+  await expect(
+    page.locator('.document-item:visible a[download], a[href="#"]'),
+  ).toHaveCount(0);
   await page.getByRole('button', { name: 'Все материалы' }).click();
-  await expect(page.locator('.document-item:visible')).toHaveCount(9);
+  await expect(page.locator('.document-item:visible')).toHaveCount(11);
 });
 
 test('FAQ combines category and normalized Russian search', async ({
@@ -432,7 +434,7 @@ test('new practical pages remain readable without JavaScript', async ({
   await page.goto('http://127.0.0.1:4173/about/reporting/');
   await expect(page.locator('.cycle-description:visible')).toHaveCount(6);
   await page.goto('http://127.0.0.1:4173/about/constituent-the-documents/');
-  await expect(page.locator('.document-item:visible')).toHaveCount(9);
+  await expect(page.locator('.document-item:visible')).toHaveCount(11);
   await page.goto('http://127.0.0.1:4173/answers-on-questions/');
   const question = page
     .locator('summary')

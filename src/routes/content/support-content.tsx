@@ -7,6 +7,7 @@ import { siteConfig } from '@/configs/site';
 import { SiteLink } from '@/components/elements/site-link';
 import { ImpactCalculator } from '@/components/elements/impact-calculator';
 import { readableText } from '@/utils/typography';
+import { LegalLinks } from '@/components/elements/legal-links';
 
 const methodIcons = [Landmark, Users, Award, Handshake];
 export function SupportContent() {
@@ -71,8 +72,8 @@ export function SupportContent() {
         <div>
           <h3 id={`${id}-enquiry`}>Начните с&nbsp;разговора</h3>
           <p>
-            Обратитесь в&nbsp;ЗГУ, чтобы связаться с&nbsp;командой фонда. Кнопка
-            «Обсудить участие» откроет письмо в&nbsp;почтовой программе.
+            Напишите команде фонда. Кнопка «Обсудить участие» откроет письмо
+            в&nbsp;почтовой программе.
           </p>
         </div>
         <div>
@@ -90,6 +91,7 @@ export function SupportContent() {
           </a>
         </div>
       </section>
+      <LegalLinks />
       <section className="editorial-section" aria-label="Форматы поддержки">
         <div className="section-heading">
           <div>
