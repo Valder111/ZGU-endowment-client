@@ -93,5 +93,9 @@ jobs:
                 echo "Missing $DEPLOY_PATH/client" >&2
                 exit 1
               fi
-              docker compose -f docker-compose.prod.yml up -d --build
+              if docker info >/dev/null 2>&1; then
+                docker compose -f docker-compose.prod.yml up -d --build
+              else
+                sudo -n docker compose -f docker-compose.prod.yml up -d --build
+              fi
             '
