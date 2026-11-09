@@ -1,3 +1,5 @@
+import type { LegalDocumentId } from '@/constants/legal';
+
 export type ProjectId = 'students' | 'science' | 'campus' | 'alumni';
 export interface Project {
   id: ProjectId;
@@ -38,6 +40,7 @@ export type PageKind =
   | 'events'
   | 'support'
   | 'documents'
+  | 'legal'
   | 'reporting'
   | 'governance'
   | 'management'
@@ -51,6 +54,7 @@ export interface PageDefinition {
   projectId?: ProjectId;
   newsId?: 'council' | 'horizon' | 'scholarship';
   showCapitalFormationLink?: boolean;
+  legalDocumentId?: LegalDocumentId;
 }
 
 export type PageGroup = Omit<PageDefinition, 'path'> & {

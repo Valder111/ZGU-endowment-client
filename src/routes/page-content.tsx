@@ -28,6 +28,7 @@ import { UniversityStories } from '@/components/elements/university-stories';
 import { AnniversaryContent } from '@/routes/content/anniversary-content';
 import { NewsArticleContent } from '@/routes/content/news-article-content';
 import { TeapotContent } from '@/routes/content/teapot-content';
+import { LegalContent } from '@/routes/content/legal-content';
 function InteriorContent({ page }: { page: PageDefinition }) {
   switch (page.kind) {
     case 'anniversary':
@@ -38,6 +39,10 @@ function InteriorContent({ page }: { page: PageDefinition }) {
       return <SupportContent />;
     case 'documents':
       return <DocumentsContent />;
+    case 'legal':
+      return page.legalDocumentId ? (
+        <LegalContent id={page.legalDocumentId} />
+      ) : null;
     case 'governance':
       return <GovernanceContent />;
     case 'management':

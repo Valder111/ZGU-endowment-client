@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useSite } from '@/hooks/use-site';
 import { SiteLink } from '@/components/elements/site-link';
 import { siteConfig } from '@/configs/site';
+import { LegalLinks } from '@/components/elements/legal-links';
 import { CapitalSelect } from '@/components/elements/capital-select';
 import { formatNumber } from '@/utils/typography';
 import {
@@ -179,6 +180,7 @@ export function DonationDialog() {
         >
           Обсудить вклад <span aria-hidden="true">↗</span>
         </a>
+        <LegalLinks newTab />
         <div className="donation-routes">
           <DialogClose asChild>
             <SiteLink href="/how-to-support/" className="button primary">

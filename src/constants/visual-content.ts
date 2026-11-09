@@ -19,6 +19,7 @@ const pageScenes: Record<PageKind, ArtworkScene> = {
   pending: 'documents',
   support: 'alumni',
   documents: 'documents',
+  legal: 'documents',
   reporting: 'documents',
   governance: 'alumni',
   management: 'endowment',

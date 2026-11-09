@@ -36,7 +36,7 @@ export const fundNewsArticles = {
       'Такие истории показывают, почему поддержка талантов важна для университета. У молодых специалистов должно быть больше возможностей сосредоточиться на сложных задачах, исследовать и делать первые самостоятельные открытия.',
     ],
     source:
-      'https://polaruniversity.ru/news/studentam/stipendiaty_rossii_gordost_zgu/',
+      'https://polaruniversity.ru/news/studentam/aktivisty_zgu_gordost_rossii/',
   },
   council: {
     ...editorialNews.council,

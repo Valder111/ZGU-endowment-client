@@ -20,6 +20,7 @@ import { readableText } from '@/utils/typography';
 import { siteConfig } from '@/configs/site';
 import { assets } from '@/constants/assets';
 import { PublishedDocument } from '@/components/elements/published-content';
+import { DocumentDownloads } from '@/components/elements/document-downloads';
 import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
 
 const documentRequestHref = (topic: string) =>
@@ -80,7 +81,7 @@ export function DocumentsContent() {
             основа осознанного решения о&nbsp;поддержке.
           </p>
           <p>
-            Скачайте опубликованный файл или запросите материалы через ЗГУ.
+            Читайте документы на сайте или скачивайте файлы в PDF и Word.
             В&nbsp;письме можно уточнить нужные документы, период и&nbsp;вопросы
             к&nbsp;команде фонда.
           </p>
@@ -100,13 +101,16 @@ export function DocumentsContent() {
         <span className="eyebrow">ПРОВЕРКА ПОЛУЧАТЕЛЯ</span>
         <h2 id={`${id}-requisites`}>Реквизиты фонда</h2>
         <p>
-          Запросите полное наименование получателя, ИНН, ОГРН и&nbsp;банковские
-          данные. Перед переводом сверьте их&nbsp;с&nbsp;договором
-          пожертвования. Общие реквизиты ЗГУ не&nbsp;заменяют реквизиты фонда.
+          Наименование получателя, регистрационные данные, банковский счёт
+          и&nbsp;назначение платежа собраны на странице контактов. Карточку
+          фонда можно скачать в PDF и Word.
         </p>
-        <a className="text-link" href={documentRequestHref('Реквизиты фонда')}>
-          Запросить реквизиты <ArrowUpRight size={18} aria-hidden="true" />
-        </a>
+        <SiteLink
+          className="text-link"
+          href="/contacts-and-requisites/#requisites"
+        >
+          Открыть реквизиты <ArrowUpRight size={18} aria-hidden="true" />
+        </SiteLink>
       </section>
       <section className="editorial-section" aria-labelledby={`${id}-library`}>
         <div className="section-heading">
@@ -172,12 +176,30 @@ export function DocumentsContent() {
                       <h4>{doc.title}</h4>
                       <p>{readableText(doc.description)}</p>
                     </div>
-                    <a
-                      className="text-link"
-                      href={documentRequestHref(doc.title)}
-                    >
-                      Запросить <ArrowUpRight size={17} aria-hidden="true" />
-                    </a>
+                    {doc.href ? (
+                      <div className="library-document-actions">
+                        <SiteLink
+                          className="text-link"
+                          href={doc.href}
+                          aria-label={`Читать: ${doc.title}`}
+                        >
+                          Читать <ArrowUpRight size={17} aria-hidden="true" />
+                        </SiteLink>
+                        {doc.fileStem && (
+                          <DocumentDownloads
+                            stem={doc.fileStem}
+                            title={doc.title}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <a
+                        className="text-link"
+                        href={documentRequestHref(doc.title)}
+                      >
+                        Запросить <ArrowUpRight size={17} aria-hidden="true" />
+                      </a>
+                    )}
                   </article>
                 ),
               )}
@@ -190,8 +212,8 @@ export function DocumentsContent() {
         <div>
           <h3>Поможем разобраться</h3>
           <p>
-            Уточните условия участия и&nbsp;порядок получения документов через
-            общие контакты университета.
+            По вопросам документов и&nbsp;условий участия свяжитесь
+            с&nbsp;директором фонда Еленой Кистнер.
           </p>
         </div>
         <SiteLink className="text-link" href="/contacts-and-requisites/">
