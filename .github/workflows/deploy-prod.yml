@@ -23,7 +23,7 @@ jobs:
       - name: Update the client on the server
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         env:
-          DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/zgu' }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/endowment' }}
           DEPLOY_REPO: client
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -40,15 +40,49 @@ jobs:
               *) echo "DEPLOY_PATH must be an absolute path" >&2; exit 1 ;;
             esac
             case "$DEPLOY_REPO" in
-              client|server) ;;
+              client) REPO_URL=https://github.com/Valder111/ZGU-endowment-client.git ;;
+              server) REPO_URL=https://github.com/Valder111/ZGU-endowment-server.git ;;
               *) echo "Unexpected repository" >&2; exit 1 ;;
             esac
+            export REPO_URL
+            mkdir -p "$DEPLOY_PATH"
+            if [ ! -f "$DEPLOY_PATH/docker-compose.prod.yml" ]; then
+              cat > "$DEPLOY_PATH/docker-compose.prod.yml" <<'EOF'
+            name: zgu-endowment-prod
+
+            include:
+              - path: ./server/docker-compose.prod.yml
+
+            services:
+              web:
+                extends:
+                  file: ./client/docker-compose.prod.yml
+                  service: web
+                depends_on:
+                  - server
+
+            networks:
+              default:
+                name: zgu-endowment-prod
+            EOF
+            fi
             flock /tmp/zgu-deploy.lock sh -c '
               set -eu
+              if [ ! -d "$DEPLOY_PATH/$DEPLOY_REPO/.git" ]; then
+                GIT_TERMINAL_PROMPT=0 git clone --branch deploy --single-branch "$REPO_URL" "$DEPLOY_PATH/$DEPLOY_REPO"
+              fi
               cd "$DEPLOY_PATH/$DEPLOY_REPO"
               git fetch origin deploy
               git checkout -B deploy
               git reset --hard origin/deploy
               cd "$DEPLOY_PATH"
+              if [ ! -f server/docker-compose.prod.yml ] || [ ! -f server/.env.prod ]; then
+                echo "Missing $DEPLOY_PATH/server or server/.env.prod. The server repository is private and is not cloned automatically." >&2
+                exit 1
+              fi
+              if [ ! -f client/docker-compose.prod.yml ]; then
+                echo "Missing $DEPLOY_PATH/client" >&2
+                exit 1
+              fi
               docker compose -f docker-compose.prod.yml up -d --build
             '
