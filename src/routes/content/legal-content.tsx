@@ -130,16 +130,7 @@ export function LegalContent({ id }: { id: LegalDocumentId }) {
               Совета фонда об утверждении документа.
             </p>
           )}
-          {id === 'payment-security' && (
-            <>
-              <PaymentSystems />
-              <p className="legal-document-note">
-                Политика описывает платежи через Best2Pay. Сейчас обращение о
-                пожертвовании на сайте отправляется по почте и не списывает
-                средства.
-              </p>
-            </>
-          )}
+          {id === 'payment-security' && <PaymentSystems />}
           {sections.map((section) => (
             <section
               key={section.id}

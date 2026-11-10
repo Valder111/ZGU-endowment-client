@@ -1,0 +1,336 @@
+/* Keep the anniversary link separate from the circular scroll control. */
+.hero-bottom > a:first-child {
+  width: auto;
+  height: auto;
+  max-width: 65%;
+  border: 0;
+  border-radius: 0;
+  font-size: inherit;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.donation-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(800px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #c8dce0;
+  border-radius: 22px;
+}
+.donation-heading {
+  position: relative;
+  flex-shrink: 0;
+  padding: 28px 76px 22px 32px;
+  border-bottom: 1px solid #e0eaec;
+  background: #f6faf9;
+}
+.donation-heading .eyebrow {
+  margin: 0 0 10px;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.donation-dialog .donation-title {
+  margin: 0;
+  font-size: clamp(25px, 2.5vw, 34px);
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.donation-close {
+  position: absolute;
+  inset: 18px 18px auto auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #cedee2;
+  border-radius: 50%;
+  background: #fff;
+  color: #193d50;
+  font-size: 26px;
+  line-height: 1;
+}
+.donation-close:hover {
+  background: #e6f2ef;
+}
+.donation-close:focus-visible {
+  outline: 3px solid #168489;
+  outline-offset: 3px;
+}
+.donation-body {
+  min-height: 0;
+  padding: 24px 32px 28px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scroll-padding-block: 20px;
+}
+.donation-dialog .donation-description {
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #486779;
+}
+.donation-frequency,
+.donation-amounts {
+  gap: 10px;
+  margin-top: 16px;
+}
+.donation-dialog .donation-fields {
+  gap: 10px;
+  margin-block: 22px;
+}
+.donation-submit {
+  display: grid;
+  gap: 18px;
+}
+.donation-documents {
+  padding: 16px 18px;
+  border: 1px solid #d8e6e7;
+  border-radius: 12px;
+  background: #f4f9f8;
+}
+.donation-documents > span {
+  display: block;
+  margin-bottom: 10px;
+  color: #486779;
+  font-size: 12px;
+  font-weight: 600;
+}
+.donation-dialog .legal-links {
+  gap: 10px 20px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.donation-dialog .donation-routes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin: 20px 0;
+}
+.donation-dialog .donation-routes :is(.button.primary, .text-link) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  width: auto;
+  padding: 6px 0;
+  border-radius: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  font-size: 13px;
+  color: #286473;
+}
+.donation-dialog .donation-dismiss {
+  min-height: 44px;
+  padding: 10px 20px;
+  background: #eaf3f1;
+  box-shadow: none;
+  font-size: 14px;
+}
+
+.cycle-steps button > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1100px) {
+  .accessible .direction-explorer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .accessible .direction-map {
+    width: min(100%, 350px);
+    margin-inline: auto;
+  }
+  .direction-node {
+    width: 48%;
+    padding-inline: 0;
+  }
+  .direction-node-students,
+  .direction-node-campus {
+    left: 1%;
+  }
+  .direction-node-science,
+  .direction-node-alumni {
+    right: 1%;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .cycle-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1800px) {
+  .wrap {
+    width: min(1760px, calc(100% - 144px));
+  }
+  .hero-inner {
+    gap: clamp(48px, 4vw, 100px);
+    min-height: 880px;
+  }
+  .hero h1 {
+    font-size: clamp(70px, 3.4vw, 86px);
+  }
+  .hero-copy > p {
+    max-width: 680px;
+    font-size: 22px;
+  }
+  .hero-art .polar-compass {
+    width: min(100%, 620px);
+    height: auto;
+    aspect-ratio: 1;
+    margin-inline: auto;
+  }
+  .hero-art .polar-emblem img {
+    max-width: 100%;
+  }
+  .page-title h1 {
+    max-width: 1100px;
+    font-size: clamp(52px, 3vw, 68px);
+  }
+  .legal-layout {
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 64px;
+  }
+  .legal-section p,
+  .legal-intro {
+    max-width: 85ch;
+  }
+  .article-content > :is(.intro-grid, .contact-grid) {
+    gap: 48px;
+  }
+}
+
+@media (max-width: 760px) {
+  .wrap {
+    width: calc(100% - 36px);
+  }
+  main :is(h1, h2, h3, p, dd) {
+    overflow-wrap: anywhere;
+  }
+  .hero-inner,
+  .hero-copy,
+  .life-layout > *,
+  .life-small-photos > *,
+  .alumni-appeal > *,
+  .intro-grid > *,
+  .journey-explanation > * {
+    min-width: 0;
+  }
+  .life-layout,
+  .alumni-appeal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero-actions {
+    min-width: 0;
+  }
+  .hero-actions .button {
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+    padding-inline: 20px;
+    gap: 18px;
+  }
+  main .button {
+    max-width: 100%;
+    white-space: normal;
+  }
+  .journey-controls button {
+    min-width: 0;
+    padding-inline: 8px;
+  }
+  .donation-dialog {
+    width: calc(100% - 20px);
+    max-height: calc(100dvh - 20px);
+    border-radius: 18px;
+  }
+  .donation-heading {
+    padding: 22px 62px 20px 20px;
+  }
+  .donation-close {
+    inset: 12px 12px auto auto;
+  }
+  .donation-body {
+    padding: 20px;
+  }
+  .donation-amounts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .donation-amounts button {
+    padding-inline: 5px;
+    font-size: 13px;
+  }
+  .donation-amounts button:last-child {
+    white-space: normal;
+    line-height: 1.3;
+  }
+  .donation-dialog .donation-routes {
+    gap: 6px 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .direction-explorer,
+  .accessible .direction-explorer {
+    padding-inline: 16px;
+  }
+  .accessible .direction-explorer {
+    padding-inline: 8px;
+  }
+  .journey-controls {
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+    gap: 12px;
+  }
+  .page-title h1 {
+    font-size: 32px;
+  }
+  .hero h1 {
+    font-size: clamp(27px, 8.3vw, 31px);
+  }
+  main
+    :is(.section-heading, .life-copy, .support-intro, .contacts-documents)
+    h2 {
+    font-size: 26px;
+  }
+  .contacts-documents,
+  .appeal-copy {
+    padding-inline: 20px;
+  }
+  .donation-heading {
+    padding-left: 16px;
+  }
+  .donation-body {
+    padding-inline: 16px;
+  }
+  .donation-dialog .donation-title {
+    font-size: 24px;
+  }
+  .donation-documents {
+    padding: 14px;
+  }
+}
+
+@media (max-height: 500px) and (min-width: 761px) {
+  .donation-heading {
+    padding-block: 16px;
+  }
+  .donation-heading .eyebrow {
+    margin-bottom: 5px;
+  }
+  .donation-dialog .donation-title {
+    font-size: 26px;
+  }
+  .donation-body {
+    padding-block: 18px;
+  }
+}

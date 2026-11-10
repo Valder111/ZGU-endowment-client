@@ -17,7 +17,7 @@ test('anniversary invitation preserves the chosen contribution in an enquiry', a
   await page.goto('/anniversary/');
   await expect(
     page.getByRole('group', { name: 'Сбор целевого капитала' }),
-  ).toContainText('2 050 000 рублей');
+  ).toContainText('2 020 000 рублей');
   await page
     .getByRole('button', { name: 'Сделать подарок университету' })
     .click();

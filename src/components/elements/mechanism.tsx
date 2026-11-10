@@ -114,11 +114,6 @@ export function Mechanism() {
             ))}
           </div>
         </div>
-        <p className="risk-note mechanism-risk">
-          Доходность не&nbsp;гарантирована. Стоимость капитала может снижаться.
-          Решения о&nbsp;поддержке принимаются по&nbsp;фактическим результатам
-          управления.
-        </p>
         <SiteLink className="text-link" href="/about/reporting/">
           Как распределяется доход ↗
         </SiteLink>

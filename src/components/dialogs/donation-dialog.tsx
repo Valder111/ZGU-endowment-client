@@ -78,132 +78,141 @@ export function DonationDialog() {
           opener.current?.focus();
         }}
       >
-        <DialogClose className="close" aria-label="Закрыть">
-          ×
-        </DialogClose>
-        <span className="eyebrow">ВАШ ВКЛАД В БУДУЩЕЕ</span>
-        <DialogTitle className="text-[35px] leading-[1.12] font-medium tracking-[-.05em] max-[760px]:text-[29px]">
-          Поддержим будущее университета
-        </DialogTitle>
-        <DialogDescription className="text-[15px] leading-[1.9] text-[#5d7586]">
-          Выберите сумму и&nbsp;близкое направление. Поможем согласовать
-          условия, договор и&nbsp;реквизиты. Заявка по&nbsp;почте
-          не&nbsp;списывает средства.
-        </DialogDescription>
-        <div
-          className="donation-frequency"
-          role="group"
-          aria-label="Периодичность участия"
-        >
-          {['Разово', 'Регулярно'].map((option) => (
-            <button
-              key={option}
-              type="button"
-              aria-pressed={frequency === option}
-              onClick={() => setFrequency(option)}
-            >
-              {option}
-            </button>
-          ))}
+        <div className="donation-heading">
+          <span className="eyebrow">ВАШ ВКЛАД В БУДУЩЕЕ</span>
+          <DialogTitle className="donation-title text-[clamp(24px,2.5vw,34px)] leading-[1.16] font-medium tracking-[-.035em]">
+            Поддержим будущее университета
+          </DialogTitle>
+          <DialogClose className="donation-close" aria-label="Закрыть">
+            ×
+          </DialogClose>
         </div>
-        <div
-          className="donation-amounts"
-          role="group"
-          aria-label="Выберите сумму"
-        >
-          {[300, 500, 1000, 3000, 10000].map((value) => (
-            <button
-              type="button"
-              key={value}
-              aria-pressed={preset === value}
-              onClick={() => setPreset(value)}
-            >
-              {formatNumber(value)} ₽
-            </button>
-          ))}
-          <button
-            type="button"
-            aria-pressed={preset === null}
-            aria-expanded={preset === null}
-            aria-controls={`${id}-custom-amount`}
-            onClick={() => setPreset(null)}
-          >
-            Другая сумма
-          </button>
-        </div>
-        <div className="donation-fields">
+        <div className="donation-body">
+          <DialogDescription className="donation-description text-[15px] leading-[1.7] text-[#486779]">
+            Выберите сумму и&nbsp;близкое направление. Поможем согласовать
+            условия, договор и&nbsp;реквизиты. Заявка по&nbsp;почте
+            не&nbsp;списывает средства.
+          </DialogDescription>
           <div
-            id={`${id}-custom-amount`}
-            className="donation-custom"
-            hidden={preset !== null}
+            className="donation-frequency"
+            role="group"
+            aria-label="Периодичность участия"
           >
-            <label htmlFor={`${id}-amount`}>Другая сумма, рублей</label>
-            {preset === null && (
-              <input
-                id={`${id}-amount`}
-                ref={focusCustomAmount}
-                type="text"
-                inputMode="numeric"
-                value={customAmount}
-                aria-invalid={Boolean(customAmount) && !validAmount}
-                aria-describedby={
-                  !validAmount && customAmount
-                    ? `${id}-amount-error`
-                    : undefined
-                }
-                onChange={changeCustomAmount}
-              />
-            )}
-            {preset === null && customAmount && !validAmount && (
-              <small
-                id={`${id}-amount-error`}
-                className="donation-amount-error"
+            {['Разово', 'Регулярно'].map((option) => (
+              <button
+                key={option}
+                type="button"
+                aria-pressed={frequency === option}
+                onClick={() => setFrequency(option)}
               >
-                Укажите целую сумму в рублях.
-              </small>
-            )}
+                {option}
+              </button>
+            ))}
           </div>
-          <label htmlFor={`${id}-direction`}>Направление поддержки</label>
-          <CapitalSelect
-            id={`${id}-direction`}
-            value={direction}
-            onValueChange={setDirection}
-          />
-        </div>
-        <a
-          className="button primary donation-enquiry"
-          href={validAmount ? enquiryHref : undefined}
-          aria-disabled={!validAmount}
-          onClick={(event) => {
-            if (!validAmount) event.preventDefault();
-          }}
-        >
-          Обсудить вклад <span aria-hidden="true">↗</span>
-        </a>
-        <LegalLinks newTab />
-        <div className="donation-routes">
-          <DialogClose asChild>
-            <SiteLink href="/how-to-support/" className="button primary">
-              Как поддержать ↗
-            </SiteLink>
-          </DialogClose>
-          <DialogClose asChild>
-            <SiteLink href="/project/all-project/" className="text-link">
-              Выбрать целевой капитал ↗
-            </SiteLink>
-          </DialogClose>
-          <a
-            href={`mailto:${siteConfig.email}?subject=${encodeURIComponent('Хочу поддержать эндаумент-фонд ЗГУ')}`}
-            className="text-link"
+          <div
+            className="donation-amounts"
+            role="group"
+            aria-label="Выберите сумму"
           >
-            Обсудить участие по почте ↗
-          </a>
+            {[300, 500, 1000, 3000, 10000].map((value) => (
+              <button
+                type="button"
+                key={value}
+                aria-pressed={preset === value}
+                onClick={() => setPreset(value)}
+              >
+                {formatNumber(value)} ₽
+              </button>
+            ))}
+            <button
+              type="button"
+              aria-pressed={preset === null}
+              aria-expanded={preset === null}
+              aria-controls={`${id}-custom-amount`}
+              onClick={() => setPreset(null)}
+            >
+              Другая сумма
+            </button>
+          </div>
+          <div className="donation-fields">
+            <div
+              id={`${id}-custom-amount`}
+              className="donation-custom"
+              hidden={preset !== null}
+            >
+              <label htmlFor={`${id}-amount`}>Другая сумма, рублей</label>
+              {preset === null && (
+                <input
+                  id={`${id}-amount`}
+                  ref={focusCustomAmount}
+                  type="text"
+                  inputMode="numeric"
+                  value={customAmount}
+                  aria-invalid={Boolean(customAmount) && !validAmount}
+                  aria-describedby={
+                    !validAmount && customAmount
+                      ? `${id}-amount-error`
+                      : undefined
+                  }
+                  onChange={changeCustomAmount}
+                />
+              )}
+              {preset === null && customAmount && !validAmount && (
+                <small
+                  id={`${id}-amount-error`}
+                  className="donation-amount-error"
+                >
+                  Укажите целую сумму в рублях.
+                </small>
+              )}
+            </div>
+            <label htmlFor={`${id}-direction`}>Направление поддержки</label>
+            <CapitalSelect
+              id={`${id}-direction`}
+              value={direction}
+              onValueChange={setDirection}
+            />
+          </div>
+          <div className="donation-submit">
+            <a
+              className="button primary donation-enquiry"
+              href={validAmount ? enquiryHref : undefined}
+              aria-disabled={!validAmount}
+              onClick={(event) => {
+                if (!validAmount) event.preventDefault();
+              }}
+            >
+              Обсудить вклад <span aria-hidden="true">↗</span>
+            </a>
+            <div className="donation-documents">
+              <span>Документы для жертвователя</span>
+              <LegalLinks newTab />
+            </div>
+          </div>
+          <div className="donation-routes">
+            <DialogClose asChild>
+              <SiteLink href="/how-to-support/" className="button primary">
+                Как поддержать ↗
+              </SiteLink>
+            </DialogClose>
+            <DialogClose asChild>
+              <SiteLink href="/project/all-project/" className="text-link">
+                Выбрать целевой капитал ↗
+              </SiteLink>
+            </DialogClose>
+            <a
+              href={`mailto:${siteConfig.email}?subject=${encodeURIComponent('Хочу поддержать эндаумент-фонд ЗГУ')}`}
+              className="text-link"
+            >
+              Обсудить участие по почте ↗
+            </a>
+          </div>
+          <DialogClose asChild>
+            <Button variant="brand" className="donation-dismiss">
+              Понятно <span aria-hidden="true">↗</span>
+            </Button>
+          </DialogClose>
         </div>
-        <DialogClose asChild>
-          <Button variant="brand">
-            Понятно <span aria-hidden="true">↗</span>
-          </Button>
-        </DialogClose>
       </DialogContent>
     </Dialog>
   );
