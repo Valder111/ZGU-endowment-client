@@ -536,15 +536,15 @@ test('support cards switch topics by keyboard without fictitious financial resul
     name: 'Сбор целевого капитала',
   });
   await expect(fundraising.locator('dd')).toHaveText([
-    '2 050 000 рублей',
+    '2 020 000 рублей',
     '100 000 000 рублей',
   ]);
   const progress = fundraising.getByRole('progressbar', {
     name: 'Прогресс сбора',
   });
-  await expect(progress).toHaveAttribute('value', '2050000');
+  await expect(progress).toHaveAttribute('value', '2020000');
   await expect(progress).toHaveAttribute('max', '100000000');
-  await expect(fundraising).toContainText('2,05% от цели');
+  await expect(fundraising).toContainText('2,02% от цели');
   await expect(activity.locator('.activity-target')).toHaveCount(0);
   await expect(activity).not.toContainText(/3\s*200\s*000|240\s*000|128/);
   await purpose.focus();

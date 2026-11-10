@@ -1,6 +1,6 @@
 export const fundraising = {
   target: 100_000_000,
-  collected: 2_050_000,
+  collected: 2_020_000,
 } as const;
 
 export const fundActivity = [
