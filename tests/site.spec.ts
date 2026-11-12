@@ -52,6 +52,26 @@ test('every route is prerendered with readable content and local assets', async 
   );
   await context.close();
 });
+test('cookie notice links to the privacy policy and remembers acknowledgement', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto('/');
+  const notice = page.getByRole('region', { name: 'Файлы cookie' });
+  await expect(notice).toBeInViewport({ ratio: 1 });
+  await notice
+    .getByRole('link', { name: 'Политика обработки персональных данных' })
+    .click();
+  await expect(page).toHaveURL(/\/documents\/privacy\/$/);
+  await notice.getByRole('button', { name: 'ОК', exact: true }).click();
+  await expect(notice).toHaveCount(0);
+
+  await page.reload();
+  const menu = page.getByRole('button', { name: 'Меню', exact: true });
+  await menu.click();
+  await expect(menu).toHaveAttribute('aria-expanded', 'true');
+  await expect(notice).toHaveCount(0);
+});
 test('donation dialog traps focus and restores it on Escape, close, and backdrop', async ({
   page,
 }) => {

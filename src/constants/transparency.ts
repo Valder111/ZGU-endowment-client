@@ -1,6 +1,7 @@
 import tarasevich from '@/assets/images/editorial/team-tarasevich.webp';
 import zemzyulina from '@/assets/images/editorial/team-zemzyulina-portrait.jpg';
 import belyaev from '@/assets/images/editorial/team-belyaev.webp';
+import maslyakova from '@/assets/images/editorial/team-maslyakova.jpg';
 import dolzhenko from '@/assets/images/editorial/team-dolzhenko.jpg';
 import makukha from '@/assets/images/editorial/team-makukha.webp';
 import mironov from '@/assets/images/editorial/team-mironov.webp';
@@ -34,7 +35,7 @@ export const foundationTeam: readonly FoundationPerson[] = [
   {
     name: 'Дарья Маслякова',
     role: 'Юридическое сопровождение фонда',
-    monogram: 'ДМ',
+    image: maslyakova,
   },
   {
     name: 'Елена Долженко',
