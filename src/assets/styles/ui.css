@@ -1,3 +1,49 @@
+.cookie-notice {
+  position: sticky;
+  z-index: 30;
+  inset-block-end: max(16px, env(safe-area-inset-bottom));
+  display: grid;
+  gap: 10px;
+  width: min(420px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: 16px max(16px, env(safe-area-inset-right)) 16px auto;
+  padding: 20px;
+  overflow-y: auto;
+  border: 1px solid #c8dce0;
+  border-radius: 16px;
+  background: #f6faf9;
+  color: #193d50;
+  box-shadow: 0 12px 38px #102c4233;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.cookie-notice h2 {
+  font-size: 19px;
+  font-weight: 650;
+}
+.cookie-notice a {
+  justify-self: start;
+  color: #176579;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.cookie-notice .button.primary {
+  justify-self: end;
+  justify-content: center;
+  min-width: 84px;
+  min-height: 44px;
+  padding: 8px 20px;
+  font-size: 14px;
+}
+@media (max-width: 480px) {
+  .cookie-notice {
+    padding: 16px;
+  }
+  .cookie-notice .button.primary {
+    justify-self: stretch;
+  }
+}
+
 /* Match the original donation window while using accessible Radix primitives. */
 .donation-overlay {
   position: fixed;

@@ -5,6 +5,7 @@ import { useMotion } from '@/hooks/use-motion';
 import { useTeapotShortcut } from '@/hooks/use-teapot-shortcut';
 import { SiteHeader } from '@/components/elements/site-header';
 import { SiteFooter } from '@/components/elements/site-footer';
+import { CookieNotice } from '@/components/elements/cookie-notice';
 import { DonationDialog } from '@/components/dialogs/donation-dialog';
 import { PageContent } from '@/routes/page-content';
 import { resolvePage } from '@/routes/resolve-page';
@@ -27,6 +28,7 @@ function Site({ page }: { page?: PageDefinition }) {
         <PageContent page={page} />
       </main>
       <SiteFooter />
+      <CookieNotice />
       <DonationDialog />
     </div>
   );
