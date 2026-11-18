@@ -80,7 +80,9 @@ test('donation dialog traps focus and restores it on Escape, close, and backdrop
   await trigger.click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
-  await expect(dialog).toContainText('Заявка по почте не списывает средства');
+  await expect(dialog).toContainText(
+    'На следующем шаге можно проверить данные и перейти к оплате',
+  );
   for (let i = 0; i < 5; i++) {
     await page.keyboard.press('Tab');
     expect(
@@ -91,7 +93,7 @@ test('donation dialog traps focus and restores it on Escape, close, and backdrop
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
   await trigger.click();
-  await page.getByRole('button', { name: 'Понятно' }).click();
+  await dialog.getByRole('button', { name: 'Закрыть', exact: true }).click();
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
   await trigger.click();

@@ -3,11 +3,15 @@ import { SiteLink } from '@/components/elements/site-link';
 import { ProjectGlyph } from '@/components/elements/project-glyph';
 import { readableText } from '@/utils/typography';
 import type { ProjectId } from '@/types/content';
+import type { DonationProgress } from '@/api/payments';
+import { ProjectFundraising } from '@/components/elements/fundraising-card';
 export function ProjectGrid({
+  funding,
   activeId,
   idPrefix,
   onSelect,
 }: {
+  funding?: DonationProgress['targets'];
   activeId?: ProjectId;
   idPrefix?: string;
   onSelect?: (id: ProjectId) => void;
@@ -47,6 +51,9 @@ export function ProjectGrid({
               {readableText(project.title)}
             </h3>
             <p>{readableText(project.description)}</p>
+            <ProjectFundraising
+              totals={funding?.get(`direction:${project.id}`)}
+            />
             <SiteLink
               className="card-link"
               href={`/projects/${project.id}/`}

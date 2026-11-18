@@ -138,9 +138,14 @@ test('library files, footer and donation dialogue link to separate legal documen
     dialog.getByRole('link', { name: 'Оферта (в новой вкладке)', exact: true }),
   ).toHaveAttribute('target', '_blank');
   await expect(
-    dialog.getByRole('link', { name: 'Обсудить вклад', exact: true }),
+    dialog.getByRole('link', {
+      name: 'Обсудить участие по почте',
+      exact: true,
+    }),
   ).toHaveAttribute('href', /^mailto:kistnerev@norvuz.ru\?/);
-  await expect(dialog).toContainText('не списывает средства');
+  await expect(
+    dialog.getByRole('link', { name: 'Перейти к оформлению' }),
+  ).toHaveAttribute('href', '/donate/?amount=1000');
 });
 
 test('payment policy includes supplied logos and working HTTPS provider links', async ({

@@ -11,6 +11,7 @@ import { PageContent } from '@/routes/page-content';
 import { resolvePage } from '@/routes/resolve-page';
 import { projects } from '@/constants/projects';
 import { AdminContent } from '@/routes/content/admin-content';
+import { DonationPage } from '@/routes/content/donation-page';
 import type { PageDefinition } from '@/types/content';
 
 function Site({ page }: { page?: PageDefinition }) {
@@ -47,7 +48,11 @@ export function App({ pathname }: { pathname: string }) {
     page?.kind === 'projects' ? projects[0].id : page?.projectId;
   return (
     <SiteProvider initialProject={initialProject}>
-      <Site page={page} />
+      {page?.kind === 'donation' || page?.kind === 'donation-result' ? (
+        <DonationPage result={page.kind === 'donation-result'} />
+      ) : (
+        <Site page={page} />
+      )}
     </SiteProvider>
   );
 }

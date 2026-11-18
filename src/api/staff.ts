@@ -5,6 +5,7 @@ import { News } from './generated/News';
 import { Events } from './generated/Events';
 import { Projects } from './generated/Projects';
 import { Documents } from './generated/Documents';
+import { Payments } from './generated/Payments';
 import type {
   HandlerDocumentResponse,
   HandlerErrorResponse,
@@ -104,6 +105,7 @@ export const staffApi = {
   events: new Events(config),
   projects: new Projects(config),
   documents: new Documents(config),
+  payments: new Payments(config),
 };
 
 export async function staffResult<T>(

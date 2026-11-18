@@ -39,6 +39,8 @@ export type PageKind =
   | 'contacts'
   | 'events'
   | 'support'
+  | 'donation'
+  | 'donation-result'
   | 'documents'
   | 'legal'
   | 'reporting'

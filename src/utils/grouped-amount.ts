@@ -17,7 +17,7 @@ export function formatGroupedAmountChange(
 
   const countBeforeCaret = raw
     .slice(0, input.selectionStart ?? raw.length)
-    .replace(/[. \u00a0\u202f]/g, '').length;
+    .replace(formatted.includes(',') ? /[^0-9,]/g : /[^0-9]/g, '').length;
   let offset = 0;
   let count = 0;
   while (offset < formatted.length && count < countBeforeCaret) {

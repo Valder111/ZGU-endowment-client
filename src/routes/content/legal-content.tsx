@@ -10,6 +10,7 @@ import { DocumentDownloads } from '@/components/elements/document-downloads';
 import { LegalLinks } from '@/components/elements/legal-links';
 import { SiteLink } from '@/components/elements/site-link';
 import { sitePath } from '@/utils/paths';
+import { personalDataConsentSections } from '@/constants/personal-data-consent';
 
 // Source text stays plain text. Only verified links are rendered as anchors.
 function DocumentText({ text }: { text: string }) {
@@ -90,7 +91,8 @@ function PaymentSystems() {
 
 export function LegalContent({ id }: { id: LegalDocumentId }) {
   const document = legalDocument(id);
-  const sections = legalContent[id];
+  const sections =
+    id === 'consent' ? personalDataConsentSections : legalContent[id];
   return (
     <div className="wrap article-content legal-page">
       <SiteLink className="legal-back" href="/about/constituent-the-documents/">

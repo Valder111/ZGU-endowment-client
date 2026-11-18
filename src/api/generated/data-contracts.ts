@@ -194,6 +194,8 @@ export interface HandlerProjectResponse {
   category?: string;
   created_by?: string;
   currency?: string;
+  /** @example "0.00" */
+  current_amount?: string;
   description?: string;
   ends_at?: string;
   id?: string;
@@ -213,6 +215,128 @@ export interface HandlerUserResponse {
   is_active?: boolean;
   last_name?: string;
   role?: string;
+}
+
+export interface HandlerCashActivateRequest {
+  amount?: string;
+  currency?: string;
+  description?: string;
+  email?: string;
+  id?: string;
+  payment_id?: string;
+  qr_ttl?: string;
+  reference?: string;
+}
+
+export interface HandlerCashIDRequest {
+  id?: string;
+}
+
+export interface HandlerCashRegisterRequest {
+  description?: string;
+  get_qr_img?: boolean;
+  url?: string;
+}
+
+export interface HandlerCashResponse {
+  code?: string;
+  id?: string;
+  image?: string;
+  message?: string;
+  payload?: string;
+  qrc_id?: string;
+  state?: string;
+}
+
+export interface HandlerCheckoutRequest {
+  amount?: string;
+  currency?: string;
+  donor_email?: string;
+  donor_name?: string;
+  donor_phone?: string;
+  idempotency_key?: string;
+  is_anonymous?: boolean;
+  method?: string;
+  offer_accepted_at?: string;
+  offer_version?: string;
+  project_id?: string;
+}
+
+export interface HandlerCheckoutResponse {
+  donation_id?: string;
+  nspk_link?: string;
+  order_id?: string;
+  payment_id?: string;
+  payment_url?: string;
+  sbp_link?: string;
+}
+
+export interface HandlerDonationResponse {
+  amount?: string;
+  confirmed_at?: string;
+  created_at?: string;
+  currency?: string;
+  donor_id?: string;
+  donor_snapshot?: object;
+  id?: string;
+  is_anonymous?: boolean;
+  offer_accepted_at?: string;
+  offer_version?: string;
+  project_id?: string;
+  status?: string;
+}
+
+export interface HandlerMoneyRequest {
+  amount?: string;
+  reason?: string;
+}
+
+export interface HandlerPaymentActionResponse {
+  donation_id?: string;
+  message?: string;
+  payment_id?: string;
+  refund_id?: string;
+  status?: string;
+}
+
+export interface HandlerPaymentResponse {
+  amount?: string;
+  created_at?: string;
+  currency?: string;
+  donation_id?: string;
+  id?: string;
+  idempotency_key?: string;
+  paid_at?: string;
+  provider?: string;
+  provider_payment_id?: string;
+  status?: string;
+}
+
+export interface HandlerRefundResponse {
+  amount?: string;
+  completed_at?: string;
+  created_at?: string;
+  id?: string;
+  payment_id?: string;
+  provider_refund_id?: string;
+  reason?: string;
+  status?: string;
+}
+
+export interface ApiProjectAdjustmentCreateRequest {
+  /** @example "1500.50" */
+  amount: string;
+  comment: string;
+}
+
+export interface HandlerProjectAdjustmentResponse {
+  /** @example "1500.50" */
+  amount?: string;
+  comment?: string;
+  created_at?: string;
+  created_by?: string;
+  id?: string;
+  project_id?: string;
 }
 
 export type DocumentsListData = HandlerDocumentResponse[];
@@ -467,3 +591,61 @@ export type UsersDeleteError = HandlerErrorResponse;
 export type UsersPartialUpdateData = any;
 
 export type UsersPartialUpdateError = HandlerErrorResponse;
+
+export type DonationsListData = HandlerDonationResponse[];
+
+export type DonationsListError = HandlerErrorResponse;
+
+export type DonationsDetailData = HandlerDonationResponse;
+
+export type DonationsDetailError = HandlerErrorResponse;
+
+export type PaymentsListData = HandlerPaymentResponse[];
+
+export type PaymentsListError = HandlerErrorResponse;
+
+export type CallbackCreateData = string;
+
+export type CallbackCreateError = HandlerErrorResponse;
+
+export type CheckoutCreateData = HandlerCheckoutResponse;
+
+export type CheckoutCreateError = HandlerErrorResponse;
+
+export type SbpCashActivateCreateData = HandlerCashResponse;
+
+export type SbpCashDeactivateCreateData = HandlerCashResponse;
+
+export type SbpCashRegisterCreateData = HandlerCashResponse;
+
+export type PaymentsDetailData = HandlerPaymentResponse;
+
+export type PaymentsDetailError = HandlerErrorResponse;
+
+export type CompleteCreateResult = HandlerPaymentActionResponse;
+
+export type CompleteCreateFail = HandlerErrorResponse;
+
+export type ReverseCreateData = HandlerPaymentActionResponse;
+
+export type SyncCreateData = HandlerPaymentActionResponse;
+
+export type RefundsListData = HandlerRefundResponse[];
+
+export type RefundsListError = HandlerErrorResponse;
+
+export type RefundsDetailData = HandlerRefundResponse;
+
+export type RefundsDetailError = HandlerErrorResponse;
+
+export type AdjustmentsListData = HandlerProjectAdjustmentResponse[];
+
+export type AdjustmentsListError = HandlerErrorResponse;
+
+export type AdjustmentsCreateData = HandlerProjectAdjustmentResponse;
+
+export type AdjustmentsCreateError = HandlerErrorResponse;
+
+export type AdjustmentsDeleteData = any;
+
+export type AdjustmentsDeleteError = HandlerErrorResponse;

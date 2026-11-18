@@ -1,5 +1,5 @@
 import { DonateButton } from '@/components/elements/donate-button';
-import { FundraisingCard } from '@/components/elements/fundraising-card';
+import { LiveFundraisingCard } from '@/components/elements/fundraising-card';
 import { ProjectGrid } from '@/components/elements/project-grid';
 import { SiteLink } from '@/components/elements/site-link';
 import { assets } from '@/constants/assets';
@@ -85,7 +85,7 @@ export function AnniversaryContent() {
           </p>
         </div>
       </section>
-      <FundraisingCard />
+      <LiveFundraisingCard />
       <section className="anniversary-gift editorial-section">
         <span className="eyebrow">ПОДАРОК С ПРОДОЛЖЕНИЕМ</span>
         <h2>

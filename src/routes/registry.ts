@@ -3,6 +3,23 @@ import { editorialNews } from '@/constants/editorial-news';
 import { legalDocuments } from '@/constants/legal';
 /** Historical addresses intentionally share the same content as in the original site. */
 const pageGroups = [
+  {
+    paths: ['/donate/'],
+    kind: 'donation',
+    title: 'Пожертвование фонду',
+    eyebrow: 'ПОДДЕРЖАТЬ УНИВЕРСИТЕТ',
+  },
+  {
+    paths: [
+      '/donate/success/',
+      '/donate/failure/',
+      '/payment/success/',
+      '/payment/fail/',
+    ],
+    kind: 'donation-result',
+    title: 'Статус пожертвования',
+    eyebrow: 'ОНЛАЙН-ПЛАТЁЖ',
+  },
   ...legalDocuments.map((document) => ({
     paths: [document.path],
     kind: 'legal' as const,

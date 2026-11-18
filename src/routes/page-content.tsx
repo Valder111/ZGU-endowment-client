@@ -29,6 +29,46 @@ import { AnniversaryContent } from '@/routes/content/anniversary-content';
 import { NewsArticleContent } from '@/routes/content/news-article-content';
 import { TeapotContent } from '@/routes/content/teapot-content';
 import { LegalContent } from '@/routes/content/legal-content';
+import { FundraisingCard } from '@/components/elements/fundraising-card';
+import { useDonationProgress } from '@/hooks/requests/queries/use-donation-progress';
+
+function ProjectsContent({
+  showCapitalFormationLink,
+}: {
+  showCapitalFormationLink?: boolean;
+}) {
+  const { data, error } = useDonationProgress();
+  return (
+    <div className="wrap article-content">
+      <section
+        className="project-funding"
+        aria-labelledby="project-funding-title"
+      >
+        <span className="eyebrow">ЦЕЛЕВОЙ КАПИТАЛ ФОНДА</span>
+        <h2 id="project-funding-title">Вместе к общей цели</h2>
+        <FundraisingCard totals={data?.fund} />
+        {Boolean(error) && (
+          <p className="payment-hint">
+            Не удалось обновить данные. Показана последняя доступная сумма.
+          </p>
+        )}
+      </section>
+      <DirectionExplorer funding={data?.targets} />
+      {showCapitalFormationLink && (
+        <p id="capital-formation" className="capital-formation-jump">
+          <SiteLink
+            className="text-link"
+            href="/about/general-information/#capital-formation"
+          >
+            Схема формирования целевого капитала ↗
+          </SiteLink>
+        </p>
+      )}
+      <PublishedContent collection="projects" funding={data?.targets} />
+    </div>
+  );
+}
+
 function InteriorContent({ page }: { page: PageDefinition }) {
   switch (page.kind) {
     case 'anniversary':
@@ -67,20 +107,9 @@ function InteriorContent({ page }: { page: PageDefinition }) {
       return <FaqContent />;
     case 'projects':
       return (
-        <div className="wrap article-content">
-          <DirectionExplorer />
-          {page.showCapitalFormationLink && (
-            <p id="capital-formation" className="capital-formation-jump">
-              <SiteLink
-                className="text-link"
-                href="/about/general-information/#capital-formation"
-              >
-                Схема формирования целевого капитала ↗
-              </SiteLink>
-            </p>
-          )}
-          <PublishedContent collection="projects" />
-        </div>
+        <ProjectsContent
+          showCapitalFormationLink={page.showCapitalFormationLink}
+        />
       );
     case 'news':
       return (
@@ -97,6 +126,8 @@ function InteriorContent({ page }: { page: PageDefinition }) {
         </div>
       );
     case 'admin':
+    case 'donation':
+    case 'donation-result':
     case 'publication':
     case 'teapot':
     case 'home':

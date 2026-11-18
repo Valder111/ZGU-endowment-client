@@ -24,6 +24,9 @@ const routes = [
   '/about/constituent-the-documents/',
   '/documents/offer/',
   '/documents/payment-security/',
+  '/donate/',
+  '/donate/success/',
+  '/donate/failure/',
 ];
 
 for (const viewport of viewports) {
@@ -108,13 +111,14 @@ for (const viewport of viewports) {
     await amount.fill('2020000');
     await expect(amount).toHaveValue('2.020.000');
     const submit = dialog.getByRole('link', {
-      name: 'Обсудить вклад',
+      name: 'Перейти к оформлению',
       exact: true,
     });
     await submit.scrollIntoViewIfNeeded();
     await expect(submit).toBeInViewport();
-    const href = new URL((await submit.getAttribute('href'))!);
-    expect(href.searchParams.get('body')).toContain('2020000 рублей');
+    const href = new URL((await submit.getAttribute('href'))!, page.url());
+    expect(href.pathname).toBe('/donate/');
+    expect(href.searchParams.get('amount')).toBe('2020000');
     const documents = dialog.locator('.donation-documents');
     await documents.scrollIntoViewIfNeeded();
     expect((await documents.boundingBox())!.y).toBeGreaterThanOrEqual(
