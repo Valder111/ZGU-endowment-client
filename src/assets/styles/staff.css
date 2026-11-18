@@ -213,6 +213,82 @@
 .staff-field textarea {
   resize: vertical;
 }
+
+.project-adjustments {
+  display: grid;
+  gap: 18px;
+}
+.project-adjustments .staff-workspace-heading {
+  margin: 0;
+}
+.project-adjustments h3 {
+  font-size: 22px;
+  font-weight: 650;
+}
+.project-adjustments-balance {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #c8dfdb;
+  border-radius: 14px;
+  background: #eff7f5;
+  color: #206a68;
+}
+.project-adjustments-balance dt {
+  font-size: 13px;
+}
+.project-adjustments-balance dd {
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.project-adjustments-form fieldset {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.project-adjustments-form button {
+  justify-self: start;
+}
+.project-adjustments-list {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+.project-adjustments-list li {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: start;
+  padding: 16px;
+  border: 1px solid var(--staff-line);
+  border-radius: 12px;
+}
+.project-adjustments-list li > div {
+  min-width: 0;
+}
+.project-adjustments-list strong {
+  display: block;
+  font-size: 20px;
+  color: #206a68;
+}
+.project-adjustments-list time {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #526d7b;
+}
+.project-adjustments-list p {
+  margin-top: 10px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.project-adjustments-list button {
+  flex-shrink: 0;
+}
 .staff-category {
   grid-column: 1 / -1;
 }

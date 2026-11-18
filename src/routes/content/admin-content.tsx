@@ -501,6 +501,7 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
                 request={request}
                 collection={collection}
                 userId={current.id}
+                role={current.role}
                 leaveRef={leaveRef}
               />
             )}

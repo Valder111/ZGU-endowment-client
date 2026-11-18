@@ -1,8 +1,10 @@
 import { isAxiosError } from 'axios';
 import { staffApi, staffBase } from '@/api/staff';
+import { publicContentParams } from '@/api/staff-content';
 import type { HandlerCheckoutRequest } from '@/api/generated/data-contracts';
 import { legalContent } from '@/constants/legal';
 import { donationDirections, projects } from '@/constants/projects';
+import { defaultDonationProjectId } from '@/constants/donation-fund';
 import { sitePath } from '@/utils/paths';
 
 export const paymentsEnabled =
@@ -32,10 +34,7 @@ function projectMap(): Record<string, string> {
       return {};
     return Object.fromEntries(
       Object.entries(parsed).filter(
-        ([key, value]) =>
-          (key === 'fund' ||
-            projects.some(({ id }) => key === `direction:${id}`)) &&
-          validPaymentReference(value),
+        ([key, value]) => key === 'fund' && validPaymentReference(value),
       ),
     );
   } catch {
@@ -45,13 +44,8 @@ function projectMap(): Record<string, string> {
 const mappedProjects = projectMap();
 
 export function paymentProjectId(target: string) {
-  const id = target.startsWith('project:')
-    ? target.slice(8)
-    : (mappedProjects[target] ??
-      (donationDirections.some(({ value }) => value === target)
-        ? mappedProjects.fund
-        : undefined));
-  return validPaymentReference(id) ? id : null;
+  if (!validPaymentTarget(target)) return null;
+  return mappedProjects.fund ?? defaultDonationProjectId;
 }
 
 export function parseDonationAmount(value: string) {
@@ -116,7 +110,7 @@ export type ProgressTotal = {
   collectedMinor: number | null;
   targetMinor: number | null;
 };
-export type FundTotal = ProgressTotal & { collectedMinor: number };
+export type FundTotal = ProgressTotal;
 export type DonationProgress = {
   fund?: FundTotal;
   targets: Map<string, ProgressTotal>;
@@ -204,7 +198,7 @@ export async function startPayment(
       draft.amountMinor ||
     draft.amountMinor % 100 !== 0 ||
     !Number.isFinite(Date.parse(draft.offerAcceptedAt)) ||
-    (draft.email && !draft.personalDataConsent)
+    !draft.personalDataConsent
   )
     throw new Error('Проверьте данные пожертвования.');
   const body: HandlerCheckoutRequest = {
@@ -280,26 +274,41 @@ export async function getDonationProgress(
 ): Promise<DonationProgress> {
   const data = await paymentResponse(
     staffApi.projects.projectsList({
-      withCredentials: false,
+      ...publicContentParams,
       timeout: 15_000,
       signal,
     }),
   );
   if (!Array.isArray(data)) throw new Error('Некорректный ответ API проектов.');
   const targets = new Map<string, ProgressTotal>();
+  const common = data.find((row) => row.id === paymentProjectId('fund'));
+  const amounts =
+    common &&
+    ['published', 'completed'].includes(common.status ?? '') &&
+    common.currency === 'RUB'
+      ? (common as typeof common & {
+          total?: string | number | null;
+          amount?: string | number | null;
+        })
+      : null;
+  const readAmount = (value: unknown) => {
+    if (value === undefined || value === null) return null;
+    try {
+      return moneyMinor(typeof value === 'number' ? String(value) : value);
+    } catch {
+      return null;
+    }
+  };
+  const fund: FundTotal = {
+    collectedMinor: readAmount(amounts?.current_amount ?? amounts?.total),
+    targetMinor: readAmount(amounts?.target_amount ?? amounts?.amount),
+  };
+  for (const direction of donationDirections)
+    targets.set(direction.value, fund);
   for (const row of data) {
-    if (
-      !validPaymentReference(row.id) ||
-      !['published', 'completed'].includes(row.status ?? '') ||
-      row.currency !== 'RUB' ||
-      !row.target_amount
-    )
-      continue;
-    const targetMinor = moneyMinor(row.target_amount);
-    if (targetMinor)
-      targets.set(`project:${row.id}`, { targetMinor, collectedMinor: null });
+    if (validPaymentReference(row.id)) targets.set(`project:${row.id}`, fund);
   }
-  return { targets };
+  return { fund, targets };
 }
 
 export function donationHref(target = 'fund', amountMinor?: number) {

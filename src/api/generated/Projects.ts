@@ -11,10 +11,17 @@
  */
 
 import type {
+  AdjustmentsCreateData,
+  AdjustmentsCreateError,
+  AdjustmentsDeleteData,
+  AdjustmentsDeleteError,
+  AdjustmentsListData,
+  AdjustmentsListError,
+  ApiProjectAdjustmentCreateRequest,
   ApiProjectCreateRequest,
   ApiProjectUpdateRequest,
-  CompleteCreateFail,
-  CompleteCreateResult,
+  CompleteCreateData,
+  CompleteCreateError,
   MediaContentListFails,
   MediaContentListOutput,
   MediaCreateFails,
@@ -164,7 +171,7 @@ export class Projects<
    * @summary Завершение проекта
    * @request POST:/projects/{id}/complete
    * @secure
-   * @response `204` `CompleteCreateResult` No Content
+   * @response `204` `CompleteCreateData` No Content
    * @response `400` `HandlerErrorResponse` Bad Request
    * @response `401` `HandlerErrorResponse` Unauthorized
    * @response `403` `HandlerErrorResponse` Forbidden
@@ -172,7 +179,7 @@ export class Projects<
    * @response `500` `HandlerErrorResponse` Internal Server Error
    */
   completeCreate = (id: string, params: RequestParams = {}) =>
-    this.request<CompleteCreateResult, CompleteCreateFail>({
+    this.request<CompleteCreateData, CompleteCreateError>({
       path: `/projects/${id}/complete`,
       method: 'POST',
       secure: true,
@@ -298,6 +305,84 @@ export class Projects<
     this.request<MediaContentListOutput, MediaContentListFails>({
       path: `/projects/${id}/media/${mediaId}/content`,
       method: 'GET',
+      ...params,
+    });
+  /**
+   * @description Нужна сессия admin или moderator. Удалённые пополнения не отдаются.
+   *
+   * @tags projects
+   * @name AdjustmentsList
+   * @summary Список ручных пополнений
+   * @request GET:/projects/{id}/adjustments
+   * @secure
+   * @response `200` `AdjustmentsListData` OK
+   * @response `400` `HandlerErrorResponse` Bad Request
+   * @response `401` `HandlerErrorResponse` Unauthorized
+   * @response `403` `HandlerErrorResponse` Forbidden
+   * @response `404` `HandlerErrorResponse` Not Found
+   * @response `500` `HandlerErrorResponse` Internal Server Error
+   */
+  adjustmentsList = (id: string, params: RequestParams = {}) =>
+    this.request<AdjustmentsListData, AdjustmentsListError>({
+      path: `/projects/${id}/adjustments`,
+      method: 'GET',
+      secure: true,
+      format: 'json',
+      ...params,
+    });
+  /**
+   * @description Нужна сессия admin. Сумма прибавляется к current_amount. Валюта берётся у проекта, комментарий обязателен.
+   *
+   * @tags projects
+   * @name AdjustmentsCreate
+   * @summary Ручное пополнение проекта
+   * @request POST:/projects/{id}/adjustments
+   * @secure
+   * @response `201` `AdjustmentsCreateData` Created
+   * @response `400` `HandlerErrorResponse` Bad Request
+   * @response `401` `HandlerErrorResponse` Unauthorized
+   * @response `403` `HandlerErrorResponse` Forbidden
+   * @response `404` `HandlerErrorResponse` Not Found
+   * @response `500` `HandlerErrorResponse` Internal Server Error
+   */
+  adjustmentsCreate = (
+    id: string,
+    body: ApiProjectAdjustmentCreateRequest,
+    params: RequestParams = {},
+  ) =>
+    this.request<AdjustmentsCreateData, AdjustmentsCreateError>({
+      path: `/projects/${id}/adjustments`,
+      method: 'POST',
+      body: body,
+      secure: true,
+      type: 'application/json',
+      format: 'json',
+      ...params,
+    });
+  /**
+   * @description Нужна сессия admin. Запись остаётся в базе, сумма вычитается из current_amount. Повтор ничего не меняет.
+   *
+   * @tags projects
+   * @name AdjustmentsDelete
+   * @summary Удаление ручного пополнения
+   * @request DELETE:/projects/{id}/adjustments/{adjustmentId}
+   * @secure
+   * @response `204` `AdjustmentsDeleteData` No Content
+   * @response `400` `HandlerErrorResponse` Bad Request
+   * @response `401` `HandlerErrorResponse` Unauthorized
+   * @response `403` `HandlerErrorResponse` Forbidden
+   * @response `404` `HandlerErrorResponse` Not Found
+   * @response `500` `HandlerErrorResponse` Internal Server Error
+   */
+  adjustmentsDelete = (
+    id: string,
+    adjustmentId: string,
+    params: RequestParams = {},
+  ) =>
+    this.request<AdjustmentsDeleteData, AdjustmentsDeleteError>({
+      path: `/projects/${id}/adjustments/${adjustmentId}`,
+      method: 'DELETE',
+      secure: true,
       ...params,
     });
 }

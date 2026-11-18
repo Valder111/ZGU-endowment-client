@@ -37,6 +37,8 @@ import {
 } from '@/api/donation-projects';
 import { staffBase, staffResult } from '@/api/staff';
 import { LegalLinks } from '@/components/elements/legal-links';
+import { PersonalDataConsent } from '@/components/elements/personal-data-consent';
+import { legalDocument } from '@/constants/legal';
 import { SiteLink } from '@/components/elements/site-link';
 import { Button } from '@/components/ui/button';
 import { donationDirections } from '@/constants/projects';
@@ -56,6 +58,7 @@ import {
 import { assets } from '@/constants/assets';
 
 const presets = [300, 500, 1000, 3000, 10000];
+const offerDocument = legalDocument('offer');
 
 function subscribeToSearch(change: () => void) {
   window.addEventListener('popstate', change);
@@ -112,6 +115,7 @@ function DonationForm({ query }: { query: URLSearchParams }) {
   const projectOptions = donationProjectOptions(published);
   const projectId = paymentProjectId(target);
   const selected = projectOptions.find(({ id }) => id === projectId);
+  const chosenProject = projectOptions.find(({ value }) => value === target);
   const direction = donationDirections.find(({ value }) => value === target);
   const commonFund = paymentProjectId('fund');
   const usesCommonFund =
@@ -119,8 +123,8 @@ function DonationForm({ query }: { query: URLSearchParams }) {
     donationDirections.every(
       ({ value }) => paymentProjectId(value) === commonFund,
     );
-  const selectedTarget = direction ? target : (selected?.value ?? '');
-  const directionLabel = direction?.label ?? selected?.label;
+  const selectedTarget = direction ? target : (chosenProject?.value ?? '');
+  const directionLabel = direction?.label ?? chosenProject?.label;
   const amountMinor = parseDonationAmount(amount);
   const hasEmail = Boolean(email.trim());
 
@@ -151,8 +155,7 @@ function DonationForm({ query }: { query: URLSearchParams }) {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!paymentsEnabled || sending.current || !offer || (hasEmail && !consent))
-      return;
+    if (!paymentsEnabled || sending.current || !offer || !consent) return;
     setAmountTouched(true);
     if (amountMinor === null) {
       event.currentTarget
@@ -160,9 +163,11 @@ function DonationForm({ query }: { query: URLSearchParams }) {
         ?.focus();
       return;
     }
-    if (!selected) {
+    if (!selected || !selectedTarget) {
       setTargetError(
-        'Для выбранного направления сбор пока недоступен. Выберите открытый сбор из списка или свяжитесь с фондом.',
+        !selected
+          ? 'Общий сбор пока недоступен. Попробуйте позже или свяжитесь с фондом.'
+          : 'Выберите направление поддержки или открытый проект из списка.',
       );
       targetSelect.current?.focus();
       return;
@@ -178,7 +183,7 @@ function DonationForm({ query }: { query: URLSearchParams }) {
         method,
         ...(hasEmail ? { email: email.trim() } : {}),
         offerAcceptedAt,
-        personalDataConsent: hasEmail && consent,
+        personalDataConsent: consent,
       };
       const body = JSON.stringify(draft);
       if (attempt.current?.body !== body)
@@ -300,8 +305,8 @@ function DonationForm({ query }: { query: URLSearchParams }) {
               </select>
             </label>
             <p id="payment-target-hint" className="payment-hint">
-              {usesCommonFund
-                ? 'Все направления пополняют общий сбор фонда.'
+              {usesCommonFund && selected
+                ? `Все направления и проекты пополняют общий сбор «${selected.label}».`
                 : 'Выберите направление поддержки или конкретный открытый сбор.'}
             </p>
             {targetError && (
@@ -373,7 +378,7 @@ function DonationForm({ query }: { query: URLSearchParams }) {
                 value={email}
                 onChange={(event) => {
                   setEmail(event.target.value);
-                  if (!event.target.value.trim()) setConsent(false);
+                  setConsent(false);
                 }}
                 aria-describedby="payment-email-help"
               />
@@ -394,19 +399,18 @@ function DonationForm({ query }: { query: URLSearchParams }) {
                   );
                 }}
               />
-              Принимаю условия публичной оферты
+              <span>
+                Принимаю условия{' '}
+                <SiteLink
+                  href={offerDocument.path}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  публичной оферты
+                </SiteLink>
+              </span>
             </label>
-            {hasEmail && (
-              <label className="payment-check">
-                <input
-                  type="checkbox"
-                  required
-                  checked={consent}
-                  onChange={(event) => setConsent(event.target.checked)}
-                />
-                Даю согласие на обработку персональных данных
-              </label>
-            )}
+            <PersonalDataConsent checked={consent} onChange={setConsent} />
           </fieldset>
           <PaymentSummary
             amountMinor={amountMinor}
@@ -424,7 +428,9 @@ function DonationForm({ query }: { query: URLSearchParams }) {
               !paymentsEnabled ||
               pending ||
               projectsLoading ||
-              !projectOptions.length
+              !projectOptions.length ||
+              !offer ||
+              !consent
             }
           >
             {pending ? 'Готовим платёж…' : 'Перейти к оплате'}{' '}
