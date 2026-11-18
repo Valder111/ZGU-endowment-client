@@ -11,7 +11,7 @@ const practicalRoutes = [
   '/about/company-information/',
 ];
 
-test('anniversary invitation preserves the chosen contribution in an enquiry', async ({
+test('anniversary invitation keeps the chosen amount and direction for recurring setup', async ({
   page,
 }) => {
   await page.goto('/anniversary/');
@@ -54,14 +54,30 @@ test('anniversary invitation preserves the chosen contribution in an enquiry', a
   await expect(direction).toHaveText(chosenCapital);
   const href = new URL(
     (await dialog
-      .getByRole('link', { name: 'Обсудить вклад' })
+      .getByRole('link', { name: 'Обсудить участие по почте' })
       .getAttribute('href'))!,
   );
   expect(href.protocol).toBe('mailto:');
   expect(href.searchParams.get('body')).toContain('3000 рублей');
   expect(href.searchParams.get('body')).toContain('Регулярно');
   expect(href.searchParams.get('body')).toContain(chosenCapital);
-  await expect(dialog).toContainText('не списывает средства');
+  const checkout = dialog.getByRole('link', { name: 'Перейти к оформлению' });
+  await expect(checkout).toHaveAttribute(
+    'href',
+    '/donate/?target=direction%3Acampus&amount=3000&mode=recurring',
+  );
+  await checkout.click();
+  await expect(
+    page.getByRole('heading', {
+      name: 'Ежемесячные пожертвования скоро появятся',
+    }),
+  ).toBeVisible();
+  await expect(page.getByLabel('Детали пожертвования')).toContainText(
+    chosenCapital,
+  );
+  await expect(page.getByLabel('Детали пожертвования')).toContainText(
+    /3\s000\s?₽/,
+  );
 });
 
 for (const width of [360, 390, 768, 1024, 1440]) {
@@ -266,7 +282,9 @@ test('donation window leads to a useful support route', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Стать благотворителем' }).click();
   const dialog = page.getByRole('dialog');
-  await expect(dialog).toContainText('Заявка по почте не списывает средства');
+  await expect(dialog).toContainText(
+    'На следующем шаге можно проверить данные и перейти к оплате',
+  );
   const custom = dialog.getByRole('button', {
     name: 'Другая сумма',
     exact: true,
@@ -280,22 +298,22 @@ test('donation window leads to a useful support route', async ({ page }) => {
   await customField.press('0');
   await expect(customField).toHaveValue('74.000');
   await expect(
-    dialog.getByRole('link', { name: 'Обсудить вклад' }),
-  ).toHaveAttribute('href', /74000%20/);
+    dialog.getByRole('link', { name: 'Перейти к оформлению' }),
+  ).toHaveAttribute('href', '/donate/?amount=74000');
   await customField.fill('');
   await customField.pressSequentially('1.5');
   await expect(customField).toHaveValue('1.5');
-  await expect(dialog.getByText('Обсудить вклад')).toHaveAttribute(
+  await expect(dialog.getByText('Перейти к оформлению')).toHaveAttribute(
     'aria-disabled',
     'true',
   );
   await customField.pressSequentially('00');
   await expect(customField).toHaveValue('1.500');
   await expect(
-    dialog.getByRole('link', { name: 'Обсудить вклад' }),
-  ).toHaveAttribute('href', /1500%20/);
+    dialog.getByRole('link', { name: 'Перейти к оформлению' }),
+  ).toHaveAttribute('href', '/donate/?amount=1500');
   await customField.fill('0');
-  await expect(dialog.getByText('Обсудить вклад')).toHaveAttribute(
+  await expect(dialog.getByText('Перейти к оформлению')).toHaveAttribute(
     'aria-disabled',
     'true',
   );

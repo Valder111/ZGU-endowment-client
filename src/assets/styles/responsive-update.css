@@ -87,6 +87,7 @@
 }
 .donation-submit {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
 }
 .donation-documents {

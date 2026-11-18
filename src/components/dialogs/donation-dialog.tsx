@@ -14,6 +14,19 @@ import { LegalLinks } from '@/components/elements/legal-links';
 import { CapitalSelect } from '@/components/elements/capital-select';
 import { formatNumber } from '@/utils/typography';
 import {
+  donationHref,
+  parseDonationAmount,
+  validPaymentTarget,
+} from '@/api/payments';
+import {
+  donationProjectOptions,
+  loadDonationProjects,
+} from '@/api/donation-projects';
+import { staffBase, staffResult } from '@/api/staff';
+import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
+import { projects } from '@/constants/projects';
+import { sitePath } from '@/utils/paths';
+import {
   formatGroupedAmountChange,
   groupAmountDigits,
 } from '@/utils/grouped-amount';
@@ -43,12 +56,35 @@ export function DonationDialog() {
   const [preset, setPreset] = useState<number | null>(1000);
   const [customAmount, setCustomAmount] = useState('1.000');
   const [frequency, setFrequency] = useState('Разово');
+  const { data: publishedProjects } = useStaffResource(
+    staffResult,
+    loadDonationProjects,
+    Boolean(staffBase && donationOpen),
+  );
+  const projectOptions = donationProjectOptions(publishedProjects);
+  const isDatabaseProject =
+    direction.startsWith('project:') && validPaymentTarget(direction);
+  const directionLabel = isDatabaseProject
+    ? (projectOptions.find(({ value }) => value === direction)?.label ??
+      'Проект фонда')
+    : direction;
   const amount = preset ?? Number(customAmount.replace(/\./g, ''));
+  const amountMinor = parseDonationAmount(
+    preset !== null ? String(preset) : customAmount,
+  );
   const validAmount =
-    (preset !== null || wholeRubles.test(customAmount)) &&
-    amount > 0 &&
-    Number.isSafeInteger(amount);
-  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${amount} рублей.\nФормат: ${frequency}.\nНаправление: ${direction}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
+    (preset !== null || wholeRubles.test(customAmount)) && amountMinor !== null;
+  const project = projects.find(({ title }) => title === direction);
+  const paymentHref = donationHref(
+    isDatabaseProject
+      ? direction
+      : project
+        ? `direction:${project.id}`
+        : 'fund',
+    validAmount ? amountMinor : undefined,
+    frequency === 'Регулярно',
+  );
+  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${amount} рублей.\nФормат: ${frequency}.\nНаправление: ${directionLabel}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
 
   function changeCustomAmount(event: ChangeEvent<HTMLInputElement>) {
     const typedSeparator =
@@ -89,9 +125,8 @@ export function DonationDialog() {
         </div>
         <div className="donation-body">
           <DialogDescription className="donation-description text-[15px] leading-[1.7] text-[#486779]">
-            Выберите сумму и&nbsp;близкое направление. Поможем согласовать
-            условия, договор и&nbsp;реквизиты. Заявка по&nbsp;почте
-            не&nbsp;списывает средства.
+            Выберите сумму и&nbsp;направление поддержки. На&nbsp;следующем шаге
+            можно проверить данные и&nbsp;перейти к&nbsp;оплате.
           </DialogDescription>
           <div
             className="donation-frequency"
@@ -162,7 +197,7 @@ export function DonationDialog() {
                   id={`${id}-amount-error`}
                   className="donation-amount-error"
                 >
-                  Укажите целую сумму в рублях.
+                  Укажите целую сумму от 100 ₽.
                 </small>
               )}
             </div>
@@ -171,18 +206,19 @@ export function DonationDialog() {
               id={`${id}-direction`}
               value={direction}
               onValueChange={setDirection}
+              additionalOptions={projectOptions}
             />
           </div>
           <div className="donation-submit">
             <a
-              className="button primary donation-enquiry"
-              href={validAmount ? enquiryHref : undefined}
+              className="button primary donation-checkout"
+              href={validAmount ? sitePath(paymentHref) : undefined}
               aria-disabled={!validAmount}
               onClick={(event) => {
                 if (!validAmount) event.preventDefault();
               }}
             >
-              Обсудить вклад <span aria-hidden="true">↗</span>
+              Перейти к оформлению <span aria-hidden="true">↗</span>
             </a>
             <div className="donation-documents">
               <span>Документы для жертвователя</span>
@@ -201,10 +237,14 @@ export function DonationDialog() {
               </SiteLink>
             </DialogClose>
             <a
-              href={`mailto:${siteConfig.email}?subject=${encodeURIComponent('Хочу поддержать эндаумент-фонд ЗГУ')}`}
+              href={validAmount ? enquiryHref : undefined}
               className="text-link"
+              aria-disabled={!validAmount}
+              onClick={(event) => {
+                if (!validAmount) event.preventDefault();
+              }}
             >
-              Обсудить участие по почте ↗
+              Обсудить участие по почте <span aria-hidden="true">↗</span>
             </a>
           </div>
           <DialogClose asChild>

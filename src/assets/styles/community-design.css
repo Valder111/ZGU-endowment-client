@@ -833,10 +833,14 @@
   background: #def0e8;
   box-shadow: inset 0 0 0 1px #267d7a;
 }
-.donation-enquiry {
+.donation-checkout {
   width: 100%;
+  min-width: 0;
+  gap: 12px;
+  white-space: normal;
+  text-align: left;
 }
-.donation-enquiry[aria-disabled='true'] {
+.donation-checkout[aria-disabled='true'] {
   opacity: 0.5;
   cursor: default;
 }

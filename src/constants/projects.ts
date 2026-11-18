@@ -43,3 +43,11 @@ export const projects = [
     symbol: '∞',
   },
 ] as const satisfies readonly Project[];
+
+export const donationDirections = [
+  { value: 'fund', label: generalCapital },
+  ...projects.map(({ id, title }) => ({
+    value: `direction:${id}`,
+    label: title,
+  })),
+];

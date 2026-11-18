@@ -18,6 +18,8 @@ const pageScenes: Record<PageKind, ArtworkScene> = {
   events: 'events',
   pending: 'documents',
   support: 'alumni',
+  donation: 'endowment',
+  'donation-result': 'endowment',
   documents: 'documents',
   legal: 'documents',
   reporting: 'documents',

@@ -9,6 +9,7 @@ import {
 import {
   ArrowLeft,
   CalendarDays,
+  ChartNoAxesColumnIncreasing,
   FileText,
   FolderKanban,
   LogOut,
@@ -25,6 +26,7 @@ import {
   type Collection,
 } from '@/components/staff/content-fields';
 import { UsersWorkspace } from '@/components/staff/users-workspace';
+import { PaymentsWorkspace } from '@/components/staff/payments-workspace';
 import { roleLabels } from '@/constants/staff';
 import {
   StaffApiError,
@@ -160,7 +162,9 @@ function StaffProfileForm({
 export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
   const [panel, setPanel] = useState(initialPanel);
   const [collection, setCollection] = useState<Collection>('news');
-  const [showProfile, setShowProfile] = useState(false);
+  const [view, setView] = useState<'workspace' | 'profile' | 'payments'>(
+    'workspace',
+  );
   const [{ profile, status }, setAuth] = useState<{
     profile: StaffProfile | null;
     status: string;
@@ -184,7 +188,7 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
     sessionVersion.current += 1;
     rememberSession(false);
     setAuth({ profile: null, status: message });
-    setShowProfile(false);
+    setView('workspace');
   }, []);
 
   const request: StaffRequest = useCallback(
@@ -244,7 +248,7 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
             ? 'moderator'
             : 'admin';
         setPanel(next);
-        setShowProfile(false);
+        setView('workspace');
         document.title = `${titles[next]} – Эндаумент-фонд ЗГУ`;
       });
     }
@@ -259,7 +263,7 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
       else window.history.pushState(null, '', href);
     }
     setPanel(next);
-    setShowProfile(false);
+    setView('workspace');
     document.title = `${titles[next]} – Эндаумент-фонд ЗГУ`;
   }
 
@@ -404,7 +408,7 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
               <a
                 href={sitePath('/admin/')}
                 aria-current={
-                  effectivePanel === 'admin' && !showProfile
+                  effectivePanel === 'admin' && view === 'workspace'
                     ? 'page'
                     : undefined
                 }
@@ -416,7 +420,7 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
             <a
               href={sitePath('/moderator/')}
               aria-current={
-                effectivePanel === 'moderator' && !showProfile
+                effectivePanel === 'moderator' && view === 'workspace'
                   ? 'page'
                   : undefined
               }
@@ -424,7 +428,7 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
             >
               <FileText /> Редакция
             </a>
-            {effectivePanel === 'moderator' && !showProfile && (
+            {effectivePanel === 'moderator' && view === 'workspace' && (
               <div className="staff-nav-sections">
                 {sections.map((item) => {
                   const Icon = sectionIcons[item];
@@ -444,10 +448,24 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
                 })}
               </div>
             )}
+            {current.role === 'admin' && (
+              <button
+                type="button"
+                aria-pressed={view === 'payments'}
+                onClick={() =>
+                  void afterSave(() => {
+                    navigate('admin');
+                    setView('payments');
+                  })
+                }
+              >
+                <ChartNoAxesColumnIncreasing /> Пожертвования
+              </button>
+            )}
             <button
               type="button"
-              aria-pressed={showProfile}
-              onClick={() => void afterSave(() => setShowProfile(true))}
+              aria-pressed={view === 'profile'}
+              onClick={() => void afterSave(() => setView('profile'))}
             >
               <UserRound /> Мой профиль
             </button>
@@ -461,7 +479,7 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
           </nav>
           <div className="staff-main">
             <h1>{titles[effectivePanel]}</h1>
-            {showProfile ? (
+            {view === 'profile' ? (
               <StaffProfileForm
                 request={request}
                 profile={current}
@@ -469,6 +487,8 @@ export function AdminContent({ initialPanel }: { initialPanel: Panel }) {
                   signOut('Пароль изменён. Войдите с новым паролем.')
                 }
               />
+            ) : view === 'payments' && current.role === 'admin' ? (
+              <PaymentsWorkspace request={request} />
             ) : effectivePanel === 'admin' ? (
               <UsersWorkspace
                 request={request}
