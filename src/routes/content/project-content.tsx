@@ -6,6 +6,8 @@ import { projectFocus } from '@/constants/visual-content';
 import { SiteLink } from '@/components/elements/site-link';
 import { readableText } from '@/utils/typography';
 import { assets } from '@/constants/assets';
+import { ProjectFundraising } from '@/components/elements/fundraising-card';
+import { useDonationProgress } from '@/hooks/requests/queries/use-donation-progress';
 const projectPhotos = {
   students: {
     src: assets.researcher,
@@ -47,6 +49,7 @@ const programFormats = {
   },
 } as const;
 export function ProjectContent({ id }: { id: ProjectId }) {
+  const { data } = useDonationProgress();
   const project = projects.find((project) => project.id === id);
   if (!project) throw new Error(`Unknown project: ${id}`);
   const program = programFormats[id];
@@ -82,6 +85,7 @@ export function ProjectContent({ id }: { id: ProjectId }) {
             результат.
           </p>
           <DonateButton />
+          <ProjectFundraising totals={data?.targets.get(`direction:${id}`)} />
           <div className="program-example">
             <span className="eyebrow">ФОРМАТ УЧАСТИЯ</span>
             <h3>{program.title}</h3>

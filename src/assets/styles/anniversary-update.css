@@ -561,6 +561,15 @@
   font-weight: 600;
 }
 
+.capital-select-group-label {
+  padding: 12px 12px 6px;
+  margin-top: 6px;
+  border-top: 1px solid #c9dce0;
+  color: #496573;
+  font-size: 12px;
+  font-weight: 650;
+}
+
 .capital-select-option[data-highlighted] {
   background: #e0f3ee;
   color: #193d50;

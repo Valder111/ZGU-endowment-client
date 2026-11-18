@@ -39,6 +39,14 @@ import { useStaffAction } from '@/hooks/requests/mutations/use-staff-action';
 import { downloadBlob } from '@/utils/download-blob';
 import { PageTitle } from './page-title';
 import { SiteLink } from './site-link';
+import {
+  donationHref,
+  validPaymentTarget,
+  type DonationProgress,
+  type ProgressTotal,
+} from '@/api/payments';
+import { ProjectFundraising } from './fundraising-card';
+import { useDonationProgress } from '@/hooks/requests/queries/use-donation-progress';
 
 const publicationKinds = {
   news: {
@@ -250,11 +258,13 @@ function PublicationCard({
   id,
   title,
   item,
+  funding,
 }: {
   collection: Exclude<Collection, 'documents'>;
   id: string;
   title: string;
   item: ContentRecord;
+  funding?: ProgressTotal;
 }) {
   const card = useRef<HTMLAnchorElement>(null);
   const titleId = useId();
@@ -314,6 +324,7 @@ function PublicationCard({
           <h3 id={titleId}>{title}</h3>
           {preview && <p className="published-preview">{preview}</p>}
           <PublicationFacts facts={publicationFacts(collection, item)} />
+          <ProjectFundraising totals={funding} />
           <span className="published-more" aria-hidden="true">
             {collection === 'news'
               ? 'Читать новость'
@@ -421,9 +432,11 @@ export function PublishedDocument({
 export function PublishedContent({
   collection,
   limit,
+  funding,
 }: {
   collection: Exclude<Collection, 'documents'>;
   limit?: number;
+  funding?: DonationProgress['targets'];
 }) {
   const titleId = useId();
   const load = useCallback(
@@ -456,6 +469,11 @@ export function PublishedContent({
             id={id}
             title={title}
             item={item}
+            funding={
+              collection === 'projects'
+                ? funding?.get(`project:${id}`)
+                : undefined
+            }
           />
         ))}
       </div>
@@ -477,6 +495,7 @@ export function PublicationPage() {
   const query = new URLSearchParams(search);
   const kind = query.get('type');
   const id = query.get('id');
+  const target = `project:${id ?? ''}`;
   const collection =
     kind && Object.hasOwn(publicationKinds, kind)
       ? (kind as Collection)
@@ -588,6 +607,14 @@ export function PublicationPage() {
                   </aside>
                 )}
               </div>
+              {collection === 'projects' && validPaymentTarget(target) && (
+                <PublishedProjectFunding
+                  target={target}
+                  payable={
+                    item.status === 'published' && item.currency === 'RUB'
+                  }
+                />
+              )}
               {api && photos.length > 1 && (
                 <section className="publication-gallery">
                   <h2>Фотографии</h2>
@@ -612,5 +639,28 @@ export function PublicationPage() {
         </div>
       </section>
     </>
+  );
+}
+
+function PublishedProjectFunding({
+  target,
+  payable,
+}: {
+  target: string;
+  payable: boolean;
+}) {
+  const { data } = useDonationProgress();
+  return (
+    <section
+      className="payment-panel published-project-funding"
+      aria-label="Поддержка проекта"
+    >
+      <ProjectFundraising totals={data?.targets.get(target)} />
+      {payable && (
+        <SiteLink href={donationHref(target)} className="button primary">
+          Поддержать проект ↗
+        </SiteLink>
+      )}
+    </section>
   );
 }

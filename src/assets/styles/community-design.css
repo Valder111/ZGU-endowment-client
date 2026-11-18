@@ -806,14 +806,12 @@
   color: #84233a;
   font-size: 13px;
 }
-.donation-frequency,
 .donation-amounts {
   display: flex;
   flex-wrap: wrap;
   gap: 9px;
   margin-top: 15px;
 }
-.donation-frequency button,
 .donation-amounts button {
   border: 1px solid #afcbd0;
   border-radius: 30px;
@@ -827,16 +825,19 @@
   padding-inline: 12px;
   white-space: nowrap;
 }
-.donation-frequency button[aria-pressed='true'],
 .donation-amounts button[aria-pressed='true'] {
   border-color: #267d7a;
   background: #def0e8;
   box-shadow: inset 0 0 0 1px #267d7a;
 }
-.donation-enquiry {
+.donation-checkout {
   width: 100%;
+  min-width: 0;
+  gap: 12px;
+  white-space: normal;
+  text-align: left;
 }
-.donation-enquiry[aria-disabled='true'] {
+.donation-checkout[aria-disabled='true'] {
   opacity: 0.5;
   cursor: default;
 }

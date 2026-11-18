@@ -18,6 +18,7 @@
     "test:e2e": "playwright test",
     "test:pages": "node scripts/check-pages.mjs",
     "ui:add": "shadcn add",
+    "gen:api": "swagger-typescript-api generate --axios --path ../ZGU-endowment-server/docs/swagger.json --output ./src/api/generated --name index.ts --modular --module-name-first-tag --responses --extract-request-body --extract-response-body --extract-response-error --enum-style union --type-only-imports && prettier --write src/api/generated",
     "check": "npm run lint && npm run build && npm run test:e2e"
   },
   "dependencies": {

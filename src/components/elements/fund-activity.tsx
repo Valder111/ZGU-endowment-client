@@ -7,7 +7,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { fundActivity } from '@/constants/fund-activity';
-import { FundraisingCard } from '@/components/elements/fundraising-card';
+import { LiveFundraisingCard } from '@/components/elements/fundraising-card';
 import { SiteLink } from '@/components/elements/site-link';
 import { readableText } from '@/utils/typography';
 
@@ -30,7 +30,7 @@ export function FundActivity() {
             <h2 id={`${panelId}-heading`}>Вместе развиваем университет</h2>
           </div>
         </div>
-        <FundraisingCard />
+        <LiveFundraisingCard />
         <div className="activity-layout">
           <div
             className="activity-metrics"

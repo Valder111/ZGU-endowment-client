@@ -13,8 +13,8 @@
 import type {
   ApiProjectCreateRequest,
   ApiProjectUpdateRequest,
-  CompleteCreateData,
-  CompleteCreateError,
+  CompleteCreateFail,
+  CompleteCreateResult,
   MediaContentListFails,
   MediaContentListOutput,
   MediaCreateFails,
@@ -164,7 +164,7 @@ export class Projects<
    * @summary Завершение проекта
    * @request POST:/projects/{id}/complete
    * @secure
-   * @response `204` `CompleteCreateData` No Content
+   * @response `204` `CompleteCreateResult` No Content
    * @response `400` `HandlerErrorResponse` Bad Request
    * @response `401` `HandlerErrorResponse` Unauthorized
    * @response `403` `HandlerErrorResponse` Forbidden
@@ -172,7 +172,7 @@ export class Projects<
    * @response `500` `HandlerErrorResponse` Internal Server Error
    */
   completeCreate = (id: string, params: RequestParams = {}) =>
-    this.request<CompleteCreateData, CompleteCreateError>({
+    this.request<CompleteCreateResult, CompleteCreateFail>({
       path: `/projects/${id}/complete`,
       method: 'POST',
       secure: true,

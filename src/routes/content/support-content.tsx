@@ -8,6 +8,7 @@ import { SiteLink } from '@/components/elements/site-link';
 import { ImpactCalculator } from '@/components/elements/impact-calculator';
 import { readableText } from '@/utils/typography';
 import { LegalLinks } from '@/components/elements/legal-links';
+import { donationHref } from '@/api/payments';
 
 const methodIcons = [Landmark, Users, Award, Handshake];
 export function SupportContent() {
@@ -25,6 +26,11 @@ export function SupportContent() {
           Найдите свой формат: личное участие, поддержка вместе
           с&nbsp;однокурсниками или корпоративное партнёрство
         </p>
+      </div>
+      <div className="payment-support-link">
+        <SiteLink href={donationHref()} className="button primary">
+          Онлайн-пожертвование <ArrowUpRight size={19} aria-hidden="true" />
+        </SiteLink>
       </div>
       <div
         className="support-selector"

@@ -114,6 +114,60 @@ export interface ApiUserUpdateRequest {
   password: string;
 }
 
+export interface HandlerCashActivateRequest {
+  amount?: string;
+  currency?: string;
+  description?: string;
+  email?: string;
+  id?: string;
+  payment_id?: string;
+  qr_ttl?: string;
+  reference?: string;
+}
+
+export interface HandlerCashIDRequest {
+  id?: string;
+}
+
+export interface HandlerCashRegisterRequest {
+  description?: string;
+  get_qr_img?: boolean;
+  url?: string;
+}
+
+export interface HandlerCashResponse {
+  code?: string;
+  id?: string;
+  image?: string;
+  message?: string;
+  payload?: string;
+  qrc_id?: string;
+  state?: string;
+}
+
+export interface HandlerCheckoutRequest {
+  amount?: string;
+  currency?: string;
+  donor_email?: string;
+  donor_name?: string;
+  donor_phone?: string;
+  idempotency_key?: string;
+  is_anonymous?: boolean;
+  method?: string;
+  offer_accepted_at?: string;
+  offer_version?: string;
+  project_id?: string;
+}
+
+export interface HandlerCheckoutResponse {
+  donation_id?: string;
+  nspk_link?: string;
+  order_id?: string;
+  payment_id?: string;
+  payment_url?: string;
+  sbp_link?: string;
+}
+
 export interface HandlerDocumentResponse {
   category?: string;
   created_at?: string;
@@ -127,6 +181,21 @@ export interface HandlerDocumentResponse {
   size_bytes?: number;
   status?: string;
   title?: string;
+}
+
+export interface HandlerDonationResponse {
+  amount?: string;
+  confirmed_at?: string;
+  created_at?: string;
+  currency?: string;
+  donor_id?: string;
+  donor_snapshot?: object;
+  id?: string;
+  is_anonymous?: boolean;
+  offer_accepted_at?: string;
+  offer_version?: string;
+  project_id?: string;
+  status?: string;
 }
 
 export interface HandlerErrorResponse {
@@ -162,6 +231,11 @@ export interface HandlerLoginResponse {
   user_id?: string;
 }
 
+export interface HandlerMoneyRequest {
+  amount?: string;
+  reason?: string;
+}
+
 export interface HandlerNewsMediaResponse {
   id?: string;
   mime_type?: string;
@@ -180,6 +254,27 @@ export interface HandlerNewsResponse {
   status?: string;
   summary?: string;
   title?: string;
+}
+
+export interface HandlerPaymentActionResponse {
+  donation_id?: string;
+  message?: string;
+  payment_id?: string;
+  refund_id?: string;
+  status?: string;
+}
+
+export interface HandlerPaymentResponse {
+  amount?: string;
+  created_at?: string;
+  currency?: string;
+  donation_id?: string;
+  id?: string;
+  idempotency_key?: string;
+  paid_at?: string;
+  provider?: string;
+  provider_payment_id?: string;
+  status?: string;
 }
 
 export interface HandlerProjectMediaResponse {
@@ -204,6 +299,17 @@ export interface HandlerProjectResponse {
   status?: string;
   /** @example "150000.00" */
   target_amount?: string;
+}
+
+export interface HandlerRefundResponse {
+  amount?: string;
+  completed_at?: string;
+  created_at?: string;
+  id?: string;
+  payment_id?: string;
+  provider_refund_id?: string;
+  reason?: string;
+  status?: string;
 }
 
 export interface HandlerUserResponse {
@@ -270,6 +376,14 @@ export type FileUpdateError = HandlerErrorResponse;
 export type PublishCreateData = any;
 
 export type PublishCreateError = HandlerErrorResponse;
+
+export type DonationsListData = HandlerDonationResponse[];
+
+export type DonationsListError = HandlerErrorResponse;
+
+export type DonationsDetailData = HandlerDonationResponse;
+
+export type DonationsDetailError = HandlerErrorResponse;
 
 export type EventsListData = HandlerEventResponse[];
 
@@ -393,6 +507,36 @@ export type PublishCreateResult = any;
 
 export type PublishCreateFail = HandlerErrorResponse;
 
+export type PaymentsListData = HandlerPaymentResponse[];
+
+export type PaymentsListError = HandlerErrorResponse;
+
+export type CallbackCreateData = string;
+
+export type CallbackCreateError = HandlerErrorResponse;
+
+export type CheckoutCreateData = HandlerCheckoutResponse;
+
+export type CheckoutCreateError = HandlerErrorResponse;
+
+export type SbpCashActivateCreateData = HandlerCashResponse;
+
+export type SbpCashDeactivateCreateData = HandlerCashResponse;
+
+export type SbpCashRegisterCreateData = HandlerCashResponse;
+
+export type PaymentsDetailData = HandlerPaymentResponse;
+
+export type PaymentsDetailError = HandlerErrorResponse;
+
+export type CompleteCreateData = HandlerPaymentActionResponse;
+
+export type CompleteCreateError = HandlerErrorResponse;
+
+export type ReverseCreateData = HandlerPaymentActionResponse;
+
+export type SyncCreateData = HandlerPaymentActionResponse;
+
 export type ProjectsListData = HandlerProjectResponse[];
 
 export type ProjectsListError = HandlerErrorResponse;
@@ -413,9 +557,9 @@ export type ProjectsPartialUpdateData = any;
 
 export type ProjectsPartialUpdateError = HandlerErrorResponse;
 
-export type CompleteCreateData = any;
+export type CompleteCreateResult = any;
 
-export type CompleteCreateError = HandlerErrorResponse;
+export type CompleteCreateFail = HandlerErrorResponse;
 
 export type MediaListOutput = HandlerProjectMediaResponse[];
 
@@ -447,6 +591,14 @@ export type MediaDeleteFails = HandlerErrorResponse;
 export type MediaContentListOutput = File;
 
 export type MediaContentListFails = HandlerErrorResponse;
+
+export type RefundsListData = HandlerRefundResponse[];
+
+export type RefundsListError = HandlerErrorResponse;
+
+export type RefundsDetailData = HandlerRefundResponse;
+
+export type RefundsDetailError = HandlerErrorResponse;
 
 export type UsersListData = HandlerUserResponse[];
 

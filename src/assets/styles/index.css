@@ -15,6 +15,10 @@
 @import './staff.css' layer(components);
 @import './legal-documents.css' layer(components);
 @import './responsive-update.css' layer(components);
+@import './payments.css' layer(components);
+@import './checkout.css' layer(components);
+/* Staff payment dashboard overrides follow the shared payment controls. */
+@import './payments-admin.css' layer(components);
 
 @custom-variant dark (&:is(.dark *));
 

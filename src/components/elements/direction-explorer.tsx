@@ -4,10 +4,15 @@ import { SiteLink } from '@/components/elements/site-link';
 import { ProjectGlyph } from '@/components/elements/project-glyph';
 import { ProjectGrid } from '@/components/elements/project-grid';
 import { useSite } from '@/hooks/use-site';
+import type { DonationProgress } from '@/api/payments';
 
 const labels = ['Образование', 'Наука', 'Инфраструктура', 'Сообщество'];
 
-export function DirectionExplorer() {
+export function DirectionExplorer({
+  funding,
+}: {
+  funding?: DonationProgress['targets'];
+}) {
   const { activeProject, setActiveProject } = useSite();
   const selected = Math.max(
     0,
@@ -100,6 +105,7 @@ export function DirectionExplorer() {
         </div>
       </section>
       <ProjectGrid
+        funding={funding}
         activeId={current.id}
         idPrefix={instanceId}
         onSelect={setActiveProject}
