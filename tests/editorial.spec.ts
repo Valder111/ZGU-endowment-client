@@ -11,7 +11,7 @@ const practicalRoutes = [
   '/about/company-information/',
 ];
 
-test('anniversary invitation keeps the chosen amount and direction for a one-time donation', async ({
+test('anniversary invitation keeps the chosen amount for the common fund donation', async ({
   page,
 }) => {
   await page.goto('/anniversary/');
@@ -29,34 +29,11 @@ test('anniversary invitation keeps the chosen amount and direction for a one-tim
     dialog.getByRole('button', { name: 'Понятно', exact: true }),
   ).toHaveCount(0);
   await dialog.getByRole('button', { name: '3 000 ₽', exact: true }).click();
-  const direction = dialog.getByRole('combobox', {
-    name: 'Направление поддержки',
-  });
-  const options = page.getByRole('listbox', { name: 'Направления поддержки' });
-  await direction.press('Enter');
-  await expect(options).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(options).toBeHidden();
-  await expect(dialog).toBeVisible();
-  await expect(direction).toBeFocused();
-  await direction.press('Enter');
+  const chosenCapital = 'Общее развитие ЗГУ';
+  await expect(dialog.getByRole('combobox')).toHaveCount(0);
   await expect(
-    options.getByRole('option', { name: 'Общее развитие университета' }),
-  ).toBeFocused();
-  const chosenCapital = 'Инфраструктура для развития';
-  for (const name of [
-    'Стипендии для талантов',
-    'Наука и инженерия для Арктики',
-    chosenCapital,
-  ]) {
-    await page.keyboard.press('ArrowDown');
-    // Radix moves focus asynchronously after the key event.
-    await expect(
-      options.getByRole('option', { name, exact: true }),
-    ).toBeFocused();
-  }
-  await page.keyboard.press('Enter');
-  await expect(direction).toHaveText(chosenCapital);
+    dialog.getByRole('group', { name: 'Цель пожертвования' }),
+  ).toContainText(chosenCapital);
   const href = new URL(
     (await dialog
       .getByRole('link', { name: 'Обсудить участие по почте' })
@@ -67,10 +44,7 @@ test('anniversary invitation keeps the chosen amount and direction for a one-tim
   expect(href.searchParams.get('body')).toContain('Разово');
   expect(href.searchParams.get('body')).toContain(chosenCapital);
   const checkout = dialog.getByRole('link', { name: 'Перейти к оформлению' });
-  await expect(checkout).toHaveAttribute(
-    'href',
-    '/donate/?target=direction%3Acampus&amount=3000',
-  );
+  await expect(checkout).toHaveAttribute('href', '/donate/?amount=3000');
   await checkout.click();
   await expect(
     page.getByRole('heading', {
@@ -143,7 +117,7 @@ for (const path of practicalRoutes) {
   });
 }
 
-test('support path keeps the chosen audience and capital in the email', async ({
+test('support path keeps the chosen audience and the common fund in the email', async ({
   page,
 }) => {
   await page.goto('/how-to-support/');
@@ -157,12 +131,7 @@ test('support path keeps the chosen audience and capital in the email', async ({
   await expect(
     page.getByRole('region', { name: 'Выпускник', exact: true }),
   ).toBeHidden();
-  await page
-    .getByRole('combobox', { name: 'Что вы хотите поддержать?' })
-    .click();
-  await page
-    .getByRole('option', { name: 'Наука и инженерия для Арктики' })
-    .click();
+  await expect(page.getByRole('combobox')).toHaveCount(0);
   const href = await page
     .getByRole('link', { name: 'Обсудить участие', exact: true })
     .getAttribute('href');
@@ -171,9 +140,7 @@ test('support path keeps the chosen audience and capital in the email', async ({
   expect(message.searchParams.get('subject')).toContain(
     'Корпоративное партнёрство',
   );
-  expect(message.searchParams.get('body')).toContain(
-    'Наука и инженерия для Арктики',
-  );
+  expect(message.searchParams.get('body')).toContain('Общее развитие ЗГУ');
   await expect(page.locator('.support-methods article')).toHaveCount(4);
   await expect(page.locator('.publication-status')).toHaveCount(0);
   await expect(page.locator('form[action], iframe')).toHaveCount(0);

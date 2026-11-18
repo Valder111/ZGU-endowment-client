@@ -33,12 +33,12 @@ const checkout = {
   payment_url: 'https://pay.best2pay.net/mock-checkout',
 };
 const checkoutPath = '/api/v1/payments/checkout';
-const projectValue = `project:${projectId}`;
+const fundLabel = 'Общее развитие ЗГУ';
 
 async function selectProject(page: Page) {
-  await page
-    .getByLabel('Направление поддержки')
-    .selectOption(commonFundProject ? 'fund' : projectValue);
+  await expect(
+    page.getByRole('group', { name: 'Цель пожертвования', exact: true }),
+  ).toContainText(fundLabel);
 }
 
 async function acceptDonationTerms(page: Page) {
@@ -56,7 +56,7 @@ async function signIn(page: Page) {
   await expect(page.getByRole('button', { name: 'Выйти' })).toBeVisible();
 }
 
-test('the main donation action preserves amount and shows the same site directions on checkout', async ({
+test('the main donation action preserves amount and always opens the common fund', async ({
   page,
 }) => {
   await page.route('**/api/v1/**', (route) =>
@@ -68,6 +68,10 @@ test('the main donation action preserves amount and shows the same site directio
     .first()
     .click();
   const dialog = page.getByRole('dialog');
+  await expect(dialog.getByRole('combobox')).toHaveCount(0);
+  await expect(
+    dialog.getByRole('group', { name: 'Цель пожертвования' }),
+  ).toContainText(fundLabel);
   await dialog
     .getByRole('button', { name: 'Другая сумма', exact: true })
     .click();
@@ -83,28 +87,12 @@ test('the main donation action preserves amount and shows the same site directio
   ).toHaveAttribute('href', /amount=10$/);
   await dialog.getByLabel('Другая сумма, рублей').fill('2020000');
   await dialog.getByRole('link', { name: 'Перейти к оформлению' }).click();
-  await expect(page).toHaveURL(
-    /\/donate\/\?target=direction%3Ascience&amount=2020000$/,
-  );
+  await expect(page).toHaveURL('http://127.0.0.1:4173/donate/?amount=2020000');
   await expect(page.getByLabel('Сумма, ₽')).toHaveValue('2.020.000');
-  await expect(page.getByLabel('Направление поддержки')).toHaveValue(
-    'direction:science',
-  );
   await expect(page.getByLabel('Детали пожертвования')).toContainText(
-    'Наука и инженерия для Арктики',
+    fundLabel,
   );
-  for (const name of [
-    'Общее развитие университета',
-    'Стипендии для талантов',
-    'Наука и инженерия для Арктики',
-    'Инфраструктура для развития',
-    'Связь выпускников',
-  ])
-    await expect(
-      page
-        .locator('#payment-target')
-        .getByRole('option', { name, exact: true }),
-    ).toHaveCount(1);
+  await expect(page.locator('#payment-target')).toHaveCount(0);
   if (enabled) {
     await expect(
       page.getByRole('button', { name: 'Перейти к оплате' }),
@@ -280,13 +268,12 @@ test.describe('actual server payment contract', () => {
     await expect(submit).toBeDisabled();
   });
 
-  test('database projects stay visible alongside all five directions in both donation selectors', async ({
+  test('published projects appear in both selectors and send checkout to their own project', async ({
     page,
   }) => {
-    const otherId = uuid(678);
     const other = {
       ...project,
-      id: otherId,
+      id: uuid(678),
       name: 'Исследовательская лаборатория',
     };
     const requests: Record<string, unknown>[] = [];
@@ -295,31 +282,23 @@ test.describe('actual server payment contract', () => {
         requests.push(route.request().postDataJSON());
         return route.fulfill({ status: 503 });
       }
-      return route.fulfill({
-        json: [project, other, { ...project, id: uuid(679), status: 'draft' }],
-      });
+      return route.fulfill({ json: [project, other] });
     });
-    await page.goto('/donate/?target=direction:science');
-    const select = page.getByLabel('Направление поддержки');
-    const databaseOptions = page.locator(
-      '#payment-target optgroup[label="Проекты фонда"] option',
-    );
-    await expect(databaseOptions).toHaveText([project.name, other.name]);
-    await expect(
-      page.locator(
-        '#payment-target optgroup[label="Направления поддержки"] option',
-      ),
-    ).toHaveCount(5);
-    await select.selectOption(`project:${otherId}`);
+    await page.goto('/donate/?target=project:' + other.id);
     await expect(page.getByLabel('Детали пожертвования')).toContainText(
       other.name,
     );
+    await expect(page.getByLabel('Проект пожертвования')).toHaveValue(
+      `project:${other.id}`,
+    );
+    await expect(
+      page.getByLabel('Проект пожертвования').locator('option'),
+    ).toHaveText([fundLabel, other.name]);
     await acceptDonationTerms(page);
     await page.getByRole('button', { name: 'Перейти к оплате' }).click();
     await expect(page.getByRole('alert')).toContainText('временно недоступен');
     expect(requests).toHaveLength(1);
-    expect(requests[0]!.project_id).toBe(commonFundProject);
-
+    expect(requests[0]!.project_id).toBe(other.id);
     await page.goto('/projects/science/');
     await page
       .getByRole('button', { name: /Сделать вклад/ })
@@ -327,49 +306,135 @@ test.describe('actual server payment contract', () => {
       .click();
     const dialog = page.getByRole('dialog');
     await dialog
-      .getByRole('combobox', { name: 'Направление поддержки' })
-      .click();
-    const options = page.getByRole('listbox', {
-      name: 'Направления поддержки',
-    });
-    await expect(options.getByRole('option')).toHaveCount(7);
-    await options
-      .getByRole('option', { name: project.name, exact: true })
-      .click();
-    await expect(
-      dialog.getByRole('combobox', { name: 'Направление поддержки' }),
-    ).toHaveText(project.name);
-    const checkoutLink = dialog.getByRole('link', {
-      name: 'Перейти к оформлению',
-    });
+      .getByLabel('Проект пожертвования')
+      .selectOption(`project:${other.id}`);
+    const link = dialog.getByRole('link', { name: 'Перейти к оформлению' });
     const href = new URL(
-      (await checkoutLink.getAttribute('href'))!,
+      (await link.getAttribute('href'))!,
       'http://127.0.0.1:4173',
     );
-    expect(href.searchParams.get('target')).toBe(projectValue);
+    expect(href.searchParams.get('target')).toBe(`project:${other.id}`);
     const enquiry = new URL(
       (await dialog
         .getByRole('link', { name: 'Обсудить участие по почте' })
         .getAttribute('href'))!,
     );
-    expect(enquiry.searchParams.get('body')).toContain(project.name);
-    await checkoutLink.click();
-    await expect(page.getByLabel('Направление поддержки')).toHaveValue(
-      projectValue,
-    );
+    expect(enquiry.searchParams.get('body')).toContain(other.name);
+    await link.click();
     await expect(page.getByLabel('Детали пожертвования')).toContainText(
-      project.name,
+      other.name,
     );
-    expect(requests).toHaveLength(1);
   });
 
-  test('all five directions use the configured common fund and remain visible in the summary', async ({
+  test('newly published projects appear while checkout is open and keep the draft and correct payment ID', async ({
     page,
   }) => {
-    test.skip(
-      !commonFundProject,
-      'Configure VITE_DONATION_PROJECT_MAP.fund for a shared fund.',
+    await page.clock.install();
+    const extra = {
+      ...project,
+      id: uuid(680),
+      name: 'Новый исследовательский проект ЗГУ',
+    };
+    const rows = [
+      project,
+      { ...extra, id: uuid(681), status: 'draft' },
+      { ...extra, id: uuid(682), currency: 'USD' },
+    ];
+    const requests: Record<string, unknown>[] = [];
+    await page.route('**/api/v1/**', (route) => {
+      if (route.request().method() === 'POST') {
+        requests.push(route.request().postDataJSON());
+        return route.fulfill({ status: 503 });
+      }
+      return route.fulfill({ json: rows });
+    });
+    await page.goto('/donate/');
+    await expect(page.getByRole('combobox')).toHaveCount(0);
+    await page.getByLabel('Сумма, ₽').fill('777');
+    await acceptDonationTerms(page);
+    await page.getByRole('button', { name: 'Перейти к оплате' }).click();
+    await expect(page.getByRole('alert')).toContainText('временно недоступен');
+    rows.push(extra);
+    await page.clock.fastForward(21000);
+    const select = page.getByLabel('Проект пожертвования');
+    await expect(select.locator('option')).toHaveText([fundLabel, extra.name]);
+    await expect(select).toHaveValue('fund');
+    await expect(page.getByLabel('Сумма, ₽')).toHaveValue('777');
+    await select.selectOption(`project:${extra.id}`);
+    await expect(page.getByLabel('Детали пожертвования')).toContainText(
+      extra.name,
     );
+    await page.getByRole('button', { name: 'Перейти к оплате' }).click();
+    await expect(page.getByRole('alert')).toContainText('временно недоступен');
+    expect(requests).toHaveLength(2);
+    expect(requests[0]!.project_id).toBe(commonFundProject);
+    expect(requests[1]!.project_id).toBe(extra.id);
+    expect(requests[1]!.amount).toBe('777.00');
+    expect(requests[1]!.idempotency_key).not.toBe(requests[0]!.idempotency_key);
+    extra.status = 'completed';
+    await page.clock.fastForward(21000);
+    await expect(page.getByRole('alert')).toContainText(
+      'Выбранный проект пока недоступен',
+    );
+    await expect(select).toHaveValue(`project:${extra.id}`);
+    await expect(
+      page.getByRole('button', { name: 'Перейти к оплате' }),
+    ).toBeDisabled();
+    expect(requests).toHaveLength(2);
+    await select.selectOption('fund');
+    await expect(
+      page.getByRole('button', { name: 'Перейти к оплате' }),
+    ).toBeEnabled();
+  });
+
+  test('a new project is discovered while the donation dialog is open and common selection resets on reopening', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await page.clock.install();
+    const rows = [project];
+    const extra = {
+      ...project,
+      id: uuid(683),
+      name: 'Исследовательский проект с подробным названием для развития университета',
+    };
+    await page.route('**/api/v1/**', (route) => route.fulfill({ json: rows }));
+    await page.goto('/projects/science/');
+    await page
+      .getByRole('button', { name: /Сделать вклад/ })
+      .first()
+      .click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('combobox')).toHaveCount(0);
+    await dialog
+      .getByRole('button', { name: 'Другая сумма', exact: true })
+      .click();
+    await dialog.getByLabel('Другая сумма, рублей').fill('1234');
+    rows.push(extra);
+    await page.clock.fastForward(21000);
+    await dialog
+      .getByLabel('Проект пожертвования')
+      .selectOption(`project:${extra.id}`);
+    await expect(dialog.getByLabel('Другая сумма, рублей')).toHaveValue(
+      '1.234',
+    );
+    await expect(
+      dialog.getByRole('link', { name: 'Перейти к оформлению' }),
+    ).toHaveAttribute('href', new RegExp(`target=project%3A${extra.id}`));
+    expect(
+      await dialog.evaluate((node) => node.scrollWidth <= node.clientWidth + 1),
+    ).toBe(true);
+    await page.keyboard.press('Escape');
+    await page
+      .getByRole('button', { name: /Сделать вклад/ })
+      .first()
+      .click();
+    await expect(dialog.getByLabel('Проект пожертвования')).toHaveValue('fund');
+  });
+
+  test('all legacy direction links use the common fund without a direction selector', async ({
+    page,
+  }) => {
     const requests: Record<string, unknown>[] = [];
     await page.route('**/api/v1/**', (route) => {
       if (new URL(route.request().url()).pathname === checkoutPath) {
@@ -378,20 +443,19 @@ test.describe('actual server payment contract', () => {
       }
       return route.fulfill({ json: [project] });
     });
-    await page.goto('/donate/');
-    await expect(page.getByLabel('Направление поддержки')).toHaveValue('fund');
-    await acceptDonationTerms(page);
-    for (const [index, [value, label]] of [
-      ['fund', 'Общее развитие университета'],
-      ['direction:students', 'Стипендии для талантов'],
-      ['direction:science', 'Наука и инженерия для Арктики'],
-      ['direction:campus', 'Инфраструктура для развития'],
-      ['direction:alumni', 'Связь выпускников'],
+    for (const [index, target] of [
+      'fund',
+      'direction:students',
+      'direction:science',
+      'direction:campus',
+      'direction:alumni',
     ].entries()) {
-      await page.getByLabel('Направление поддержки').selectOption(value!);
+      await page.goto('/donate/?target=' + encodeURIComponent(target));
+      await expect(page.getByRole('combobox')).toHaveCount(0);
       await expect(page.getByLabel('Детали пожертвования')).toContainText(
-        label!,
+        fundLabel,
       );
+      await acceptDonationTerms(page);
       await page.getByRole('button', { name: 'Перейти к оплате' }).click();
       await expect(page.getByRole('alert')).toContainText(
         'временно недоступен',
@@ -401,43 +465,41 @@ test.describe('actual server payment contract', () => {
     }
   });
 
-  test('an unavailable mapped fund focuses the selection and explains the missing collection without creating a payment', async ({
+  test('an unavailable common fund is not replaced automatically but another published project can be selected', async ({
     page,
   }) => {
-    test.skip(
-      !commonFundProject,
-      'Configure a shared fund for the unavailable-project check.',
-    );
-    let writes = 0;
+    const writes: Record<string, unknown>[] = [];
     await page.route('**/api/v1/**', (route) => {
-      if (route.request().method() === 'POST') writes++;
+      if (route.request().method() === 'POST') {
+        writes.push(route.request().postDataJSON());
+        return route.fulfill({ status: 503 });
+      }
       return route.fulfill({ json: [{ ...project, id: uuid(999) }] });
     });
     await page.goto('/donate/?target=direction:students');
-    await acceptDonationTerms(page);
-    await page.getByRole('button', { name: 'Перейти к оплате' }).click();
-    await expect(page.getByRole('alert')).toContainText('сбор пока недоступен');
-    await expect(page.getByLabel('Направление поддержки')).toBeFocused();
-    await expect(page.getByLabel('Направление поддержки')).toHaveAttribute(
-      'aria-invalid',
-      'true',
-    );
-    expect(writes).toBe(0);
-    await page
-      .getByLabel('Направление поддержки')
-      .selectOption(`project:${uuid(999)}`);
-    await expect(page.getByRole('alert')).toHaveCount(0);
-    await page.getByRole('button', { name: 'Перейти к оплате' }).click();
     await expect(page.getByRole('alert')).toContainText(
       'Общий сбор пока недоступен',
     );
-    expect(writes).toBe(0);
+    await acceptDonationTerms(page);
+    await expect(
+      page.getByRole('button', { name: 'Перейти к оплате' }),
+    ).toBeDisabled();
+    expect(writes).toEqual([]);
+    await page
+      .getByLabel('Проект пожертвования')
+      .selectOption(`project:${uuid(999)}`);
+    await page.getByRole('button', { name: 'Перейти к оплате' }).click();
+    await expect(page.getByRole('alert')).toContainText('временно недоступен');
+    expect(writes).toHaveLength(1);
+    expect(writes[0]!.project_id).toBe(uuid(999));
     await page.goto('/projects/');
     await expect(
       page.locator('.fundraising-summary .fundraising-amounts dd'),
     ).toHaveText(['—']);
     await expect(
-      page.locator('.project-funding-meter').getByText('Цель', { exact: true }),
+      page
+        .locator('.project-grid .project-funding-meter')
+        .getByText('Цель', { exact: true }),
     ).toHaveCount(0);
   });
 
@@ -603,7 +665,7 @@ test.describe('actual server payment contract', () => {
     expect(writes).toBe(1);
   });
 
-  test('only open RUB projects can be chosen; SBP and a fresh key are sent after changing a draft', async ({
+  test('the published common RUB fund supports SBP and uses a fresh key after changing the amount', async ({
     page,
   }) => {
     const requests: Record<string, unknown>[] = [];
@@ -625,10 +687,10 @@ test.describe('actual server payment contract', () => {
       });
     });
     await page.goto(`/donate/?target=project:${projectId}`);
-    await expect(page.getByLabel('Направление поддержки')).toHaveValue(
-      projectValue,
+    await expect(page.getByRole('combobox')).toHaveCount(0);
+    await expect(page.getByLabel('Детали пожертвования')).toContainText(
+      fundLabel,
     );
-    await expect(page.locator('#payment-target option')).toHaveCount(7);
     await page.getByRole('button', { name: 'СБП', exact: true }).click();
     await acceptDonationTerms(page);
     await page.getByRole('button', { name: 'Перейти к оплате' }).click();
@@ -665,7 +727,7 @@ test.describe('actual server payment contract', () => {
     });
     await page.goto('/donate/');
     await expect(
-      page.getByText('Открытых сборов пока нет.', { exact: false }),
+      page.getByText('Общий сбор пока недоступен.', { exact: false }),
     ).toBeVisible();
     await expect(
       page.getByRole('button', { name: 'Перейти к оплате' }),
@@ -915,7 +977,7 @@ test.describe('actual server payment contract', () => {
     expect(privateReads).toEqual([]);
   });
 
-  test('one common project supplies every public amount and receives donations from another project page', async ({
+  test('four basic directions use common totals while a published project uses its own totals and payment ID', async ({
     page,
   }) => {
     await page.clock.install();
@@ -964,8 +1026,16 @@ test.describe('actual server payment contract', () => {
     const overall = page.getByRole('group', { name: 'Сбор целевого капитала' });
     await expect(overall).toContainText('2 020 000 рублей');
     await expect(overall).toContainText('100 000 000 рублей');
-    const meters = page.locator('.project-funding-meter');
-    await expect(meters).toHaveCount(6);
+    await expect(page.locator('.project-funding-meter')).toHaveCount(6);
+    const meters = page
+      .locator('.project-grid .project-funding-meter')
+      .or(
+        page
+          .locator('.published-card')
+          .filter({ hasText: project.name })
+          .locator('.project-funding-meter'),
+      );
+    await expect(meters).toHaveCount(5);
     for (const meter of await meters.all()) {
       await expect(meter).toContainText(/2\s020\s000\s?₽/);
       await expect(meter).toContainText(/100\s000\s000\s?₽/);
@@ -973,7 +1043,12 @@ test.describe('actual server payment contract', () => {
     const otherCard = page
       .locator('.published-card')
       .filter({ hasText: other.name });
-    await expect(otherCard).not.toContainText(/Целевая сумма50/);
+    await expect(otherCard.locator('.project-funding-meter')).toContainText(
+      /30\s?₽/,
+    );
+    await expect(otherCard.locator('.project-funding-meter')).toContainText(
+      /50\s?₽/,
+    );
     currentAmount = '2020110.00';
     amount = '150000000.00';
     await page.clock.fastForward(21000);
@@ -984,10 +1059,10 @@ test.describe('actual server payment contract', () => {
     }
     await page.goto(`/publications/?type=projects&id=${other.id}`);
     await expect(page.locator('.published-project-funding')).toContainText(
-      /2\s020\s110\s?₽/,
+      /30\s?₽/,
     );
     await expect(page.getByLabel('Сведения о публикации')).toContainText(
-      /150\s000\s000\s?₽/,
+      /50\s?₽/,
     );
     await page.getByRole('link', { name: 'Поддержать проект' }).click();
     await expect(page.getByLabel('Детали пожертвования')).toContainText(
@@ -997,7 +1072,7 @@ test.describe('actual server payment contract', () => {
     await page.getByRole('button', { name: 'Перейти к оплате' }).click();
     await expect(page.getByRole('alert')).toBeVisible();
     expect(writes).toHaveLength(1);
-    expect(writes[0]!.project_id).toBe(commonFundProject);
+    expect(writes[0]!.project_id).toBe(other.id);
     await page.goto('/projects/students/');
     await expect(page.locator('.project-funding-meter')).toContainText(
       /2\s020\s110\s?₽/,
@@ -1121,7 +1196,7 @@ test.describe('actual server payment contract', () => {
       {
         id: uuid(33),
         payment_id: uuid(21),
-        amount: '999.00',
+        amount: '100.00',
         status: 'pending',
       },
       {

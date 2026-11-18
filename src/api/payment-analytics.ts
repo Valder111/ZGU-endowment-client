@@ -13,6 +13,7 @@ export type PaymentRow = {
   paidAt: string | null;
   providerId: string | null;
   refundedMinor: number;
+  pendingRefundMinor: number;
 };
 type RefundRow = {
   id: string;
@@ -103,6 +104,7 @@ export async function getPaymentLedger(
         paidAt,
         providerId: row.provider_payment_id || null,
         refundedMinor: 0,
+        pendingRefundMinor: 0,
       };
     }),
   );
@@ -127,6 +129,25 @@ export async function getPaymentLedger(
     if (
       !Number.isSafeInteger(payment.refundedMinor) ||
       payment.refundedMinor > payment.amountMinor
+    )
+      throw new Error('Сумма возвратов превышает сумму платежа.');
+  }
+  for (const refund of unique(
+    refundData
+      .filter((row) => row.status === 'pending')
+      .map((row) => ({
+        id: id(row.id),
+        paymentId: id(row.payment_id),
+        amountMinor: moneyMinor(row.amount),
+      })),
+  )) {
+    const payment = byPayment.get(refund.paymentId);
+    if (!payment)
+      throw new Error('В API отсутствует платёж для ожидающего возврата.');
+    payment.pendingRefundMinor += refund.amountMinor;
+    if (
+      !Number.isSafeInteger(payment.pendingRefundMinor) ||
+      payment.pendingRefundMinor + payment.refundedMinor > payment.amountMinor
     )
       throw new Error('Сумма возвратов превышает сумму платежа.');
   }

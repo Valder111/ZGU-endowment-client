@@ -1,5 +1,6 @@
 import type { RequestParams } from '@/api/generated/http-client';
-import { validPaymentReference } from '@/api/payments';
+import { paymentProjectId, validPaymentReference } from '@/api/payments';
+import { donationFundLabel } from '@/constants/donation-fund';
 import { collectionApi, publicContentParams } from '@/api/staff-content';
 import type { ContentRecord } from '@/api/staff';
 
@@ -20,4 +21,15 @@ export function donationProjectOptions(records?: ContentRecord[]) {
       ? [{ id: project.id, value: `project:${project.id}`, label }]
       : [];
   });
+}
+
+export function donationTargetOptions(records?: ContentRecord[]) {
+  const commonId = paymentProjectId('fund')!;
+  const other = donationProjectOptions(records).filter(
+    (project) => project.id !== commonId,
+  );
+  return [
+    { id: commonId, value: 'fund', label: donationFundLabel },
+    ...Array.from(new Map(other.map((option) => [option.id, option])).values()),
+  ];
 }

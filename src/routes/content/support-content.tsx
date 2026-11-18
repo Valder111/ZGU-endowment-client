@@ -1,8 +1,9 @@
 import { useId, useState } from 'react';
 import { ArrowUpRight, Landmark, Users, Award, Handshake } from 'lucide-react';
 import { supportAudiences, supportMethods } from '@/constants/support';
-import { CapitalSelect } from '@/components/elements/capital-select';
-import { generalCapital } from '@/constants/projects';
+import { donationTargetOptions } from '@/api/donation-projects';
+import { useDonationProjects } from '@/hooks/requests/queries/use-donation-projects';
+import { DonationTargetSelect } from '@/components/elements/donation-target-select';
 import { siteConfig } from '@/configs/site';
 import { SiteLink } from '@/components/elements/site-link';
 import { ImpactCalculator } from '@/components/elements/impact-calculator';
@@ -14,9 +15,14 @@ const methodIcons = [Landmark, Users, Award, Handshake];
 export function SupportContent() {
   const id = useId();
   const [selected, setSelected] = useState(0);
-  const [direction, setDirection] = useState(generalCapital);
+  const [target, setTarget] = useState('fund');
+  const { data: publishedProjects } = useDonationProjects();
+  const targetOptions = donationTargetOptions(publishedProjects);
+  const targetLabel =
+    targetOptions.find((option) => option.value === target)?.label ??
+    'Выбранный проект недоступен';
   const audience = supportAudiences[selected] ?? supportAudiences[0];
-  const emailHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent(audience.subject)}&body=${encodeURIComponent(`Здравствуйте!\n\nМеня интересует направление «${direction}». Хочу обсудить условия участия, договор пожертвования и доступные способы поддержки.\n\nМой вопрос: `)}`;
+  const emailHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent(audience.subject)}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу поддержать ${targetLabel}. Хочу обсудить условия участия, договор пожертвования и доступные способы поддержки.\n\nМой вопрос: `)}`;
   return (
     <div className="wrap article-content">
       <div className="support-intro">
@@ -28,7 +34,10 @@ export function SupportContent() {
         </p>
       </div>
       <div className="payment-support-link">
-        <SiteLink href={donationHref()} className="button primary">
+        <SiteLink
+          href={donationHref(undefined, target)}
+          className="button primary"
+        >
           Онлайн-пожертвование <ArrowUpRight size={19} aria-hidden="true" />
         </SiteLink>
       </div>
@@ -83,14 +92,10 @@ export function SupportContent() {
           </p>
         </div>
         <div>
-          <label htmlFor={`${id}-direction`}>
-            Что вы&nbsp;хотите поддержать?
-          </label>
-          <CapitalSelect
-            id={`${id}-direction`}
-            value={direction}
-            onValueChange={setDirection}
-            withNamedCapital
+          <DonationTargetSelect
+            value={target}
+            onChange={setTarget}
+            options={targetOptions}
           />
           <a href={emailHref} className="button primary">
             Обсудить участие <ArrowUpRight size={19} aria-hidden="true" />

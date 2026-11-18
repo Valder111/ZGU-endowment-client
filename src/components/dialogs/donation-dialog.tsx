@@ -10,21 +10,15 @@ import { useSite } from '@/hooks/use-site';
 import { SiteLink } from '@/components/elements/site-link';
 import { siteConfig } from '@/configs/site';
 import { LegalLinks } from '@/components/elements/legal-links';
-import { CapitalSelect } from '@/components/elements/capital-select';
+import { donationTargetOptions } from '@/api/donation-projects';
+import { useDonationProjects } from '@/hooks/requests/queries/use-donation-projects';
+import { DonationTargetSelect } from '@/components/elements/donation-target-select';
 import { formatNumber } from '@/utils/typography';
 import {
   donationHref,
   minimumDonationRubles,
   parseDonationAmount,
-  validPaymentTarget,
 } from '@/api/payments';
-import {
-  donationProjectOptions,
-  loadDonationProjects,
-} from '@/api/donation-projects';
-import { staffBase, staffResult } from '@/api/staff';
-import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
-import { projects } from '@/constants/projects';
 import { sitePath } from '@/utils/paths';
 import {
   formatGroupedAmountChange,
@@ -48,41 +42,29 @@ export function DonationDialog() {
   const {
     donationOpen,
     setDonationOpen,
-    donationDirection: direction,
-    setDonationDirection: setDirection,
+    donationTarget: target,
+    setDonationTarget: setTarget,
   } = useSite();
   const opener = useRef<HTMLElement | null>(null);
   const id = useId();
   const [preset, setPreset] = useState<number | null>(1000);
   const [customAmount, setCustomAmount] = useState('1.000');
-  const { data: publishedProjects } = useStaffResource(
-    staffResult,
-    loadDonationProjects,
-    Boolean(staffBase && donationOpen),
-  );
-  const projectOptions = donationProjectOptions(publishedProjects);
-  const isDatabaseProject =
-    direction.startsWith('project:') && validPaymentTarget(direction);
-  const directionLabel = isDatabaseProject
-    ? (projectOptions.find(({ value }) => value === direction)?.label ??
-      'Проект фонда')
-    : direction;
+  const { data: publishedProjects } = useDonationProjects(donationOpen);
+  const targetOptions = donationTargetOptions(publishedProjects);
+  const targetLabel =
+    targetOptions.find((option) => option.value === target)?.label ??
+    'Выбранный проект недоступен';
   const amount = preset ?? Number(customAmount.replace(/\./g, ''));
   const amountMinor = parseDonationAmount(
     preset !== null ? String(preset) : customAmount,
   );
   const validAmount =
     (preset !== null || wholeRubles.test(customAmount)) && amountMinor !== null;
-  const project = projects.find(({ title }) => title === direction);
   const paymentHref = donationHref(
-    isDatabaseProject
-      ? direction
-      : project
-        ? `direction:${project.id}`
-        : 'fund',
     validAmount ? amountMinor : undefined,
+    target,
   );
-  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${amount} рублей.\nФормат: Разово.\nНаправление: ${directionLabel}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
+  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${amount} рублей.\nФормат: Разово.\nЦель: ${targetLabel}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
 
   function changeCustomAmount(event: ChangeEvent<HTMLInputElement>) {
     const typedSeparator =
@@ -123,8 +105,8 @@ export function DonationDialog() {
         </div>
         <div className="donation-body">
           <DialogDescription className="donation-description text-[15px] leading-[1.7] text-[#486779]">
-            Выберите сумму и&nbsp;направление поддержки. На&nbsp;следующем шаге
-            можно проверить данные и&nbsp;перейти к&nbsp;оплате.
+            Выберите сумму вклада. На&nbsp;следующем шаге можно проверить данные
+            и&nbsp;перейти к&nbsp;оплате.
           </DialogDescription>
           <div
             className="donation-amounts"
@@ -183,12 +165,10 @@ export function DonationDialog() {
                 </small>
               )}
             </div>
-            <label htmlFor={`${id}-direction`}>Направление поддержки</label>
-            <CapitalSelect
-              id={`${id}-direction`}
-              value={direction}
-              onValueChange={setDirection}
-              additionalOptions={projectOptions}
+            <DonationTargetSelect
+              value={target}
+              onChange={setTarget}
+              options={targetOptions}
             />
           </div>
           <div className="donation-submit">
@@ -211,11 +191,6 @@ export function DonationDialog() {
             <DialogClose asChild>
               <SiteLink href="/how-to-support/" className="button primary">
                 Как поддержать ↗
-              </SiteLink>
-            </DialogClose>
-            <DialogClose asChild>
-              <SiteLink href="/project/all-project/" className="text-link">
-                Выбрать целевой капитал ↗
               </SiteLink>
             </DialogClose>
             <a

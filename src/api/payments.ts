@@ -42,10 +42,19 @@ function projectMap(): Record<string, string> {
   }
 }
 const mappedProjects = projectMap();
+const commonProjectId = mappedProjects.fund ?? defaultDonationProjectId;
+
+export function normalizeDonationTarget(value: string | null) {
+  return value?.startsWith('project:') &&
+    validPaymentReference(value.slice(8)) &&
+    value.slice(8) !== commonProjectId
+    ? value
+    : 'fund';
+}
 
 export function paymentProjectId(target: string) {
   if (!validPaymentTarget(target)) return null;
-  return mappedProjects.fund ?? defaultDonationProjectId;
+  return target.startsWith('project:') ? target.slice(8) : commonProjectId;
 }
 
 export function parseDonationAmount(value: string) {
@@ -281,16 +290,6 @@ export async function getDonationProgress(
   );
   if (!Array.isArray(data)) throw new Error('Некорректный ответ API проектов.');
   const targets = new Map<string, ProgressTotal>();
-  const common = data.find((row) => row.id === paymentProjectId('fund'));
-  const amounts =
-    common &&
-    ['published', 'completed'].includes(common.status ?? '') &&
-    common.currency === 'RUB'
-      ? (common as typeof common & {
-          total?: string | number | null;
-          amount?: string | number | null;
-        })
-      : null;
   const readAmount = (value: unknown) => {
     if (value === undefined || value === null) return null;
     try {
@@ -299,22 +298,38 @@ export async function getDonationProgress(
       return null;
     }
   };
-  const fund: FundTotal = {
-    collectedMinor: readAmount(amounts?.current_amount ?? amounts?.total),
-    targetMinor: readAmount(amounts?.target_amount ?? amounts?.amount),
+  const totals = (row?: (typeof data)[number]): ProgressTotal => {
+    const amounts =
+      row &&
+      ['published', 'completed'].includes(row.status ?? '') &&
+      row.currency === 'RUB'
+        ? (row as typeof row & {
+            total?: string | number | null;
+            amount?: string | number | null;
+          })
+        : null;
+    return {
+      collectedMinor: readAmount(amounts?.current_amount ?? amounts?.total),
+      targetMinor: readAmount(amounts?.target_amount ?? amounts?.amount),
+    };
   };
+  const fund = totals(data.find((row) => row.id === commonProjectId));
   for (const direction of donationDirections)
     targets.set(direction.value, fund);
   for (const row of data) {
-    if (validPaymentReference(row.id)) targets.set(`project:${row.id}`, fund);
+    if (validPaymentReference(row.id))
+      targets.set(
+        `project:${row.id}`,
+        row.id === commonProjectId ? fund : totals(row),
+      );
   }
   return { fund, targets };
 }
 
-export function donationHref(target = 'fund', amountMinor?: number) {
+export function donationHref(amountMinor?: number, target = 'fund') {
   const query = new URLSearchParams();
-  if (target !== 'fund' && validPaymentTarget(target))
-    query.set('target', target);
+  const normalized = normalizeDonationTarget(target);
+  if (normalized !== 'fund') query.set('target', normalized);
   if (
     amountMinor &&
     parseDonationAmount(String(amountMinor / 100).replace('.', ',')) ===
