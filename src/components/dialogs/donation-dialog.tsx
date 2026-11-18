@@ -6,7 +6,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { useSite } from '@/hooks/use-site';
 import { SiteLink } from '@/components/elements/site-link';
 import { siteConfig } from '@/configs/site';
@@ -15,6 +14,7 @@ import { CapitalSelect } from '@/components/elements/capital-select';
 import { formatNumber } from '@/utils/typography';
 import {
   donationHref,
+  minimumDonationRubles,
   parseDonationAmount,
   validPaymentTarget,
 } from '@/api/payments';
@@ -55,7 +55,6 @@ export function DonationDialog() {
   const id = useId();
   const [preset, setPreset] = useState<number | null>(1000);
   const [customAmount, setCustomAmount] = useState('1.000');
-  const [frequency, setFrequency] = useState('Разово');
   const { data: publishedProjects } = useStaffResource(
     staffResult,
     loadDonationProjects,
@@ -82,9 +81,8 @@ export function DonationDialog() {
         ? `direction:${project.id}`
         : 'fund',
     validAmount ? amountMinor : undefined,
-    frequency === 'Регулярно',
   );
-  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${amount} рублей.\nФормат: ${frequency}.\nНаправление: ${directionLabel}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
+  const enquiryHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Участие в Эндаумент-фонде ЗГУ')}&body=${encodeURIComponent(`Здравствуйте!\n\nХочу обсудить пожертвование в размере ${amount} рублей.\nФормат: Разово.\nНаправление: ${directionLabel}.\n\nПрошу уточнить условия, договор и реквизиты.\n\nМой вопрос: `)}`;
 
   function changeCustomAmount(event: ChangeEvent<HTMLInputElement>) {
     const typedSeparator =
@@ -128,22 +126,6 @@ export function DonationDialog() {
             Выберите сумму и&nbsp;направление поддержки. На&nbsp;следующем шаге
             можно проверить данные и&nbsp;перейти к&nbsp;оплате.
           </DialogDescription>
-          <div
-            className="donation-frequency"
-            role="group"
-            aria-label="Периодичность участия"
-          >
-            {['Разово', 'Регулярно'].map((option) => (
-              <button
-                key={option}
-                type="button"
-                aria-pressed={frequency === option}
-                onClick={() => setFrequency(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
           <div
             className="donation-amounts"
             role="group"
@@ -197,7 +179,7 @@ export function DonationDialog() {
                   id={`${id}-amount-error`}
                   className="donation-amount-error"
                 >
-                  Укажите целую сумму от 100 ₽.
+                  Укажите целую сумму от {minimumDonationRubles} ₽.
                 </small>
               )}
             </div>
@@ -247,11 +229,6 @@ export function DonationDialog() {
               Обсудить участие по почте <span aria-hidden="true">↗</span>
             </a>
           </div>
-          <DialogClose asChild>
-            <Button variant="brand" className="donation-dismiss">
-              Понятно <span aria-hidden="true">↗</span>
-            </Button>
-          </DialogClose>
         </div>
       </DialogContent>
     </Dialog>

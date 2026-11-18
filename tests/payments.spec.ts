@@ -63,6 +63,16 @@ test('the main donation action preserves amount and shows the same site directio
   await dialog
     .getByRole('button', { name: 'Другая сумма', exact: true })
     .click();
+  await dialog.getByLabel('Другая сумма, рублей').fill('9');
+  await expect(dialog.getByText('Укажите целую сумму от 10 ₽.')).toBeVisible();
+  await expect(dialog.locator('a.donation-checkout')).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  );
+  await dialog.getByLabel('Другая сумма, рублей').fill('10');
+  await expect(
+    dialog.getByRole('link', { name: 'Перейти к оформлению' }),
+  ).toHaveAttribute('href', /amount=10$/);
   await dialog.getByLabel('Другая сумма, рублей').fill('2020000');
   await dialog.getByRole('link', { name: 'Перейти к оформлению' }).click();
   await expect(page).toHaveURL(
@@ -93,7 +103,7 @@ test('the main donation action preserves amount and shows the same site directio
     ).toBeEnabled();
 });
 
-test('the amount groups digits immediately, rejects text and accepts only 100 rubles or more', async ({
+test('the amount groups digits immediately, rejects text and accepts only 10 rubles or more', async ({
   page,
 }) => {
   await page.route('**/api/v1/**', (route) =>
@@ -125,24 +135,24 @@ test('the amount groups digits immediately, rejects text and accepts only 100 ru
   await amount.fill('');
   await amount.pressSequentially('1000000000');
   await expect(amount).toHaveValue('1.000.000.000');
-  await amount.fill('99');
+  await amount.fill('9');
   await amount.blur();
   await expect(amount).toHaveAttribute('aria-invalid', 'true');
-  await expect(page.getByText('Укажите целую сумму от 100 ₽.')).toBeVisible();
-  await amount.fill('100');
+  await expect(page.getByText('Укажите целую сумму от 10 ₽.')).toBeVisible();
+  await amount.fill('10');
   await amount.blur();
   await expect(amount).toHaveAttribute('aria-invalid', 'false');
-  await expect(page.locator('.payment-total')).toHaveText(/100\s?₽/);
+  await expect(page.locator('.payment-total')).toHaveText(/10\s?₽/);
 });
 
-test('checkout and its recurring placeholder fit mobile and have accessible controls', async ({
+test('one-time checkout fits mobile and old recurring links still open the payment form', async ({
   page,
 }) => {
   await page.route('**/api/v1/**', (route) =>
     route.fulfill({ json: [project] }),
   );
   await page.setViewportSize({ width: 320, height: 740 });
-  await page.goto('/donate/');
+  await page.goto('/donate/?amount=10&mode=recurring');
   await expect(
     page.getByRole('group', { name: 'Способ оплаты' }),
   ).toBeVisible();
@@ -154,15 +164,16 @@ test('checkout and its recurring placeholder fit mobile and have accessible cont
     .withTags(['wcag2a', 'wcag2aa'])
     .analyze();
   expect(audit.violations).toEqual([]);
-  await page.getByRole('button', { name: 'Ежемесячно', exact: true }).click();
+  await expect(page.getByLabel('Сумма, ₽')).toHaveValue('10');
+  await expect(page.getByLabel('Детали пожертвования')).toContainText(
+    'Разовый вклад',
+  );
   await expect(
-    page.getByRole('heading', {
-      name: 'Ежемесячные пожертвования скоро появятся',
-    }),
-  ).toBeVisible();
+    page.getByRole('button', { name: /Ежемесячно|Регулярно/ }),
+  ).toHaveCount(0);
   await expect(
     page.getByRole('button', { name: 'Перейти к оплате' }),
-  ).toHaveCount(0);
+  ).toHaveCount(1);
 });
 
 test.describe('actual server payment contract', () => {
@@ -528,9 +539,11 @@ test.describe('actual server payment contract', () => {
   }) => {
     let available = false;
     let writes = 0;
+    let submittedAmount: string | undefined;
     await page.route('**/api/v1/**', (route) => {
       if (route.request().method() === 'POST') {
         writes++;
+        submittedAmount = route.request().postDataJSON().amount;
         return route.fulfill({
           json: {
             ...checkout,
@@ -551,17 +564,18 @@ test.describe('actual server payment contract', () => {
     await page.reload();
     await selectProject(page);
     await page.getByLabel('Принимаю условия публичной оферты').check();
-    await page.getByLabel('Сумма, ₽').fill('99');
+    await page.getByLabel('Сумма, ₽').fill('9');
     await page.getByRole('button', { name: 'Перейти к оплате' }).click();
     await expect(page.getByLabel('Сумма, ₽')).toHaveAttribute(
       'aria-invalid',
       'true',
     );
     expect(writes).toBe(0);
-    await page.getByLabel('Сумма, ₽').fill('100');
+    await page.getByLabel('Сумма, ₽').fill('10');
     await page.getByRole('button', { name: 'Перейти к оплате' }).click();
     await expect(page.getByRole('alert')).toBeVisible();
     expect(writes).toBe(1);
+    expect(submittedAmount).toBe('10.00');
     await expect(page).toHaveURL(/\/donate\/$/);
   });
 

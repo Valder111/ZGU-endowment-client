@@ -93,7 +93,7 @@ test('donation dialog traps focus and restores it on Escape, close, and backdrop
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
   await trigger.click();
-  await page.getByRole('button', { name: 'Понятно' }).click();
+  await dialog.getByRole('button', { name: 'Закрыть', exact: true }).click();
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
   await trigger.click();

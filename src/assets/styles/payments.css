@@ -25,15 +25,10 @@
   letter-spacing: -0.04em;
 }
 
-.payment-layout .payment-modes {
-  margin-block: 18px 24px;
-}
-
 .payment-layout .payment-presets {
   margin: 0;
 }
 
-.payment-modes button,
 .payment-presets button {
   min-height: 44px;
 }

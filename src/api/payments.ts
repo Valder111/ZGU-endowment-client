@@ -11,6 +11,7 @@ export const paymentsEnabled =
 const uuid =
   /^(?!00000000-0000-0000-0000-000000000000$)[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 const maxAmountMinor = 999_999_999_999;
+export const minimumDonationRubles = 10;
 export const validPaymentReference = (value: unknown): value is string =>
   typeof value === 'string' && uuid.test(value);
 
@@ -61,7 +62,7 @@ export function parseDonationAmount(value: string) {
   const amount =
     Number(rubles.replace(/\./g, '')) * 100 + Number(fraction.padEnd(2, '0'));
   return Number.isSafeInteger(amount) &&
-    amount >= 10_000 &&
+    amount >= minimumDonationRubles * 100 &&
     amount <= maxAmountMinor
     ? amount
     : null;
@@ -301,11 +302,7 @@ export async function getDonationProgress(
   return { targets };
 }
 
-export function donationHref(
-  target = 'fund',
-  amountMinor?: number,
-  recurring = false,
-) {
+export function donationHref(target = 'fund', amountMinor?: number) {
   const query = new URLSearchParams();
   if (target !== 'fund' && validPaymentTarget(target))
     query.set('target', target);
@@ -315,7 +312,6 @@ export function donationHref(
       amountMinor
   )
     query.set('amount', String(amountMinor / 100).replace('.', ','));
-  if (recurring) query.set('mode', 'recurring');
   return `/donate/${query.size ? `?${query}` : ''}`;
 }
 

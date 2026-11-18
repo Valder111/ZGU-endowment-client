@@ -11,7 +11,7 @@ const practicalRoutes = [
   '/about/company-information/',
 ];
 
-test('anniversary invitation keeps the chosen amount and direction for recurring setup', async ({
+test('anniversary invitation keeps the chosen amount and direction for a one-time donation', async ({
   page,
 }) => {
   await page.goto('/anniversary/');
@@ -22,7 +22,12 @@ test('anniversary invitation keeps the chosen amount and direction for recurring
     .getByRole('button', { name: 'Сделать подарок университету' })
     .click();
   const dialog = page.getByRole('dialog');
-  await dialog.getByRole('button', { name: 'Регулярно', exact: true }).click();
+  await expect(
+    dialog.getByRole('button', { name: 'Регулярно', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    dialog.getByRole('button', { name: 'Понятно', exact: true }),
+  ).toHaveCount(0);
   await dialog.getByRole('button', { name: '3 000 ₽', exact: true }).click();
   const direction = dialog.getByRole('combobox', {
     name: 'Направление поддержки',
@@ -59,17 +64,17 @@ test('anniversary invitation keeps the chosen amount and direction for recurring
   );
   expect(href.protocol).toBe('mailto:');
   expect(href.searchParams.get('body')).toContain('3000 рублей');
-  expect(href.searchParams.get('body')).toContain('Регулярно');
+  expect(href.searchParams.get('body')).toContain('Разово');
   expect(href.searchParams.get('body')).toContain(chosenCapital);
   const checkout = dialog.getByRole('link', { name: 'Перейти к оформлению' });
   await expect(checkout).toHaveAttribute(
     'href',
-    '/donate/?target=direction%3Acampus&amount=3000&mode=recurring',
+    '/donate/?target=direction%3Acampus&amount=3000',
   );
   await checkout.click();
   await expect(
     page.getByRole('heading', {
-      name: 'Ежемесячные пожертвования скоро появятся',
+      name: 'Пожертвование фонду',
     }),
   ).toBeVisible();
   await expect(page.getByLabel('Детали пожертвования')).toContainText(

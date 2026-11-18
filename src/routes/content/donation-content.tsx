@@ -9,7 +9,6 @@ import {
 } from 'react';
 import {
   ArrowUpRight,
-  CalendarClock,
   CircleCheck,
   CircleX,
   Clock3,
@@ -22,6 +21,7 @@ import {
   formatPaymentAmount,
   getPayment,
   parseDonationAmount,
+  minimumDonationRubles,
   paymentsEnabled,
   paymentError,
   paymentProjectId,
@@ -81,9 +81,6 @@ export function DonationContent() {
 
 function DonationForm({ query }: { query: URLSearchParams }) {
   const initialTarget = query.get('target') ?? 'fund';
-  const [mode, setMode] = useState(
-    query.get('mode') === 'recurring' ? 'recurring' : 'once',
-  );
   const [target, setTarget] = useState(
     validPaymentTarget(initialTarget) ? initialTarget : 'fund',
   );
@@ -154,13 +151,7 @@ function DonationForm({ query }: { query: URLSearchParams }) {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (
-      !paymentsEnabled ||
-      mode !== 'once' ||
-      sending.current ||
-      !offer ||
-      (hasEmail && !consent)
-    )
+    if (!paymentsEnabled || sending.current || !offer || (hasEmail && !consent))
       return;
     setAmountTouched(true);
     if (amountMinor === null) {
@@ -215,299 +206,247 @@ function DonationForm({ query }: { query: URLSearchParams }) {
           <h1>Пожертвование фонду</h1>
           <p>Выберите близкую цель и комфортную сумму вклада.</p>
         </div>
-        <div
-          className="donation-frequency payment-modes"
-          role="group"
-          aria-label="Вид пожертвования"
-        >
-          <button
-            type="button"
-            aria-pressed={mode === 'once'}
-            disabled={pending}
-            onClick={() => setMode('once')}
-          >
-            Разово
-          </button>
-          <button
-            type="button"
-            aria-pressed={mode === 'recurring'}
-            disabled={pending}
-            onClick={() => setMode('recurring')}
-          >
-            Ежемесячно
-            <span className="checkout-soon" aria-hidden="true">
-              Скоро
-            </span>
-          </button>
-        </div>
-        {mode === 'recurring' ? (
-          <>
-            <div className="payment-message checkout-recurring">
-              <CalendarClock aria-hidden="true" />
-              <div>
-                <h2>Ежемесячные пожертвования скоро появятся</h2>
-                <p>
-                  Пока вы можете сделать разовый вклад в выбранном направлении.
-                </p>
+        <form className="payment-form" method="post" onSubmit={submit}>
+          <fieldset disabled={pending}>
+            <legend className="sr-only">Данные пожертвования</legend>
+            <div className="checkout-step" aria-hidden="true">
+              <span>01</span> Сумма и направление
+            </div>
+            <div
+              className="donation-amounts payment-presets"
+              role="group"
+              aria-label="Готовые суммы"
+            >
+              {presets.map((value) => (
                 <button
                   type="button"
-                  className="text-link"
-                  onClick={() => setMode('once')}
+                  key={value}
+                  aria-pressed={value * 100 === amountMinor}
+                  onClick={() => setAmount(readableAmount(value * 100))}
                 >
-                  К разовому пожертвованию ↗
+                  {formatPaymentAmount(value * 100)}
                 </button>
-              </div>
+              ))}
             </div>
-            <PaymentSummary
-              amountMinor={amountMinor}
-              direction={directionLabel}
-              recurring
-            />
-          </>
-        ) : (
-          <form className="payment-form" method="post" onSubmit={submit}>
-            <fieldset disabled={pending}>
-              <legend className="sr-only">Данные пожертвования</legend>
-              <div className="checkout-step" aria-hidden="true">
-                <span>01</span> Сумма и направление
-              </div>
-              <div
-                className="donation-amounts payment-presets"
-                role="group"
-                aria-label="Готовые суммы"
-              >
-                {presets.map((value) => (
-                  <button
-                    type="button"
-                    key={value}
-                    aria-pressed={value * 100 === amountMinor}
-                    onClick={() => setAmount(readableAmount(value * 100))}
-                  >
-                    {formatPaymentAmount(value * 100)}
-                  </button>
-                ))}
-              </div>
-              <label className="payment-field" htmlFor="payment-amount">
-                Сумма, ₽
-                <input
-                  id="payment-amount"
-                  type="text"
-                  inputMode="numeric"
-                  required
-                  maxLength={13}
-                  pattern="[0-9]{1,3}([.][0-9]{3})*"
-                  value={amount}
-                  aria-invalid={amountTouched && amountMinor === null}
-                  aria-describedby={`payment-amount-hint${amountTouched && amountMinor === null ? ' payment-amount-error' : ''}`}
-                  onChange={changeAmount}
-                  onBlur={() => {
-                    setAmountTouched(true);
-                    if (amountMinor !== null)
-                      setAmount(readableAmount(amountMinor));
-                  }}
-                />
-              </label>
-              <p id="payment-amount-hint" className="payment-hint">
-                Сумма в целых рублях, от 100 ₽.
+            <label className="payment-field" htmlFor="payment-amount">
+              Сумма, ₽
+              <input
+                id="payment-amount"
+                type="text"
+                inputMode="numeric"
+                required
+                maxLength={13}
+                pattern="[0-9]{1,3}([.][0-9]{3})*"
+                value={amount}
+                aria-invalid={amountTouched && amountMinor === null}
+                aria-describedby={`payment-amount-hint${amountTouched && amountMinor === null ? ' payment-amount-error' : ''}`}
+                onChange={changeAmount}
+                onBlur={() => {
+                  setAmountTouched(true);
+                  if (amountMinor !== null)
+                    setAmount(readableAmount(amountMinor));
+                }}
+              />
+            </label>
+            <p id="payment-amount-hint" className="payment-hint">
+              Сумма в целых рублях, от {minimumDonationRubles} ₽.
+            </p>
+            {amountTouched && amountMinor === null && (
+              <p id="payment-amount-error" className="payment-error">
+                Укажите целую сумму от {minimumDonationRubles} ₽.
               </p>
-              {amountTouched && amountMinor === null && (
-                <p id="payment-amount-error" className="payment-error">
-                  Укажите целую сумму от 100 ₽.
-                </p>
-              )}
-              <label className="payment-field" htmlFor="payment-target">
-                Направление поддержки
-                <select
-                  ref={targetSelect}
-                  id="payment-target"
-                  required
-                  value={selectedTarget}
-                  aria-invalid={Boolean(targetError)}
-                  aria-describedby={`payment-target-hint${targetError ? ' payment-target-error' : ''}`}
-                  onInvalid={() =>
-                    setTargetError(
-                      'Выберите направление поддержки или открытый сбор.',
-                    )
-                  }
-                  onChange={(event) => {
-                    setTarget(event.target.value);
-                    setTargetError('');
-                    setError('');
-                  }}
-                >
-                  <option value="" disabled>
-                    {projectsLoading
-                      ? 'Загружаем открытые сборы…'
-                      : 'Выберите открытый сбор'}
-                  </option>
-                  <optgroup label="Направления поддержки">
-                    {donationDirections.map(({ value, label }) => (
+            )}
+            <label className="payment-field" htmlFor="payment-target">
+              Направление поддержки
+              <select
+                ref={targetSelect}
+                id="payment-target"
+                required
+                value={selectedTarget}
+                aria-invalid={Boolean(targetError)}
+                aria-describedby={`payment-target-hint${targetError ? ' payment-target-error' : ''}`}
+                onInvalid={() =>
+                  setTargetError(
+                    'Выберите направление поддержки или открытый сбор.',
+                  )
+                }
+                onChange={(event) => {
+                  setTarget(event.target.value);
+                  setTargetError('');
+                  setError('');
+                }}
+              >
+                <option value="" disabled>
+                  {projectsLoading
+                    ? 'Загружаем открытые сборы…'
+                    : 'Выберите открытый сбор'}
+                </option>
+                <optgroup label="Направления поддержки">
+                  {donationDirections.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </optgroup>
+                {projectOptions.length > 0 && (
+                  <optgroup label="Проекты фонда">
+                    {projectOptions.map(({ value, label }) => (
                       <option key={value} value={value}>
                         {label}
                       </option>
                     ))}
                   </optgroup>
-                  {projectOptions.length > 0 && (
-                    <optgroup label="Проекты фонда">
-                      {projectOptions.map(({ value, label }) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )}
-                </select>
-              </label>
-              <p id="payment-target-hint" className="payment-hint">
-                {usesCommonFund
-                  ? 'Все направления пополняют общий сбор фонда.'
-                  : 'Выберите направление поддержки или конкретный открытый сбор.'}
+                )}
+              </select>
+            </label>
+            <p id="payment-target-hint" className="payment-hint">
+              {usesCommonFund
+                ? 'Все направления пополняют общий сбор фонда.'
+                : 'Выберите направление поддержки или конкретный открытый сбор.'}
+            </p>
+            {targetError && (
+              <p
+                id="payment-target-error"
+                className="payment-error"
+                role="alert"
+              >
+                {targetError}
               </p>
-              {targetError && (
-                <p
-                  id="payment-target-error"
-                  className="payment-error"
-                  role="alert"
-                >
-                  {targetError}
+            )}
+            {projectsError && (
+              <div className="payment-message" role="status">
+                <p>Не удалось загрузить открытые сборы.</p>
+                <Button variant="outline" onClick={reloadProjects}>
+                  Повторить
+                </Button>
+              </div>
+            )}
+            {staffBase &&
+              !projectsLoading &&
+              !projectsError &&
+              !projectOptions.length && (
+                <p className="payment-message" role="status">
+                  Открытых сборов пока нет.{' '}
+                  <SiteLink
+                    href="/contacts-and-requisites/"
+                    className="text-link"
+                  >
+                    Свяжитесь с фондом ↗
+                  </SiteLink>
                 </p>
               )}
-              {projectsError && (
-                <div className="payment-message" role="status">
-                  <p>Не удалось загрузить открытые сборы.</p>
-                  <Button variant="outline" onClick={reloadProjects}>
-                    Повторить
-                  </Button>
-                </div>
-              )}
-              {staffBase &&
-                !projectsLoading &&
-                !projectsError &&
-                !projectOptions.length && (
-                  <p className="payment-message" role="status">
-                    Открытых сборов пока нет.{' '}
-                    <SiteLink
-                      href="/contacts-and-requisites/"
-                      className="text-link"
-                    >
-                      Свяжитесь с фондом ↗
-                    </SiteLink>
-                  </p>
-                )}
-              <div
-                className="payment-methods"
-                role="group"
-                aria-label="Способ оплаты"
+            <div
+              className="payment-methods"
+              role="group"
+              aria-label="Способ оплаты"
+            >
+              <button
+                type="button"
+                aria-pressed={method === 'card'}
+                onClick={() => setMethod('card')}
               >
-                <button
-                  type="button"
-                  aria-pressed={method === 'card'}
-                  onClick={() => setMethod('card')}
-                >
-                  <CreditCard aria-hidden="true" /> Карта и другие способы
-                </button>
-                <button
-                  type="button"
-                  aria-pressed={method === 'sbp'}
-                  onClick={() => setMethod('sbp')}
-                >
-                  <QrCode aria-hidden="true" /> СБП
-                </button>
-              </div>
-              <div
-                className="checkout-step checkout-step-contacts"
-                aria-hidden="true"
+                <CreditCard aria-hidden="true" /> Карта и другие способы
+              </button>
+              <button
+                type="button"
+                aria-pressed={method === 'sbp'}
+                onClick={() => setMethod('sbp')}
               >
-                <span>02</span> Контактные данные
-              </div>
-              <label className="payment-field" htmlFor="payment-email">
-                <span>
-                  Электронная почта <small>Необязательно</small>
-                </span>
-                <input
-                  id="payment-email"
-                  type="email"
-                  autoComplete="email"
-                  maxLength={100}
-                  value={email}
-                  onChange={(event) => {
-                    setEmail(event.target.value);
-                    if (!event.target.value.trim()) setConsent(false);
-                  }}
-                  aria-describedby="payment-email-help"
-                />
-              </label>
-              <p id="payment-email-help" className="payment-hint">
-                Укажите почту, если хотите получить уведомление о результате
-                платежа.
-              </p>
+                <QrCode aria-hidden="true" /> СБП
+              </button>
+            </div>
+            <div
+              className="checkout-step checkout-step-contacts"
+              aria-hidden="true"
+            >
+              <span>02</span> Контактные данные
+            </div>
+            <label className="payment-field" htmlFor="payment-email">
+              <span>
+                Электронная почта <small>Необязательно</small>
+              </span>
+              <input
+                id="payment-email"
+                type="email"
+                autoComplete="email"
+                maxLength={100}
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  if (!event.target.value.trim()) setConsent(false);
+                }}
+                aria-describedby="payment-email-help"
+              />
+            </label>
+            <p id="payment-email-help" className="payment-hint">
+              Укажите почту, если хотите получить уведомление о результате
+              платежа.
+            </p>
+            <label className="payment-check">
+              <input
+                type="checkbox"
+                required
+                checked={offer}
+                onChange={(event) => {
+                  setOffer(event.target.checked);
+                  setOfferAcceptedAt(
+                    event.target.checked ? new Date().toISOString() : '',
+                  );
+                }}
+              />
+              Принимаю условия публичной оферты
+            </label>
+            {hasEmail && (
               <label className="payment-check">
                 <input
                   type="checkbox"
                   required
-                  checked={offer}
-                  onChange={(event) => {
-                    setOffer(event.target.checked);
-                    setOfferAcceptedAt(
-                      event.target.checked ? new Date().toISOString() : '',
-                    );
-                  }}
+                  checked={consent}
+                  onChange={(event) => setConsent(event.target.checked)}
                 />
-                Принимаю условия публичной оферты
+                Даю согласие на обработку персональных данных
               </label>
-              {hasEmail && (
-                <label className="payment-check">
-                  <input
-                    type="checkbox"
-                    required
-                    checked={consent}
-                    onChange={(event) => setConsent(event.target.checked)}
-                  />
-                  Даю согласие на обработку персональных данных
-                </label>
-              )}
-            </fieldset>
-            <PaymentSummary
-              amountMinor={amountMinor}
-              direction={directionLabel}
-              recurring={false}
-            />
-            {error && (
-              <p className="payment-error" role="alert">
-                {error}
+            )}
+          </fieldset>
+          <PaymentSummary
+            amountMinor={amountMinor}
+            direction={directionLabel}
+          />
+          {error && (
+            <p className="payment-error" role="alert">
+              {error}
+            </p>
+          )}
+          <Button
+            type="submit"
+            variant="brand"
+            disabled={
+              !paymentsEnabled ||
+              pending ||
+              projectsLoading ||
+              !projectOptions.length
+            }
+          >
+            {pending ? 'Готовим платёж…' : 'Перейти к оплате'}{' '}
+            <ArrowUpRight aria-hidden="true" />
+          </Button>
+          {!paymentsEnabled && (
+            <div className="payment-message">
+              <Clock3 aria-hidden="true" />
+              <p>
+                Онлайн-оплата пока недоступна.{' '}
+                <SiteLink className="text-link" href="/how-to-support/">
+                  Другие способы поддержать фонд ↗
+                </SiteLink>
               </p>
-            )}
-            <Button
-              type="submit"
-              variant="brand"
-              disabled={
-                !paymentsEnabled ||
-                pending ||
-                projectsLoading ||
-                !projectOptions.length
-              }
-            >
-              {pending ? 'Готовим платёж…' : 'Перейти к оплате'}{' '}
-              <ArrowUpRight aria-hidden="true" />
-            </Button>
-            {!paymentsEnabled && (
-              <div className="payment-message">
-                <Clock3 aria-hidden="true" />
-                <p>
-                  Онлайн-оплата пока недоступна.{' '}
-                  <SiteLink className="text-link" href="/how-to-support/">
-                    Другие способы поддержать фонд ↗
-                  </SiteLink>
-                </p>
-              </div>
-            )}
-            <div className="checkout-security">
-              <LockKeyhole aria-hidden="true" />
-              <p>Данные карты вводятся на защищённой странице Best2Pay.</p>
             </div>
-            <LegalLinks newTab />
-          </form>
-        )}
+          )}
+          <div className="checkout-security">
+            <LockKeyhole aria-hidden="true" />
+            <p>Данные карты вводятся на защищённой странице Best2Pay.</p>
+          </div>
+          <LegalLinks newTab />
+        </form>
       </div>
       <aside className="checkout-story" aria-labelledby="checkout-story-title">
         <div className="checkout-story-copy">
@@ -552,11 +491,9 @@ function DonationForm({ query }: { query: URLSearchParams }) {
 function PaymentSummary({
   amountMinor,
   direction,
-  recurring,
 }: {
   amountMinor: number | null;
   direction?: string;
-  recurring: boolean;
 }) {
   return (
     <aside
@@ -576,7 +513,7 @@ function PaymentSummary({
         </div>
         <div>
           <dt>Формат</dt>
-          <dd>{recurring ? 'Ежемесячно · скоро' : 'Разовый вклад'}</dd>
+          <dd>Разовый вклад</dd>
         </div>
       </dl>
     </aside>
