@@ -41,6 +41,7 @@ import { PageTitle } from './page-title';
 import { SiteLink } from './site-link';
 import {
   donationHref,
+  formatPaymentAmount,
   validPaymentTarget,
   type DonationProgress,
   type ProgressTotal,
@@ -199,10 +200,16 @@ function publicationFacts(
   collection: Collection,
   item: ContentRecord,
   full = false,
+  funding?: ProgressTotal,
 ) {
   const facts: Fact[] = [];
   const date = item.starts_at ?? item.published_at;
-  const goal = goalLabel(item.target_amount, item.currency);
+  const goal =
+    collection === 'projects'
+      ? funding?.targetMinor !== undefined && funding.targetMinor !== null
+        ? formatPaymentAmount(funding.targetMinor)
+        : undefined
+      : goalLabel(item.target_amount, item.currency);
   const status = publicationStatus(collection, item);
   if (full && item.category)
     facts.push({ label: 'Категория', value: item.category, icon: Tag });
@@ -323,7 +330,9 @@ function PublicationCard({
           )}
           <h3 id={titleId}>{title}</h3>
           {preview && <p className="published-preview">{preview}</p>}
-          <PublicationFacts facts={publicationFacts(collection, item)} />
+          <PublicationFacts
+            facts={publicationFacts(collection, item, false, funding)}
+          />
           <ProjectFundraising totals={funding} />
           <span className="published-more" aria-hidden="true">
             {collection === 'news'
@@ -500,6 +509,9 @@ export function PublicationPage() {
     kind && Object.hasOwn(publicationKinds, kind)
       ? (kind as Collection)
       : undefined;
+  const { data: commonFunding } = useDonationProgress(
+    collection === 'projects',
+  );
   const load = useCallback(
     (params: RequestParams) =>
       collection && id
@@ -530,7 +542,7 @@ export function PublicationPage() {
   const featured = Boolean(collection && collection !== 'documents');
   const facts =
     featured && item && collection
-      ? publicationFacts(collection, item, true)
+      ? publicationFacts(collection, item, true, commonFunding?.fund)
       : [];
   const contentId = useId();
 
@@ -610,6 +622,7 @@ export function PublicationPage() {
               {collection === 'projects' && validPaymentTarget(target) && (
                 <PublishedProjectFunding
                   target={target}
+                  totals={commonFunding?.fund}
                   payable={
                     item.status === 'published' && item.currency === 'RUB'
                   }
@@ -645,17 +658,18 @@ export function PublicationPage() {
 function PublishedProjectFunding({
   target,
   payable,
+  totals,
 }: {
   target: string;
   payable: boolean;
+  totals?: ProgressTotal;
 }) {
-  const { data } = useDonationProgress();
   return (
     <section
       className="payment-panel published-project-funding"
       aria-label="Поддержка проекта"
     >
-      <ProjectFundraising totals={data?.targets.get(target)} />
+      <ProjectFundraising totals={totals} />
       {payable && (
         <SiteLink href={donationHref(target)} className="button primary">
           Поддержать проект ↗

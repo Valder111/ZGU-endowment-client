@@ -60,12 +60,14 @@ export function ProjectFundraising({ totals }: { totals?: ProgressTotal }) {
           </div>
         )}
       </dl>
-      {totals.targetMinor !== null && totals.collectedMinor !== null && (
-        <ProgressIndicator
-          collectedMinor={totals.collectedMinor}
-          targetMinor={totals.targetMinor}
-        />
-      )}
+      {totals.targetMinor !== null &&
+        totals.targetMinor > 0 &&
+        totals.collectedMinor !== null && (
+          <ProgressIndicator
+            collectedMinor={totals.collectedMinor}
+            targetMinor={totals.targetMinor}
+          />
+        )}
       {totals.collectedMinor === null && (
         <p className="payment-hint">
           Информация о поступлениях уточняется фондом.
@@ -91,7 +93,11 @@ export function FundraisingCard({
       <dl className="fundraising-amounts">
         <div>
           <dt>Собрано</dt>
-          <dd>{displayAmount(totals.collectedMinor)}</dd>
+          <dd>
+            {totals.collectedMinor === null
+              ? '—'
+              : displayAmount(totals.collectedMinor)}
+          </dd>
         </div>
         {totals.targetMinor !== null && (
           <div>
@@ -100,11 +106,18 @@ export function FundraisingCard({
           </div>
         )}
       </dl>
-      {totals.targetMinor !== null && (
-        <ProgressIndicator
-          collectedMinor={totals.collectedMinor}
-          targetMinor={totals.targetMinor}
-        />
+      {totals.targetMinor !== null &&
+        totals.targetMinor > 0 &&
+        totals.collectedMinor !== null && (
+          <ProgressIndicator
+            collectedMinor={totals.collectedMinor}
+            targetMinor={totals.targetMinor}
+          />
+        )}
+      {totals.collectedMinor === null && (
+        <p className="payment-hint">
+          Информация о поступлениях уточняется фондом.
+        </p>
       )}
     </div>
   );

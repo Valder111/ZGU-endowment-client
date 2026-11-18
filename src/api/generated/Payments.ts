@@ -15,8 +15,8 @@ import type {
   CallbackCreateError,
   CheckoutCreateData,
   CheckoutCreateError,
-  CompleteCreateData,
-  CompleteCreateError,
+  CompleteCreateFail,
+  CompleteCreateResult,
   DonationsDetailData,
   DonationsDetailError,
   DonationsListData,
@@ -246,7 +246,7 @@ export class Payments<
    * @summary Завершение оплаты
    * @request POST:/payments/{id}/complete
    * @secure
-   * @response `200` `CompleteCreateData` OK
+   * @response `200` `CompleteCreateResult` OK
    * @response `400` `HandlerErrorResponse` Bad Request
    */
   completeCreate = (
@@ -254,7 +254,7 @@ export class Payments<
     body: HandlerMoneyRequest,
     params: RequestParams = {},
   ) =>
-    this.request<CompleteCreateData, CompleteCreateError>({
+    this.request<CompleteCreateResult, CompleteCreateFail>({
       path: `/payments/${id}/complete`,
       method: 'POST',
       body: body,

@@ -114,6 +114,109 @@ export interface ApiUserUpdateRequest {
   password: string;
 }
 
+export interface HandlerDocumentResponse {
+  category?: string;
+  created_at?: string;
+  created_by?: string;
+  description?: string;
+  id?: string;
+  mime_type?: string;
+  original_filename?: string;
+  published_at?: string;
+  reporting_year?: number;
+  size_bytes?: number;
+  status?: string;
+  title?: string;
+}
+
+export interface HandlerErrorResponse {
+  error?: string;
+}
+
+export interface HandlerEventMediaResponse {
+  event_id?: string;
+  id?: string;
+  mime_type?: string;
+  original_filename?: string;
+  size_bytes?: number;
+}
+
+export interface HandlerEventResponse {
+  category?: string;
+  created_by?: string;
+  description?: string;
+  ends_at?: string;
+  event_status?: string;
+  id?: string;
+  location?: string;
+  name?: string;
+  publication_status?: string;
+  published_at?: string;
+  starts_at?: string;
+  type?: string;
+}
+
+export interface HandlerLoginResponse {
+  email?: string;
+  role?: string;
+  user_id?: string;
+}
+
+export interface HandlerNewsMediaResponse {
+  id?: string;
+  mime_type?: string;
+  news_id?: string;
+  original_filename?: string;
+  size_bytes?: number;
+}
+
+export interface HandlerNewsResponse {
+  author_id?: string;
+  body?: string;
+  category?: string;
+  created_at?: string;
+  id?: string;
+  published_at?: string;
+  status?: string;
+  summary?: string;
+  title?: string;
+}
+
+export interface HandlerProjectMediaResponse {
+  id?: string;
+  mime_type?: string;
+  original_filename?: string;
+  project_id?: string;
+  size_bytes?: number;
+}
+
+export interface HandlerProjectResponse {
+  category?: string;
+  created_by?: string;
+  currency?: string;
+  /** @example "0.00" */
+  current_amount?: string;
+  description?: string;
+  ends_at?: string;
+  id?: string;
+  name?: string;
+  published_at?: string;
+  short_description?: string;
+  starts_at?: string;
+  status?: string;
+  /** @example "150000.00" */
+  target_amount?: string;
+}
+
+export interface HandlerUserResponse {
+  email?: string;
+  first_name?: string;
+  id?: string;
+  is_active?: boolean;
+  last_name?: string;
+  role?: string;
+}
+
 export interface HandlerCashActivateRequest {
   amount?: string;
   currency?: string;
@@ -168,21 +271,6 @@ export interface HandlerCheckoutResponse {
   sbp_link?: string;
 }
 
-export interface HandlerDocumentResponse {
-  category?: string;
-  created_at?: string;
-  created_by?: string;
-  description?: string;
-  id?: string;
-  mime_type?: string;
-  original_filename?: string;
-  published_at?: string;
-  reporting_year?: number;
-  size_bytes?: number;
-  status?: string;
-  title?: string;
-}
-
 export interface HandlerDonationResponse {
   amount?: string;
   confirmed_at?: string;
@@ -198,62 +286,9 @@ export interface HandlerDonationResponse {
   status?: string;
 }
 
-export interface HandlerErrorResponse {
-  error?: string;
-}
-
-export interface HandlerEventMediaResponse {
-  event_id?: string;
-  id?: string;
-  mime_type?: string;
-  original_filename?: string;
-  size_bytes?: number;
-}
-
-export interface HandlerEventResponse {
-  category?: string;
-  created_by?: string;
-  description?: string;
-  ends_at?: string;
-  event_status?: string;
-  id?: string;
-  location?: string;
-  name?: string;
-  publication_status?: string;
-  published_at?: string;
-  starts_at?: string;
-  type?: string;
-}
-
-export interface HandlerLoginResponse {
-  email?: string;
-  role?: string;
-  user_id?: string;
-}
-
 export interface HandlerMoneyRequest {
   amount?: string;
   reason?: string;
-}
-
-export interface HandlerNewsMediaResponse {
-  id?: string;
-  mime_type?: string;
-  news_id?: string;
-  original_filename?: string;
-  size_bytes?: number;
-}
-
-export interface HandlerNewsResponse {
-  author_id?: string;
-  body?: string;
-  category?: string;
-  created_at?: string;
-  id?: string;
-  published_at?: string;
-  status?: string;
-  summary?: string;
-  title?: string;
 }
 
 export interface HandlerPaymentActionResponse {
@@ -277,30 +312,6 @@ export interface HandlerPaymentResponse {
   status?: string;
 }
 
-export interface HandlerProjectMediaResponse {
-  id?: string;
-  mime_type?: string;
-  original_filename?: string;
-  project_id?: string;
-  size_bytes?: number;
-}
-
-export interface HandlerProjectResponse {
-  category?: string;
-  created_by?: string;
-  currency?: string;
-  description?: string;
-  ends_at?: string;
-  id?: string;
-  name?: string;
-  published_at?: string;
-  short_description?: string;
-  starts_at?: string;
-  status?: string;
-  /** @example "150000.00" */
-  target_amount?: string;
-}
-
 export interface HandlerRefundResponse {
   amount?: string;
   completed_at?: string;
@@ -312,13 +323,20 @@ export interface HandlerRefundResponse {
   status?: string;
 }
 
-export interface HandlerUserResponse {
-  email?: string;
-  first_name?: string;
+export interface ApiProjectAdjustmentCreateRequest {
+  /** @example "1500.50" */
+  amount: string;
+  comment: string;
+}
+
+export interface HandlerProjectAdjustmentResponse {
+  /** @example "1500.50" */
+  amount?: string;
+  comment?: string;
+  created_at?: string;
+  created_by?: string;
   id?: string;
-  is_active?: boolean;
-  last_name?: string;
-  role?: string;
+  project_id?: string;
 }
 
 export type DocumentsListData = HandlerDocumentResponse[];
@@ -376,14 +394,6 @@ export type FileUpdateError = HandlerErrorResponse;
 export type PublishCreateData = any;
 
 export type PublishCreateError = HandlerErrorResponse;
-
-export type DonationsListData = HandlerDonationResponse[];
-
-export type DonationsListError = HandlerErrorResponse;
-
-export type DonationsDetailData = HandlerDonationResponse;
-
-export type DonationsDetailError = HandlerErrorResponse;
 
 export type EventsListData = HandlerEventResponse[];
 
@@ -507,36 +517,6 @@ export type PublishCreateResult = any;
 
 export type PublishCreateFail = HandlerErrorResponse;
 
-export type PaymentsListData = HandlerPaymentResponse[];
-
-export type PaymentsListError = HandlerErrorResponse;
-
-export type CallbackCreateData = string;
-
-export type CallbackCreateError = HandlerErrorResponse;
-
-export type CheckoutCreateData = HandlerCheckoutResponse;
-
-export type CheckoutCreateError = HandlerErrorResponse;
-
-export type SbpCashActivateCreateData = HandlerCashResponse;
-
-export type SbpCashDeactivateCreateData = HandlerCashResponse;
-
-export type SbpCashRegisterCreateData = HandlerCashResponse;
-
-export type PaymentsDetailData = HandlerPaymentResponse;
-
-export type PaymentsDetailError = HandlerErrorResponse;
-
-export type CompleteCreateData = HandlerPaymentActionResponse;
-
-export type CompleteCreateError = HandlerErrorResponse;
-
-export type ReverseCreateData = HandlerPaymentActionResponse;
-
-export type SyncCreateData = HandlerPaymentActionResponse;
-
 export type ProjectsListData = HandlerProjectResponse[];
 
 export type ProjectsListError = HandlerErrorResponse;
@@ -557,9 +537,9 @@ export type ProjectsPartialUpdateData = any;
 
 export type ProjectsPartialUpdateError = HandlerErrorResponse;
 
-export type CompleteCreateResult = any;
+export type CompleteCreateData = any;
 
-export type CompleteCreateFail = HandlerErrorResponse;
+export type CompleteCreateError = HandlerErrorResponse;
 
 export type MediaListOutput = HandlerProjectMediaResponse[];
 
@@ -592,14 +572,6 @@ export type MediaContentListOutput = File;
 
 export type MediaContentListFails = HandlerErrorResponse;
 
-export type RefundsListData = HandlerRefundResponse[];
-
-export type RefundsListError = HandlerErrorResponse;
-
-export type RefundsDetailData = HandlerRefundResponse;
-
-export type RefundsDetailError = HandlerErrorResponse;
-
 export type UsersListData = HandlerUserResponse[];
 
 export type UsersListError = HandlerErrorResponse;
@@ -619,3 +591,61 @@ export type UsersDeleteError = HandlerErrorResponse;
 export type UsersPartialUpdateData = any;
 
 export type UsersPartialUpdateError = HandlerErrorResponse;
+
+export type DonationsListData = HandlerDonationResponse[];
+
+export type DonationsListError = HandlerErrorResponse;
+
+export type DonationsDetailData = HandlerDonationResponse;
+
+export type DonationsDetailError = HandlerErrorResponse;
+
+export type PaymentsListData = HandlerPaymentResponse[];
+
+export type PaymentsListError = HandlerErrorResponse;
+
+export type CallbackCreateData = string;
+
+export type CallbackCreateError = HandlerErrorResponse;
+
+export type CheckoutCreateData = HandlerCheckoutResponse;
+
+export type CheckoutCreateError = HandlerErrorResponse;
+
+export type SbpCashActivateCreateData = HandlerCashResponse;
+
+export type SbpCashDeactivateCreateData = HandlerCashResponse;
+
+export type SbpCashRegisterCreateData = HandlerCashResponse;
+
+export type PaymentsDetailData = HandlerPaymentResponse;
+
+export type PaymentsDetailError = HandlerErrorResponse;
+
+export type CompleteCreateResult = HandlerPaymentActionResponse;
+
+export type CompleteCreateFail = HandlerErrorResponse;
+
+export type ReverseCreateData = HandlerPaymentActionResponse;
+
+export type SyncCreateData = HandlerPaymentActionResponse;
+
+export type RefundsListData = HandlerRefundResponse[];
+
+export type RefundsListError = HandlerErrorResponse;
+
+export type RefundsDetailData = HandlerRefundResponse;
+
+export type RefundsDetailError = HandlerErrorResponse;
+
+export type AdjustmentsListData = HandlerProjectAdjustmentResponse[];
+
+export type AdjustmentsListError = HandlerErrorResponse;
+
+export type AdjustmentsCreateData = HandlerProjectAdjustmentResponse;
+
+export type AdjustmentsCreateError = HandlerErrorResponse;
+
+export type AdjustmentsDeleteData = any;
+
+export type AdjustmentsDeleteError = HandlerErrorResponse;

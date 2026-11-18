@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { Plus, RefreshCw } from 'lucide-react';
-import { staffBase, type StaffRequest } from '@/api/staff';
+import { staffBase, type StaffRequest, type StaffRole } from '@/api/staff';
+import { validPaymentReference } from '@/api/payments';
 import { collectionApi, isPublished } from '@/api/staff-content';
 import type { RequestParams } from '@/api/generated/http-client';
 import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
@@ -16,6 +17,7 @@ import { ContentEditor, type LeaveEditor } from './content-editor';
 import { StaffFeedback, StaffList, StaffLoad } from './staff-controls';
 import { StaffMedia } from './staff-media';
 import { StaffDocumentFile } from './staff-document-file';
+import { ProjectAdjustments } from './project-adjustments';
 
 function readCategories(key: string): string[] {
   try {
@@ -32,11 +34,13 @@ export function ContentWorkspace({
   collection,
   request,
   userId,
+  role,
   leaveRef,
 }: {
   collection: Collection;
   request: StaffRequest;
   userId: string;
+  role: StaffRole;
   leaveRef: LeaveEditor;
 }) {
   const config = collections[collection];
@@ -185,6 +189,17 @@ export function ContentWorkspace({
               )}
             </StaffLoad>
           )}
+          {collection === 'projects' &&
+            detail.data &&
+            validPaymentReference(detail.data.id) && (
+              <ProjectAdjustments
+                key={detail.data.id}
+                request={request}
+                projectId={detail.data.id}
+                canManage={role === 'admin'}
+                onChanged={list.reload}
+              />
+            )}
           {recordId && detail.data && api.photos && (
             <StaffMedia
               key={recordId}
