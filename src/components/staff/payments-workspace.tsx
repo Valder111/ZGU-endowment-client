@@ -41,6 +41,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { formatNumber } from '@/utils/typography';
+import { readRefundHolds, writeRefundHolds } from '@/api/payment-refunds';
+import { PaymentRefundForm } from './payment-refund-form';
 
 const monthName = new Intl.DateTimeFormat('ru-RU', {
   month: 'short',
@@ -95,6 +97,8 @@ export function PaymentsWorkspace({ request }: { request: StaffRequest }) {
   const [activeMonth, setActiveMonth] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [refundBusy, setRefundBusy] = useState(false);
+  const [refundHolds, setRefundHolds] = useState(readRefundHolds);
   const action = useStaffAction();
   const load = useCallback(
     (signal: AbortSignal) => getPaymentLedger(request, signal),
@@ -172,8 +176,19 @@ export function PaymentsWorkspace({ request }: { request: StaffRequest }) {
   function synchronize(row: PaymentRow) {
     void action.run(async () => {
       await request(staffApi.payments.syncCreate(row.id, { timeout: 75_000 }));
+      holdRefund(row, false);
       refresh();
     }, 'Статус платежа обновлён.');
+  }
+
+  function holdRefund(row: PaymentRow, hold: boolean) {
+    setRefundHolds((previous) => {
+      const next = { ...previous };
+      if (hold) next[row.id] = row.refundedMinor + row.pendingRefundMinor;
+      else delete next[row.id];
+      writeRefundHolds(next);
+      return next;
+    });
   }
 
   function filterStatus(value: string) {
@@ -218,7 +233,7 @@ export function PaymentsWorkspace({ request }: { request: StaffRequest }) {
           </label>
           <Button
             variant="outline"
-            disabled={loading || action.pending}
+            disabled={loading || action.pending || refundBusy}
             onClick={refresh}
           >
             <RefreshCw aria-hidden="true" />
@@ -631,7 +646,11 @@ export function PaymentsWorkspace({ request }: { request: StaffRequest }) {
                               <div className="payment-row-actions">
                                 <Button
                                   variant="outline"
-                                  disabled={action.pending || !row.providerId}
+                                  disabled={
+                                    action.pending ||
+                                    refundBusy ||
+                                    !row.providerId
+                                  }
                                   onClick={() => synchronize(row)}
                                   aria-label={'Сверить платёж ' + row.id}
                                 >
@@ -641,6 +660,7 @@ export function PaymentsWorkspace({ request }: { request: StaffRequest }) {
                                 <Button
                                   variant="ghost"
                                   size="icon"
+                                  disabled={refundBusy}
                                   onClick={() => setDetailId(row.id)}
                                   aria-label={'Подробнее о платеже ' + row.id}
                                 >
@@ -691,10 +711,18 @@ export function PaymentsWorkspace({ request }: { request: StaffRequest }) {
       <Dialog
         open={Boolean(detailId)}
         onOpenChange={(open) => {
-          if (!open) setDetailId(null);
+          if (!open && !refundBusy) setDetailId(null);
         }}
       >
-        <DialogContent className="payment-detail-dialog">
+        <DialogContent
+          className="payment-detail-dialog"
+          onEscapeKeyDown={(event) => {
+            if (refundBusy) event.preventDefault();
+          }}
+          onInteractOutside={(event) => {
+            if (refundBusy) event.preventDefault();
+          }}
+        >
           <span className="payments-section-kicker">КАРТОЧКА ОПЕРАЦИИ</span>
           <DialogTitle>
             {inspected?.providerId
@@ -772,7 +800,7 @@ export function PaymentsWorkspace({ request }: { request: StaffRequest }) {
               {inspected.providerId && (
                 <Button
                   variant="outline"
-                  disabled={action.pending}
+                  disabled={action.pending || refundBusy || loading}
                   onClick={() => synchronize(inspected)}
                 >
                   <RefreshCw aria-hidden="true" />
@@ -786,6 +814,26 @@ export function PaymentsWorkspace({ request }: { request: StaffRequest }) {
                   заказа.
                 </p>
               )}
+              <PaymentRefundForm
+                key={inspected.id}
+                row={inspected}
+                request={request}
+                disabled={
+                  loading ||
+                  action.pending ||
+                  refundBusy ||
+                  Boolean(error) ||
+                  Boolean(calculated.error)
+                }
+                held={
+                  refundHolds[inspected.id] !== undefined &&
+                  inspected.refundedMinor + inspected.pendingRefundMinor <=
+                    refundHolds[inspected.id]!
+                }
+                onHold={(hold) => holdRefund(inspected, hold)}
+                onPending={setRefundBusy}
+                onChanged={refresh}
+              />
             </>
           ) : (
             <p>Операция больше не отображается в текущем реестре.</p>

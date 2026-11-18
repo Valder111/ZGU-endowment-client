@@ -25,23 +25,23 @@ import {
   paymentsEnabled,
   paymentError,
   paymentProjectId,
+  normalizeDonationTarget,
   startPayment,
   validPaymentReference,
-  validPaymentTarget,
   type DonationDraft,
   type PaymentResult,
 } from '@/api/payments';
 import {
   donationProjectOptions,
-  loadDonationProjects,
+  donationTargetOptions,
 } from '@/api/donation-projects';
-import { staffBase, staffResult } from '@/api/staff';
+import { staffBase } from '@/api/staff';
 import { LegalLinks } from '@/components/elements/legal-links';
 import { PersonalDataConsent } from '@/components/elements/personal-data-consent';
 import { legalDocument } from '@/constants/legal';
 import { SiteLink } from '@/components/elements/site-link';
 import { Button } from '@/components/ui/button';
-import { donationDirections } from '@/constants/projects';
+import { donationFundLabel } from '@/constants/donation-fund';
 import {
   checkoutSnapshot,
   readCheckout,
@@ -50,7 +50,8 @@ import {
   subscribeCheckout,
 } from '@/api/payment-context';
 import { usePaymentResource } from '@/hooks/requests/queries/use-payment-resource';
-import { useStaffResource } from '@/hooks/requests/queries/use-staff-resource';
+import { useDonationProjects } from '@/hooks/requests/queries/use-donation-projects';
+import { DonationTargetSelect } from '@/components/elements/donation-target-select';
 import {
   formatGroupedAmountChange,
   groupAmountDigits,
@@ -83,9 +84,8 @@ export function DonationContent() {
 }
 
 function DonationForm({ query }: { query: URLSearchParams }) {
-  const initialTarget = query.get('target') ?? 'fund';
-  const [target, setTarget] = useState(
-    validPaymentTarget(initialTarget) ? initialTarget : 'fund',
+  const [target, setTarget] = useState(() =>
+    normalizeDonationTarget(query.get('target')),
   );
   const [amount, setAmount] = useState(() => {
     const raw = query.get('amount');
@@ -100,9 +100,7 @@ function DonationForm({ query }: { query: URLSearchParams }) {
   const [consent, setConsent] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
-  const [targetError, setTargetError] = useState('');
   const [amountTouched, setAmountTouched] = useState(false);
-  const targetSelect = useRef<HTMLSelectElement>(null);
   const attempt = useRef<{ body: string; id: string } | null>(null);
   const sending = useRef(false);
   const checkoutController = useRef<AbortController | null>(null);
@@ -110,21 +108,18 @@ function DonationForm({ query }: { query: URLSearchParams }) {
     data: published,
     loading: projectsLoading,
     error: projectsError,
-    reload: reloadProjects,
-  } = useStaffResource(staffResult, loadDonationProjects, Boolean(staffBase));
+    refresh: reloadProjects,
+  } = useDonationProjects();
   const projectOptions = donationProjectOptions(published);
+  const targetOptions = donationTargetOptions(published);
   const projectId = paymentProjectId(target);
   const selected = projectOptions.find(({ id }) => id === projectId);
-  const chosenProject = projectOptions.find(({ value }) => value === target);
-  const direction = donationDirections.find(({ value }) => value === target);
-  const commonFund = paymentProjectId('fund');
-  const usesCommonFund =
-    Boolean(commonFund) &&
-    donationDirections.every(
-      ({ value }) => paymentProjectId(value) === commonFund,
-    );
-  const selectedTarget = direction ? target : (chosenProject?.value ?? '');
-  const directionLabel = direction?.label ?? chosenProject?.label;
+  const targetLabel =
+    target === 'fund'
+      ? donationFundLabel
+      : (selected?.label ?? 'Выбранный проект недоступен');
+  const targetUnavailable =
+    paymentsEnabled && !projectsLoading && !projectsError && !selected;
   const amountMinor = parseDonationAmount(amount);
   const hasEmail = Boolean(email.trim());
 
@@ -163,13 +158,12 @@ function DonationForm({ query }: { query: URLSearchParams }) {
         ?.focus();
       return;
     }
-    if (!selected || !selectedTarget) {
-      setTargetError(
-        !selected
+    if (!selected) {
+      setError(
+        target === 'fund'
           ? 'Общий сбор пока недоступен. Попробуйте позже или свяжитесь с фондом.'
-          : 'Выберите направление поддержки или открытый проект из списка.',
+          : 'Выбранный проект пока недоступен. Выберите другой опубликованный проект.',
       );
-      targetSelect.current?.focus();
       return;
     }
     sending.current = true;
@@ -209,13 +203,17 @@ function DonationForm({ query }: { query: URLSearchParams }) {
         <div className="checkout-form-heading">
           <span className="eyebrow">ПОДДЕРЖАТЬ УНИВЕРСИТЕТ</span>
           <h1>Пожертвование фонду</h1>
-          <p>Выберите близкую цель и комфортную сумму вклада.</p>
+          <p>
+            {target === 'fund'
+              ? 'Поддержите общее развитие ЗГУ комфортной суммой вклада.'
+              : `Выберите комфортную сумму для проекта «${targetLabel}».`}
+          </p>
         </div>
         <form className="payment-form" method="post" onSubmit={submit}>
           <fieldset disabled={pending}>
             <legend className="sr-only">Данные пожертвования</legend>
             <div className="checkout-step" aria-hidden="true">
-              <span>01</span> Сумма и направление
+              <span>01</span> Сумма пожертвования
             </div>
             <div
               className="donation-amounts payment-presets"
@@ -261,85 +259,35 @@ function DonationForm({ query }: { query: URLSearchParams }) {
                 Укажите целую сумму от {minimumDonationRubles} ₽.
               </p>
             )}
-            <label className="payment-field" htmlFor="payment-target">
-              Направление поддержки
-              <select
-                ref={targetSelect}
-                id="payment-target"
-                required
-                value={selectedTarget}
-                aria-invalid={Boolean(targetError)}
-                aria-describedby={`payment-target-hint${targetError ? ' payment-target-error' : ''}`}
-                onInvalid={() =>
-                  setTargetError(
-                    'Выберите направление поддержки или открытый сбор.',
-                  )
-                }
-                onChange={(event) => {
-                  setTarget(event.target.value);
-                  setTargetError('');
-                  setError('');
-                }}
-              >
-                <option value="" disabled>
-                  {projectsLoading
-                    ? 'Загружаем открытые сборы…'
-                    : 'Выберите открытый сбор'}
-                </option>
-                <optgroup label="Направления поддержки">
-                  {donationDirections.map(({ value, label }) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </optgroup>
-                {projectOptions.length > 0 && (
-                  <optgroup label="Проекты фонда">
-                    {projectOptions.map(({ value, label }) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </optgroup>
-                )}
-              </select>
-            </label>
-            <p id="payment-target-hint" className="payment-hint">
-              {usesCommonFund && selected
-                ? `Все направления и проекты пополняют общий сбор «${selected.label}».`
-                : 'Выберите направление поддержки или конкретный открытый сбор.'}
-            </p>
-            {targetError && (
-              <p
-                id="payment-target-error"
-                className="payment-error"
-                role="alert"
-              >
-                {targetError}
+            <DonationTargetSelect
+              value={target}
+              onChange={(value) => {
+                setTarget(value);
+                setError('');
+              }}
+              options={targetOptions}
+            >
+              <p>
+                {target === 'fund'
+                  ? 'Ваш вклад пополнит общий сбор университета.'
+                  : 'Ваш вклад поступит в выбранный проект фонда.'}
+              </p>
+            </DonationTargetSelect>
+            {targetUnavailable && (
+              <p className="payment-error" role="alert">
+                {target === 'fund'
+                  ? 'Общий сбор пока недоступен. Попробуйте позже или свяжитесь с фондом.'
+                  : 'Выбранный проект пока недоступен. Выберите другой опубликованный проект.'}
               </p>
             )}
-            {projectsError && (
+            {Boolean(projectsError) && (
               <div className="payment-message" role="status">
-                <p>Не удалось загрузить открытые сборы.</p>
+                <p>Не удалось загрузить проекты фонда.</p>
                 <Button variant="outline" onClick={reloadProjects}>
                   Повторить
                 </Button>
               </div>
             )}
-            {staffBase &&
-              !projectsLoading &&
-              !projectsError &&
-              !projectOptions.length && (
-                <p className="payment-message" role="status">
-                  Открытых сборов пока нет.{' '}
-                  <SiteLink
-                    href="/contacts-and-requisites/"
-                    className="text-link"
-                  >
-                    Свяжитесь с фондом ↗
-                  </SiteLink>
-                </p>
-              )}
             <div
               className="payment-methods"
               role="group"
@@ -412,11 +360,8 @@ function DonationForm({ query }: { query: URLSearchParams }) {
             </label>
             <PersonalDataConsent checked={consent} onChange={setConsent} />
           </fieldset>
-          <PaymentSummary
-            amountMinor={amountMinor}
-            direction={directionLabel}
-          />
-          {error && (
+          <PaymentSummary amountMinor={amountMinor} targetLabel={targetLabel} />
+          {error && !targetUnavailable && (
             <p className="payment-error" role="alert">
               {error}
             </p>
@@ -428,7 +373,8 @@ function DonationForm({ query }: { query: URLSearchParams }) {
               !paymentsEnabled ||
               pending ||
               projectsLoading ||
-              !projectOptions.length ||
+              Boolean(projectsError) ||
+              !selected ||
               !offer ||
               !consent
             }
@@ -496,10 +442,10 @@ function DonationForm({ query }: { query: URLSearchParams }) {
 
 function PaymentSummary({
   amountMinor,
-  direction,
+  targetLabel,
 }: {
   amountMinor: number | null;
-  direction?: string;
+  targetLabel: string;
 }) {
   return (
     <aside
@@ -514,8 +460,8 @@ function PaymentSummary({
           </dd>
         </div>
         <div>
-          <dt>Направление</dt>
-          <dd>{direction ?? 'Выберите направление'}</dd>
+          <dt>Цель пожертвования</dt>
+          <dd>{targetLabel}</dd>
         </div>
         <div>
           <dt>Формат</dt>

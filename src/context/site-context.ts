@@ -5,10 +5,10 @@ export interface SiteState {
   toggleAccessible: () => void;
   donationOpen: boolean;
   setDonationOpen: (open: boolean) => void;
+  donationTarget: string;
+  setDonationTarget: (value: string) => void;
   activeProject: ProjectId | undefined;
   setActiveProject: (id: ProjectId) => void;
-  donationDirection: string;
-  setDonationDirection: (value: string) => void;
   openDonation: () => void;
 }
 export const SiteContext = createContext<SiteState | null>(null);

@@ -542,7 +542,12 @@ export function PublicationPage() {
   const featured = Boolean(collection && collection !== 'documents');
   const facts =
     featured && item && collection
-      ? publicationFacts(collection, item, true, commonFunding?.fund)
+      ? publicationFacts(
+          collection,
+          item,
+          true,
+          commonFunding?.targets.get(target),
+        )
       : [];
   const contentId = useId();
 
@@ -622,7 +627,7 @@ export function PublicationPage() {
               {collection === 'projects' && validPaymentTarget(target) && (
                 <PublishedProjectFunding
                   target={target}
-                  totals={commonFunding?.fund}
+                  totals={commonFunding?.targets.get(target)}
                   payable={
                     item.status === 'published' && item.currency === 'RUB'
                   }
@@ -671,7 +676,10 @@ function PublishedProjectFunding({
     >
       <ProjectFundraising totals={totals} />
       {payable && (
-        <SiteLink href={donationHref(target)} className="button primary">
+        <SiteLink
+          href={donationHref(undefined, target)}
+          className="button primary"
+        >
           Поддержать проект ↗
         </SiteLink>
       )}
