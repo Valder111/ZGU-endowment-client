@@ -440,8 +440,8 @@ test('direction constellation highlights and focuses its matching card without r
     .click();
   const donation = page.getByRole('dialog');
   await expect(
-    donation.getByRole('combobox', { name: 'Направление поддержки' }),
-  ).toHaveText('Наука и инженерия для Арктики');
+    donation.getByRole('group', { name: 'Цель пожертвования' }),
+  ).toContainText('Общее развитие ЗГУ');
   await page.keyboard.press('Escape');
   await expect(donation).toBeHidden();
   await campusCard.click({ position: { x: 20, y: 24 } });
@@ -461,8 +461,8 @@ test('direction constellation highlights and focuses its matching card without r
     .getByRole('button', { name: 'Сделать вклад' })
     .click();
   await expect(
-    donation.getByRole('combobox', { name: 'Направление поддержки' }),
-  ).toHaveText('Инфраструктура для развития');
+    donation.getByRole('group', { name: 'Цель пожертвования' }),
+  ).toContainText('Общее развитие ЗГУ');
 });
 
 test('FAQ search filters answers, handles no results, and resets', async ({

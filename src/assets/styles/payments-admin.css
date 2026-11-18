@@ -1047,3 +1047,49 @@
     margin: 12px auto;
   }
 }
+.payment-refund {
+  display: grid;
+  min-width: 0;
+  gap: 14px;
+  margin-top: 12px;
+  padding-top: 22px;
+  border-top: 1px solid #d6e3df;
+}
+.payment-refund h3 {
+  font-size: 20px;
+  font-weight: 650;
+  color: #193b4e;
+}
+.payment-refund form,
+.payment-refund fieldset {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.payment-refund-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.payment-refund-actions button {
+  white-space: normal;
+  min-height: 44px;
+  height: auto;
+}
+.payment-refund-confirm {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #e4c6bd;
+  border-radius: 14px;
+  background: #fff6f1;
+}
+.payment-refund-confirm strong {
+  font-size: 19px;
+  color: #683d34;
+}
+.payment-refund-confirm p {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}

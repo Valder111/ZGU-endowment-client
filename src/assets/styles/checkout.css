@@ -687,3 +687,44 @@
     min-height: 100px;
   }
 }
+.donation-recipient {
+  display: grid;
+  gap: 6px;
+  padding: 18px 20px;
+  border: 1px solid #c8dedb;
+  border-radius: 14px;
+  background: #f0f7f5;
+  color: #173e4f;
+}
+.donation-recipient > span {
+  color: #4d6976;
+  font-size: 13px;
+}
+.donation-recipient > strong {
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 650;
+}
+.donation-recipient > p {
+  margin: 0;
+  color: #4d6976;
+  font-size: 13px;
+}
+.donation-project-select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid #8aabb0;
+  border-radius: 10px;
+  background: #fff;
+  color: #173e4f;
+  font: inherit;
+  font-size: 15px;
+  text-overflow: ellipsis;
+}
+.donation-recipient > label {
+  font-size: 13px;
+  color: #4d6976;
+}
